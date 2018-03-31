@@ -39,8 +39,56 @@ $$
 Con esto conseguimos crear un nuevo marco de ejecución con el código inicial de main. Nótese que la función inicializa la pila de ambitos de variables locales con el ambito $\nil$ que no contiene ninguna variable inicializada.
 
 \subsubsection{Semántica (Expresiones aritmético-lógicas).}
-(Primero hablemos de las funciones aritméticas que ya son jaleo. Se trata de expresiones con operandos, numerales y variables junto con funciones (por el momento como si no tuvieran argumentos!!!)).\\
+(Primero hablemos de las funciones aritméticas que ya son un jaleo. Se trata de expresiones con operandos, numerales y variables junto con llamadas funciones (por el momento como si no tuvieran argumentos!!!)).\\
 
 Tenemos que definir una función (parcial) que dada una expresión (aritmética reducida) nos devuelva otra expresión más simplificada, pudiendo emplear un estado para ello (permitiendo modificaciones del mismo), hasta eventualmente quedarnos con un valor (entero por el momento).\\
 
+De ahora en adelante nos referimos por el conjunto $\AExp$ a la unión de expresiones aritméticas y valores enteros.\\
+
 Buscamos definir la función semántica $\A: (\AExp \times \State) \hookrightarrow (\AExp \times \State)$ mediante las siguientes reglas:
+
+\begin{prooftree*}
+    \Infer[left label=$\numa$]0{\st{n}{(\G, \F, \RP \leadsto (s, S)))} \staexp \st{\N \eval{n}}{(\G, \F, \RP \leadsto (s, S)))}}
+\end{prooftree*}
+
+\begin{prooftree*}
+        \hypo{local(x) = v}
+        \hypo{G(x) = \Undef}
+    \Infer[left label=$\varal$]2{\st{x}{(\G, \F, \RP \leadsto (local:s, S))} \staexp \st{v}{(\G, \F, \RP \leadsto (local:s, S))}}
+\end{prooftree*}
+
+\begin{prooftree*}
+        \hypo{G(x) = v}
+        \hypo{local(x) = undef}
+    \Infer[left label=$\varag$]2{\st{x}{(\G, \F, \RP \leadsto (local:s, S))} \staexp \st{v}{(\G, \F, \RP \leadsto (local:s, S))}}
+\end{prooftree*}
+
+\begin{prooftree*}
+        \hypo{\st{a_1}{(\G, \F, \RP \leadsto (s, S)))} \staexp \st{a_1'}{(\G, \F, \RP \leadsto (s', S')))}}
+    \Infer[left label=$\opaa$]1{\st{a_1 \bigodot a_2}{(\G, \F, \RP \leadsto (s, S)))} \staexp \st{a_1' \bigodot a_2}{(\G, \F, \RP \leadsto (s', S')))}}
+\end{prooftree*}
+
+\begin{prooftree*}
+        \hypo{\st{a_2}{(\G, \F, \RP \leadsto (s, S)))} \staexp \st{a_2'}{(\G, \F, \RP \leadsto (s', S')))}}
+    \Infer[left label=$\opab$]1{\st{v \bigodot a_2}{(\G, \F, \RP \leadsto (s, S)))} \staexp \st{v \bigodot a_2'}{(\G, \F, \RP \leadsto (s', S')))}}
+\end{prooftree*}
+
+\begin{prooftree*}
+    \Infer[left label=$\opac$]0{\st{v_1 \bigodot v_2}{(\G, \F, \RP \leadsto (s, S)))} \staexp \st{v_1 \bigodot_{\N} v_2}{(\G, \F, \RP \leadsto (s, S)))}}
+\end{prooftree*}
+
+\begin{prooftree*}
+        \hypo{\st{a}{(\G, \F, \RP \leadsto (s, S)))} \staexp \st{a'}{(\G, \F, \RP \leadsto (s', S')))}}
+    \Infer[left label=$\unaa$]1{\st{\Unstack{a}}{(\G, \F, \RP \leadsto (s, S)))} \staexp \st{\Unstack{a'}}{(\G, \F, \RP \leadsto (s', S')))}}
+\end{prooftree*}
+
+\begin{prooftree*}
+    \Infer[left label=$\unab$]0{\st{\Unstack{v}}{(\G, \F, \RP \leadsto (local:s, S)))} \staexp \st{v}{(\G, \F, \RP \leadsto (s, S)))}}
+\end{prooftree*}
+
+\begin{prooftree*}
+        \hypo{\F(\func) = (int, S_F, [], a)}
+    \Infer[left label=$\calla$]1{\st{\func()}{(\G, \F, \RP \leadsto (local:s, S)))} \staexp \st{\Unstack{a}}{(\G, \F, \RP \leadsto (\nil:local:s, S_F\;S)))}}
+\end{prooftree*}
+
+\subsubsection{Semántica (Instrucciones).}
