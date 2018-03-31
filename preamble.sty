@@ -118,17 +118,21 @@
 \newcommand{\unab}[0]{\left[ \text{unstack}_{\A}^{2} \right]}
 \newcommand{\calla}[0]{\left[ \text{call}_{\A} \right]}
 
-\newcommand{\assns}[0]{\left[ \text{ass}_{\text{ns}} \right]}
-\newcommand{\skipns}[0]{\left[ \text{skip}_{\text{ns}} \right]}
-\newcommand{\compns}[0]{\left[ \text{comp}_{\text{ns}} \right]}
-\newcommand{\wttns}[0]{\left[ \text{while}_{\text{ns}}^{\Tt} \right]}
-\newcommand{\wffns}[0]{\left[ \text{while}_{\text{ns}}^{\ff} \right]}
-\newcommand{\ifttns}[0]{\left[ \text{if}_{\text{ns}}^{\Tt} \right]}
-\newcommand{\ifffns}[0]{\left[ \text{if}_{\text{ns}}^{\ff} \right]}
-\newcommand{\rttns}[0]{\left[ \text{repeat}_{\text{ns}}^{\Tt} \right]}
-\newcommand{\rffns}[0]{\left[ \text{repeat}_{\text{ns}}^{\ff} \right]}
-\newcommand{\fttns}[0]{\left[ \text{for}_{\text{ns}}^{\Tt} \right]}
-\newcommand{\fffns}[0]{\left[ \text{for}_{\text{ns}}^{\ff} \right]}
+% Sematics
+\newcommand{\declic}[0]{\left[ \text{Decl}_{\text{C}}^{int} \right]}
+\newcommand{\declbc}[0]{\left[ \text{Decl}_{\text{C}}^{bool} \right]}
+\newcommand{\assac}[0]{\left[ \text{ass}_{\text{C}}^{1} \right]}
+\newcommand{\assvc}[0]{\left[ \text{ass}_{\text{C}}^{2} \right]}
+\newcommand{\compac}[0]{\left[ \text{comp}_{\text{C}}^{1} \right]}
+\newcommand{\compbc}[0]{\left[ \text{comp}_{\text{C}}^{2} \right]}
+\newcommand{\wac}[0]{\left[ \text{while}_{\text{C}} \right]}
+\newcommand{\wtc}[0]{\left[ \text{while}_{\text{C}}^{\True} \right]}
+\newcommand{\wfc}[0]{\left[ \text{while}_{\text{C}}^{\False} \right]}
+\newcommand{\ifac}[0]{\left[ \text{if}_{\text{C}} \right]}
+\newcommand{\iftc}[0]{\left[ \text{if}_{\text{C}}^{\True} \right]}
+\newcommand{\iffc}[0]{\left[ \text{if}_{\text{C}}^{\False} \right]}
+\newcommand{\enac}[0]{\left[ \text{end}_{\text{C}} \right]}
+\newcommand{\threadc}[0]{\left[ \text{thread}_{\text{C}} \right]}
 \newcommand{\customrule}[1]{\left[ \text{#1} \right]}
 
 \newcommand{\asssos}[0]{\left[ \text{ass}_{\text{sos}} \right]}
@@ -143,10 +147,11 @@
 
 % While syntax
 \newcommand{\While}[0]{\textbf{While}}
-\renewcommand{\while}[2]{\mbox{\textbf{while} } #1 \mbox{ \textbf{do} } #2}
+\renewcommand{\while}[2]{\mbox{\textbf{while}} (#1) \{#2\}}
 \newcommand{\Repeat}[2]{\mbox{\textbf{repeat} } #1 \mbox{ \textbf{until} } #2}
 \newcommand{\For}[3]{\mbox{\textbf{for} } #1 \mbox{ \textbf{to} } #2 \mbox{ \textbf{do} } #3}
-\newcommand{\If}[3]{\mbox{\textbf{if} } #1 \mbox{ \textbf{then} } #2 \mbox{ \textbf{else} } #3}
+\newcommand{\If}[3]{\mbox{\textbf{if}} (#1) \{#2\} \mbox{\textbf{else}} \{#3\}}
+\newcommand{\Ifp}[2]{\mbox{\textbf{if}} (#1) \{#2\}}
 \newcommand{\Skip}[0]{\mbox{\textbf{skip}}}
 \renewcommand{\=}[0]{:=}
 \newcommand{\eq}[0]{=} % used within trees
