@@ -1,0 +1,172 @@
+\ProvidesPackage{preamble}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{latexsym}
+\usepackage{mathtools}
+\usepackage{ebproof}
+\usepackage{stmaryrd}
+\usepackage[linguistics]{forest} % drawing trees
+\usepackage{anysize}
+\usepackage{pdflscape}
+
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{verbatim}
+\usepackage[explicit]{titlesec}
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+
+% Macros
+
+% CABS
+\newcommand{\thread}[0]{\textbf{thread}}
+
+% Generales
+\newcommand{\AExp}[0]{\textbf{Aexp}}
+\newcommand{\am}[0]{\textbf{AM}}
+\newcommand{\args}[0]{\text{arg}}
+\newcommand{\Args}[0]{\textbf{Args}}
+\newcommand{\BExp}[0]{\textbf{Bexp}}
+\newcommand{\block}[0]{\textbf{Block}}
+\newcommand{\code}[0]{\textbf{Code}}
+\newcommand{\cont}[0]{\textbf{Cont}}
+\newcommand{\decp}[0]{\textbf{Dec}{\scriptsize P}}
+\newcommand{\decv}[0]{\textbf{Dec}{\scriptsize V}}
+\newcommand{\Enve}[0]{\textbf{Env}{\scriptsize E}}
+\newcommand{\Envp}[0]{\textbf{Env}{\scriptsize P}}
+\newcommand{\Envv}[0]{\textbf{Env}{\scriptsize V}}
+\newcommand{\enve}[0]{env_{\mbox{\scriptsize\textit{E}}}}
+\newcommand{\envp}[0]{env_{\mbox{\scriptsize\textit{P}}}}
+\newcommand{\envv}[0]{env_{\mbox{\scriptsize\textit{V}}}}
+\newcommand{\Exp}[0]{\textbf{Exp}}
+\newcommand{\ff}[0]{\textbf{ff}}
+\newcommand{\FF}[0]{\textbf{FF}}
+\newcommand{\FV}[0]{\text{FV}}
+\newcommand{\func}[0]{\textbf{func}}
+\newcommand{\Func}[0]{\textbf{Func}}
+\newcommand{\init}[0]{\textbf{init}}
+\newcommand{\loc}[0]{\textbf{Loc}}
+\newcommand{\main}[0]{\textit{main}}
+\newcommand{\n}[0]{\textbf{N}}
+\newcommand{\nil}[0]{\textbf{nil}}
+\newcommand{\num}[0]{\textbf{Num}}
+\newcommand{\p}[0]{\textbf{P}}
+\newcommand{\pname}[0]{\textbf{Pname}}
+\newcommand{\proc}[0]{\textbf{Proc}}
+\newcommand{\Prog}[0]{\textbf{Prog}}
+\newcommand{\pstate}[0]{\textbf{PState}}
+\newcommand{\return}[0]{\textbf{return }}
+\newcommand{\RP}[0]{\textbf{RP}}
+\newcommand{\stack}[0]{\textbf{Stack}}
+\newcommand{\start}[0]{\textbf{start}}
+\newcommand{\State}[0]{\textbf{State}}
+\newcommand{\Stm}[0]{\textbf{Stm}}
+\newcommand{\store}[0]{\textbf{Store}}
+\newcommand{\T}[0]{\textbf{T}}
+\newcommand{\TT}[0]{\textbf{TT}}
+\newcommand{\Tt}[0]{\textbf{tt}}
+\newcommand{\var}[0]{\text{ var}}
+\newcommand{\Var}[0]{\textbf{Var}}
+\newcommand{\while}[0]{\textbf{While}}
+\newcommand{\A}[0]{\mathcal{A}}
+\newcommand{\B}[0]{\mathbb{B}}
+\newcommand{\C}[0]{\mathcal{C}}
+\newcommand{\D}[0]{\mathcal{D}}
+\newcommand{\G}[0]{\mathbf{G}}
+\newcommand{\F}[0]{\mathbf{F}}
+\newcommand{\M}[0]{\mathcal{M}}
+\newcommand{\N}[0]{\mathcal{N}}
+\renewcommand{\O}[0]{\mathcal{O}}
+\renewcommand{\P}[0]{\mathbf{P}}
+\renewcommand{\S}[0]{\mathcal{S}}
+\newcommand{\V}[0]{\mathbb{V}}
+\newcommand{\Tcal}[0]{\mathcal{T}}
+\newcommand{\Z}[0]{\mathbb{Z}}
+\newcommand{\sam}[0]{\S_{\mbox{\scriptsize am}}}
+\newcommand{\scs}[0]{\S_{\mbox{\scriptsize cs}}}
+\newcommand{\sds}[0]{\S_{\mbox{\scriptsize ds}}}
+\newcommand{\sns}[0]{\S_{\mbox{\scriptsize ns}}}
+\newcommand{\ssos}[0]{\S_{\mbox{\scriptsize sos}}}
+\newcommand{\stns}[0]{\rightarrow}
+\newcommand{\staexp}[0]{\rightarrow_{Aexp}}
+\newcommand{\stbexp}[0]{\rightarrow_{Bexp}}
+\newcommand{\stsos}[0]{\Rightarrow}
+\newcommand{\stsost}[1]{\stackrel{#1}{\Rightarrow}}
+\newcommand{\stam}[0]{\rhd}
+\newcommand{\st}[2]{\left\langle#1, #2\right\rangle}
+\newcommand{\ste}[3]{\left\langle#1, #2, #3\right\rangle}
+\newcommand{\ass}[2]{\left[ #1\mapsto#2 \right]}
+\newcommand{\eval}[1]{\left\llbracket #1 \right\rrbracket}
+\newcommand{\fpart}[0]{\hookrightarrow}
+\newcommand{\ftot}[0]{\rightarrow}
+
+\newcommand{\assns}[0]{\left[ \text{ass}_{\text{ns}} \right]}
+\newcommand{\skipns}[0]{\left[ \text{skip}_{\text{ns}} \right]}
+\newcommand{\compns}[0]{\left[ \text{comp}_{\text{ns}} \right]}
+\newcommand{\wttns}[0]{\left[ \text{while}_{\text{ns}}^{\Tt} \right]}
+\newcommand{\wffns}[0]{\left[ \text{while}_{\text{ns}}^{\ff} \right]}
+\newcommand{\ifttns}[0]{\left[ \text{if}_{\text{ns}}^{\Tt} \right]}
+\newcommand{\ifffns}[0]{\left[ \text{if}_{\text{ns}}^{\ff} \right]}
+\newcommand{\rttns}[0]{\left[ \text{repeat}_{\text{ns}}^{\Tt} \right]}
+\newcommand{\rffns}[0]{\left[ \text{repeat}_{\text{ns}}^{\ff} \right]}
+\newcommand{\fttns}[0]{\left[ \text{for}_{\text{ns}}^{\Tt} \right]}
+\newcommand{\fffns}[0]{\left[ \text{for}_{\text{ns}}^{\ff} \right]}
+\newcommand{\customrule}[1]{\left[ \text{#1} \right]}
+
+\newcommand{\asssos}[0]{\left[ \text{ass}_{\text{sos}} \right]}
+\newcommand{\skipsos}[0]{\left[ \text{skip}_{\text{sos}} \right]}
+\newcommand{\compsos}[0]{\left[ \text{comp}_{\text{sos}}^{1} \right]}
+\newcommand{\compsosp}[0]{\left[ \text{comp}_{\text{sos}}^{2} \right]}
+\newcommand{\wsos}[0]{\left[ \text{while}_{\text{sos}} \right]}
+\newcommand{\ifttsos}[0]{\left[ \text{if}_{\text{sos}}^{\Tt} \right]}
+\newcommand{\ifffsos}[0]{\left[ \text{if}_{\text{sos}}^{\ff} \right]}
+\newcommand{\rsos}[0]{\left[ \text{repeat}_{\text{sos}} \right]}
+\newcommand{\fsos}[0]{\left[ \text{for}_{\text{sos}} \right]}
+
+% While syntax
+\newcommand{\While}[0]{\textbf{While}}
+\renewcommand{\while}[2]{\mbox{\textbf{while} } #1 \mbox{ \textbf{do} } #2}
+\newcommand{\Repeat}[2]{\mbox{\textbf{repeat} } #1 \mbox{ \textbf{until} } #2}
+\newcommand{\For}[3]{\mbox{\textbf{for} } #1 \mbox{ \textbf{to} } #2 \mbox{ \textbf{do} } #3}
+\newcommand{\If}[3]{\mbox{\textbf{if} } #1 \mbox{ \textbf{then} } #2 \mbox{ \textbf{else} } #3}
+\newcommand{\Skip}[0]{\mbox{\textbf{skip}}}
+\renewcommand{\=}[0]{:=}
+\newcommand{\eq}[0]{=} % used within trees
+\renewcommand{\;}[0]{\mbox{; }}
+\newcommand{\Case}[2]{#1, &\text{if } #2\\}
+\newcommand{\mult}[1]{
+\left\{
+\begin{array}{l l}
+#1
+\end{array}
+\right.
+}
+
+% Abstract Machine syntax
+\newcommand{\Push}[1]{\text{\scriptsize{PUSH-}}#1}
+\newcommand{\add}[0]{\text{\scriptsize{ADD}}}
+\newcommand{\mul}[0]{\text{\scriptsize{MULT}}}
+\newcommand{\sub}[0]{\text{\scriptsize{SUB}}}
+\newcommand{\True}[0]{\text{\scriptsize{TRUE}}}
+\newcommand{\False}[0]{\text{\scriptsize{FALSE}}}
+\newcommand{\EQ}[0]{\text{\scriptsize{EQ}}}
+\newcommand{\LE}[0]{\text{\scriptsize{LE}}}
+\newcommand{\AND}[0]{\text{\scriptsize{AND}}}
+\newcommand{\NEG}[0]{\text{\scriptsize{NEG}}}
+\newcommand{\Fetch}[1]{\text{\scriptsize{FETCH-}}#1}
+\newcommand{\Store}[1]{\text{\scriptsize{STORE-}}#1}
+\newcommand{\Noop}[0]{\text{\scriptsize{NOOP}}}
+\newcommand{\Branch}[2]{\text{\scriptsize{BRANCH(}}#1, #2\text{\scriptsize{)}}}
+\newcommand{\Loop}[2]{\text{\scriptsize{LOOP(}}#1, #2\text{\scriptsize{)}}}
+
+% Denotational Semantics
+\newcommand{\cond}[3]{\textbf{cond} \left( #1, #2, #3 \right)}
+\newcommand{\id}[0]{\text{id}}
+\newcommand{\ord}[0]{\sqsubseteq}
+
+\setlength{\parindent}{0cm}

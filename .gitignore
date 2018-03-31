@@ -1,3 +1,9 @@
+## MacOS' shitty folder
+.DS_Store
+
+## Emacs' shitty files
+*~
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
