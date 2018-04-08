@@ -1,0 +1,11 @@
+int var1;
+
+void f() {
+    var1 = 2;
+}
+
+int main() {
+    thread f();
+    var1 = 1;
+    return 0;
+}

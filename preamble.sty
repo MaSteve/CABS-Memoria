@@ -21,6 +21,37 @@
 \usepackage[explicit]{titlesec}
 \DeclareGraphicsExtensions{.pdf,.png,.jpg}
 
+% Code snippets
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{blue}{rgb}{0.13,0.13,1}
+\definecolor{green}{rgb}{0,0.5,0}
+\definecolor{red}{rgb}{0.9,0,0}
+\definecolor{grey}{rgb}{0.46,0.45,0.48}
+\definecolor{purple}{rgb}{0.58,0,0.82}
+\definecolor{background}{rgb}{0.95,0.95,0.92}
+
+\lstset{language=Java,
+  showspaces=false,
+  showtabs=false,
+  breaklines=true,
+  showstringspaces=false,
+  breakatwhitespace=true,
+  keywordstyle=\color{blue},
+  backgroundcolor=\color{background},
+  commentstyle=\color{green},
+  numberstyle=\tiny\color{grey},
+  stringstyle=\color{purple},
+  basicstyle=\ttfamily,
+  moredelim=[il][\textcolor{grey}]{$$},
+  moredelim=[is][\textcolor{grey}]{\%\%}{\%\%},
+  tabsize=4,
+  keepspaces=true,
+  numbers=left,
+  numbersep=5pt
+}
+
 % Macros
 
 % CABS

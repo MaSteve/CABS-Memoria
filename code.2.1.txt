@@ -1,0 +1,25 @@
+module Cabs;
+import * from ABS.StdLib;
+
+interface Functions {
+  Unit f();
+  Unit main();
+}
+
+class Prog() implements Functions {
+  Int var1 = 0;
+
+  Unit f() {
+    var1 = 2;
+  }
+
+  Unit main() {
+    this!f();
+    var1 = 1;
+  }
+}
+
+{
+  Functions prog = new Prog();
+  prog.main();
+}
