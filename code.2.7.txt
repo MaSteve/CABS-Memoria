@@ -1,0 +1,15 @@
+interface GLOBAL {
+ ArrayInt retrievearray();
+ Int getarray(Int indx);
+ Unit setarray(Int indx, Int val);
+ Unit init();
+}
+
+class GlobalVariables() implements GLOBAL {
+  ...
+  ArrayInt retrievearray() {
+    return array;
+  }
+  ...
+}
+...

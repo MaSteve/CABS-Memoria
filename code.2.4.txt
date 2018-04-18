@@ -1,0 +1,27 @@
+interface ArrayInt {
+  Int getV(Int indx);
+  Unit setV(Int indx, Int value);
+}
+
+class ArrayIntC(Int size) implements ArrayInt{
+  List<Int> list = copy(0, size);
+
+  Int getV(Int indx) {
+    return nth(this.list, indx);
+  }
+
+  Unit setV(Int indx, Int value) {
+    Int i = 0;
+    List<Int> prev = Nil;
+    List<Int> post = list;
+    while (i < indx) {
+      Int elem = head(post);
+      prev = appendright(prev, elem);
+      post = tail(post);
+      i = i + 1;
+    }
+    prev = appendright(prev, value);
+    post = tail(post);
+    this.list = concatenate(prev, post);
+  }
+}

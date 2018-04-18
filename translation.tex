@@ -59,3 +59,38 @@ Del mismo modo se procede con la variable $var2$. Y gracias al $await$ dentro de
 Con esto hemos conseguido solucionar el problema de las variables globales y a la vez hemos obtenido una concurrencia de grano fino entre las distintas hebras de CABS al separar las lecturas de la escrituras en dos llamadas asíncronas distintas.
 
 \section{Arrays locales y globales}
+
+ABS cuenta un tipo genérico de lista recursiva de coste de acceso lineal. Se trata de un tipo inmutable que no permite la modificación del contenido de la lista una vez creada.\\
+
+Pese a tener estas restricciones podemos conseguir un comportamiento similar al de un array común obviando el coste de las operaciones.\\
+
+Para ello nos interesa encapsular el tipo lista en una clase ABS que implemente una interfaz con dos métodos que aporten el concepto de array:
+un getter y un setter de elementos por posición.\\
+
+La implementación de un array de enteros quedaría del siguiente modo:
+
+\lstinputlisting{code.2.4.txt}
+
+La implementación del setter pasa por iterar sobre la lista hasta encontrar la posición solicitada para posteriormente concatenar dos listas con el elemento modificado en medio.\\
+
+Una implementación similar se puede hacer para el otro tipo de nuestro lenguaje CABS: los booleanos.\\
+
+El hecho de tener ahora nuestro tipo array encapsulado en una clase ABS nos permite utilizarlo con facilidad para implementar los arrays globales. Para este propósito podemos crear un método $init$ que se encarge de la creación de los objetos array y unos métodos $getters$ y $setters$ modificados que se encarguen de realizar las llamadas a los métodos finales del array.\\
+
+El código generado para el siguiente ejemplo
+
+\lstinputlisting{code.2.5.txt}
+
+quedaría de este modo:
+
+\lstinputlisting{code.2.6.txt}
+
+Por último, sería conveniente (y lo será más adelante en la traducción de las funciones) tener un método que nos devuelva el array global para usarlo con algunos fines locales. Esto se consigue con un método $retrieve$ que implemente la clase $GlobalVariables$. Para el ejemplo anterior, quedaría como
+
+\lstinputlisting{code.2.7.txt}
+
+\subsection{Arrays multidimensionales}
+
+El lenguaje CABS permite en su sintaxis declarar arrays multidimensionales al estilo de C. ABS no cuenta con un tipo de datos similar, pero, gracias a la propuesta previamente expuesta, podemos simular el comportamiento de las matrices estableciendo una biyección con la representación de un array de tamaño el producto de las dimensiones de la matriz. En otras palabras, la traducción implementada en este trabajo considera las matrices como un array unidimensional.\\
+
+A modo de explicación, sea $mat$ una matriz multidimensional entera en $int^{N_1} \times \dots \times int^{N_D}$ y supongamos que queremos acceder a la posición $(i_1, \dots, i_D)$ donde $\forall j \in \{1, \dots, D\}$ tenemos $i_j \in \{0, \dots, N_j - 1\}$, entonces la posición $p$ correspondiente a dicho elemento en un array en $int^{\prod_{i = 1}^{D} N_i}$ vendría dada por $p = \sum_{i = 1}^{D} i_i \cdot (\prod_{j=1}^{i} N_j)$ (cuadradar con implementación!!!!).

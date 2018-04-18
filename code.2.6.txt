@@ -1,0 +1,30 @@
+interface GLOBAL {
+ Int getarray(Int indx);
+ Unit setarray(Int indx, Int val);
+ Unit init();
+}
+
+class GlobalVariables() implements GLOBAL {
+  ArrayInt array;
+
+  Unit init() {
+    array = new ArrayIntC(10);
+  }
+
+  Int getarray(Int indx) {
+    return await array!getV(indx);
+  }
+
+  Unit setarray(Int indx, Int val) {
+    await array!setV(indx, val);
+  }
+}
+
+...
+
+{
+  GLOBAL globalval = new GlobalVariables();
+  await globalval!init();
+  Intmain prog = new Impmain(globalval);
+  await prog!main();
+}
