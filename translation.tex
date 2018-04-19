@@ -95,7 +95,7 @@ El lenguaje CABS permite en su sintaxis declarar arrays multidimensionales al es
 
 A modo de explicación, sea $mat$ una matriz multidimensional entera en $int^{N_1} \times \dots \times int^{N_D}$ y supongamos que queremos acceder a la posición $(i_1, \dots, i_D)$ donde $\forall j \in \{1, \dots, D\}$ tenemos $i_j \in \{0, \dots, N_j - 1\}$, entonces la posición $p$ correspondiente a dicho elemento en un array en $int^{\prod_{i = 1}^{D} N_i}$ vendría dada por $p = \sum_{i = 1}^{D} i_i \cdot (\prod_{j=1}^{i} N_j)$ (cuadradar con implementación!!!!).
 
-\section{Expresiones aritméticas}
+\section{Expresiones aritméticas (faltan arrays y funciones!!!!)}
 
 CABS presenta una gran flexibilidad en sus expresiones aritmético-lógicas no presente en ABS. La sintaxis de ABS obliga a que el valor de retorno devuelto por una función solo pueda ser asignado a una variable, no pudiendo ser usado inmediatamente en una expresión del mismo tipo que el de retorno.\\
 
@@ -111,14 +111,62 @@ Especificamos esta idea con la definición de las funciones $\C_\AExp: \AExp \ri
 
 \begin{align*}
   \C_\AExp\eval{n} v &= (Int\, (\Aux\, v) = n, v + 1) \\
-  \C_\AExp\eval{x} v &= (Int\, (\Aux\, v) = x, v + 1) \mbox{ donde $x$ es variable entera.} \\
+  \C_\AExp\eval{x} v &= (Int\, (\Aux\, v) = x, v + 1) \mbox{ donde $x$ es variable entera local.} \\
   \C_\AExp\eval{a_1 \odot_\A a_2} v &= (c_1\; c_2 \; Int\, (\Aux\, v'') =  (\Aux\, (v' - 1))  \odot_\A  (\Aux\, (v'' - 1)) , v'' + 1) \\
   &\mbox{donde $\C_\AExp\eval{a_1} v = (c_1, v')$ y $\C_\AExp\eval{a_2}v' = (c_2, v'')$} \\
   \C_\BExp\eval{false} v &= (Bool\, (\Aux\, v) = False, v + 1) \\
   \C_\BExp\eval{true} v &= (Bool\, (\Aux\, v) = True, v + 1) \\
-  \C_\BExp\eval{x} v &= (Bool\, (\Aux\, v) = x, v + 1) \mbox{ donde $x$ es variable booleana.} \\
+  \C_\BExp\eval{x} v &= (Bool\, (\Aux\, v) = x, v + 1) \mbox{ donde $x$ es variable booleana local.} \\
   \C_\BExp\eval{b_1 \odot_\Bb b_2} v &= (c_1\; c_2 \; Bool\, (\Aux\, v'') =  (\Aux\, (v' - 1))  \odot_\Bb  (\Aux\, (v'' - 1)) , v'' + 1) \\
   &\mbox{donde $\C_\BExp\eval{b_1} v = (c_1, v')$ y $\C_\BExp\eval{b_2}v' = (c_2, v'')$} \\
   \C_\BExp\eval{a_1 \odot a_2} v &= (c_1\; c_2 \; Bool\, (\Aux\, v'') =  (\Aux\, (v' - 1))  \odot  (\Aux\, (v'' - 1)) , v'' + 1) \\
   &\mbox{donde $\C_\AExp\eval{a_1} v = (c_1, v')$ y $\C_\AExp\eval{a_2}v' = (c_2, v'')$ y $\odot$ comparador.} \\
 \end{align*}
+
+\section{Traducción de código}
+
+Tras esta introducción, podemos vislumbrar que aspecto tendrá la traducción de código llevada a cabo en este trabajo. Obviaremos el preámbulo de los programas ABS, que incluirá la definición de los clases Array, y nos centraremos en otros aspectos más importantes.\\
+
+Sea pues la función $\C: \CABS \rightarrow \Nat \rightarrow (ABS \times \Nat)$ nuestra función de traducción de CABS a ABS definida recursivamente del siguiente modo:
+
+\begin{align*}
+  \C\eval{int\, var} v &= (Int var, v) \\
+  \C\eval{bool\, var} v &= (Bool var, v) \\
+  \C\eval{var = a} v &= (c\; var = (\Aux\, (v' - 1)), v') \\
+  & \mbox{donde $\C_\AExp\eval{a} v = (c, v')$ y $var$ variable local entera} \\
+  \C\eval{var = b} v &= (c\; var = (\Aux\, (v' - 1)), v') \\
+  & \mbox{donde $\C_\BExp\eval{b} v = (c, v')$ y $var$ variable local booleana} \\
+  \C\eval{S_1 S_2} v &= (c_1 c_2, v'') \mbox{ donde $\C\eval{S_1} v = (c_1, v')$ y $\C\eval{S_2} v' = (c_2, v'')$} \\
+  \C\eval{\If{b}{S_1}{S_2}} v &= (c_1\; \If{\Aux\, (v' - 1)}{c_2}{c_3}, v''') \\
+  & \mbox{ donde $\C_\BExp\eval{b} v = (c_1, v')$, $\C\eval{S_1} v' = (c_2, v'')$ y $\C\eval{S_2} v'' = (c_3, v''')$} \\
+  \C\eval{\while{b}{S}} v &= (c_1\; \while{\Aux\, (v' - 1)}{c_2}, v'') \\
+  & \mbox{ donde $\C_\BExp\eval{b} v = (c_1, v')$ y $\C\eval{S} v' = (c_2, v'')$}
+\end{align*}
+
+Para la traducción de las funciones necesitamos previamente una traducción de los argumentos $\C_{arg}: \Args \rightarrow \Args_\ABS$ que en esencia lo único que hace es cambiar los tipos de CABS a los de ABS. (Arrays!!!!)
+\begin{align*}
+  \C_{arg}\,\varepsilon &= \varepsilon\\
+  \C_{arg}\, (int \, var,\,arg) &= Int\,var,\,\C_{arg}\, arg\\
+  \C_{arg}\, (bool \, var,\,arg) &= Bool\,var,\,\C_{arg}\, arg
+\end{align*}
+
+Usando esta traducción de argumentos tenemos que
+\begin{align*}
+  \C\eval{int\,\func(arg)\{S\}} v &= (\mbox{interface Int$\func$}\{
+  \mbox{$Int\, \func(\C_{arg}\,arg)\;$}\}\\
+  & \mbox{class Imp$\func($GLOBAL globalval$)$ implements Int$\func\{$}\\
+  & Int\, func(\C_{arg}\,arg) \{ c \}\} , v'')
+  \mbox{ donde $\C\eval{S} v' = (c, v'')$} \\
+  \C\eval{bool\,\func(arg)\{S\}} v &= (\mbox{interface Int$\func$}\{
+  \mbox{$Bool\, \func(\C_{arg}\,arg)\;$}\}\\
+  & \mbox{class Imp$\func($GLOBAL globalval$)$ implements Int$\func\{$}\\
+  & Bool\, func(\C_{arg}\,arg) \{ c \}\} , v'')
+  \mbox{ donde $\C\eval{S} v' = (c, v'')$} \\
+  \C\eval{void\,\func(arg)\{S\}} v &= (\mbox{interface Int$\func$}\{
+  \mbox{$Unit\, \func(\C_{arg}\,arg)\;$}\}\\
+  & \mbox{class Imp$\func($GLOBAL globalval$)$ implements Int$\func\{$}\\
+  & Unit\, func(\C_{arg}\,arg) \{ c \}\} , v'')
+  \mbox{ donde $\C\eval{S} v' = (c, v'')$}
+\end{align*}
+
+y para las variables globales
