@@ -112,11 +112,15 @@ Especificamos esta idea con la definición de las funciones $\C_\AExp: \AExp \ri
 \begin{align*}
   \C_\AExp\eval{n} v &= (Int\, (\Aux\, v) = n, v + 1) \\
   \C_\AExp\eval{x} v &= (Int\, (\Aux\, v) = x, v + 1) \mbox{ donde $x$ es variable entera local.} \\
+  \C_\AExp\eval{x} v &= (Int\, (\Aux\, v) = await \mbox{ globalval!get}x(), v + 1) \\
+  &\mbox{ donde $x$ es variable entera global.} \\
   \C_\AExp\eval{a_1 \odot_\A a_2} v &= (c_1\; c_2 \; Int\, (\Aux\, v'') =  (\Aux\, (v' - 1))  \odot_\A  (\Aux\, (v'' - 1)) , v'' + 1) \\
   &\mbox{donde $\C_\AExp\eval{a_1} v = (c_1, v')$ y $\C_\AExp\eval{a_2}v' = (c_2, v'')$} \\
   \C_\BExp\eval{false} v &= (Bool\, (\Aux\, v) = False, v + 1) \\
   \C_\BExp\eval{true} v &= (Bool\, (\Aux\, v) = True, v + 1) \\
   \C_\BExp\eval{x} v &= (Bool\, (\Aux\, v) = x, v + 1) \mbox{ donde $x$ es variable booleana local.} \\
+  \C_\AExp\eval{x} v &= (Bool\, (\Aux\, v) = await \mbox{ globalval!get}x(), v + 1) \\
+  &\mbox{ donde $x$ es variable booleana global.} \\
   \C_\BExp\eval{b_1 \odot_\Bb b_2} v &= (c_1\; c_2 \; Bool\, (\Aux\, v'') =  (\Aux\, (v' - 1))  \odot_\Bb  (\Aux\, (v'' - 1)) , v'' + 1) \\
   &\mbox{donde $\C_\BExp\eval{b_1} v = (c_1, v')$ y $\C_\BExp\eval{b_2}v' = (c_2, v'')$} \\
   \C_\BExp\eval{a_1 \odot a_2} v &= (c_1\; c_2 \; Bool\, (\Aux\, v'') =  (\Aux\, (v' - 1))  \odot  (\Aux\, (v'' - 1)) , v'' + 1) \\
@@ -130,11 +134,11 @@ Tras esta introducción, podemos vislumbrar que aspecto tendrá la traducción d
 Sea pues la función $\C: \CABS \rightarrow \Nat \rightarrow (ABS \times \Nat)$ nuestra función de traducción de CABS a ABS definida recursivamente del siguiente modo:
 
 \begin{align*}
-  \C\eval{int\, var} v &= (Int var, v) \\
-  \C\eval{bool\, var} v &= (Bool var, v) \\
-  \C\eval{var = a} v &= (c\; var = (\Aux\, (v' - 1)), v') \\
+  \C\eval{int\, var\;} v &= (Int\, var, v) \\
+  \C\eval{bool\, var\;} v &= (Bool\, var, v) \\
+  \C\eval{var = a\;} v &= (c\; var = (\Aux\, (v' - 1)), v') \\
   & \mbox{donde $\C_\AExp\eval{a} v = (c, v')$ y $var$ variable local entera} \\
-  \C\eval{var = b} v &= (c\; var = (\Aux\, (v' - 1)), v') \\
+  \C\eval{var = b\;} v &= (c\; var = (\Aux\, (v' - 1)), v') \\
   & \mbox{donde $\C_\BExp\eval{b} v = (c, v')$ y $var$ variable local booleana} \\
   \C\eval{S_1 S_2} v &= (c_1 c_2, v'') \mbox{ donde $\C\eval{S_1} v = (c_1, v')$ y $\C\eval{S_2} v' = (c_2, v'')$} \\
   \C\eval{\If{b}{S_1}{S_2}} v &= (c_1\; \If{\Aux\, (v' - 1)}{c_2}{c_3}, v''') \\
@@ -169,4 +173,10 @@ Usando esta traducción de argumentos tenemos que
   \mbox{ donde $\C\eval{S} v' = (c, v'')$}
 \end{align*}
 
-y para las variables globales
+y para las variables globales tenemos
+\begin{align*} % await globalval!setvar1(1);
+  \C\eval{var = a\;} v &= (c\; await \mbox{ globalval!set}var(\Aux\, (v' - 1)), v') \\
+  & \mbox{donde $\C_\AExp\eval{a} v = (c, v')$ y $var$ variable global entera} \\
+  \C\eval{var = b\;} v &= (c\; await \mbox{ globalval!set}var(\Aux\, (v' - 1)), v') \\
+  & \mbox{donde $\C_\BExp\eval{b} v = (c, v')$ y $var$ variable global booleana}
+\end{align*}

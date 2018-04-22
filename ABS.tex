@@ -1,0 +1,49 @@
+\chapter{ABS: sintaxis y semántica}
+
+ABS (REFERENCIAS!!!) es un lenguaje de modelado para sistemas distribuidos con orientación a objetos y concurrencia basada en actores, donde los objetos de una clase ejecutan sus métodos en función de los mensajes recibidos por otros actores.\\
+
+Sobre este lenguaje se han construido una serie de herramientas para el análisis de programas concurrentes que estamos interesados en mantener para nuestro lenguaje CABS, mediante una traducción de código.\\
+
+Antes de poder continuar con el trabajo de traducción, es necesario hacer una introducción de las construcciones básicas de ABS.
+
+\section{Sintaxis}
+
+Como muestra su manual (ref!!!), ABS es un lenguaje que permite el uso de una amplia variedad de construcciones que van desde la definición de tipos de datos algebraicos hasta la definición de funciones dentro de los métodos de una clase.\\
+
+De todas estas construcciones, para este trabajo emplearemos principalmente la definición de clases e interfaces del lenguaje.\\
+
+La sintaxis para la declaración de interfaces en ABS es
+
+\lstinputlisting{code.1.1.txt}
+
+donde las signaturas de los métodos son de la forma
+
+\lstinputlisting{code.1.2.txt}
+
+donde los argumentos son una lista separada por comas de cero o más nombres de variables precedidos de su tipo (al estilo de Java).\\
+
+De los tipos predefinidos en ABS solo usaremos los enteros ($Int$) y los booleanos ($Bool$). También emplearemos el tipo genérico List para la construcción de Arrays.\\
+
+La declaración de clases en ABS es similar a la de Java con la peculiaridad de que todas las clases definidas por el usuario deben implementar una interfaz. La sintaxis para la definición de clases en ABS es
+
+\lstinputlisting{code.1.3.txt}
+
+La declaración de atributos de una clase es idéntica a la de Java, con la ausencia de las palabras reservadas $private$, $public$ o $protected$. La visibilidad de todos los atributos es privada. Del mismo modo las implementaciones de métodos siguen el mismo estilo. Un método es por tanto público si está definido en la interfaz que implementa la clase, en caso contrario es privado.\\
+
+Una característica especial de las clases de ABS es la posibilidad de definirlas con una lista de argumentos accesibles desde cualquier punto de la clase. Esta propiedad será ampliamente explotada con posterioridad para la implementación del concepto de variable global.\\
+
+Por último nos queda discutir las llamadas a métodos de una clase. En ABS, las llamadas a métodos son un paso de mensaje, es decir, cuando un objeto llama a un método de otro objeto o de sí mismo, dicha llamada se mete en una cola a la espera de poder ser ejecutada por el objeto receptor. Un objeto (o actor) solo puede ejecutar un mensaje a la vez.\\
+
+De los operadores de llamada a métodos de ABS, nosotros solo nos preocuparemos del operador `$!$', cuya sintaxis es
+
+\lstinputlisting{code.1.4.txt}
+
+La idea de esta llamada es mandar un mensaje al objeto $o$ para que ejecute su método $f$. Esta llamada devuelve un tipo futuro. El tipo futuro permite entre otras cosas saber cuando se ha concluido la ejecución del mensaje y en este caso recuperar el valor de rotorno del método.\\
+
+Cuando queramos realizar una llamada síncrona, es decir, una llamada para la que no deseamos continuar la ejecución de un mensaje antes de conocer el valor de retorno del método llamado, emplearemos un $await$. La idea del await es paralizar la ejecución del mensaje actual, permitiendo a otros mensajes del objeto ser ejecutados, y esperar a que la variable futura de la llamada tenga un valor, es decir, que la llamada haya concluido. La construcción $await$ tiene la siguiente sintaxis
+
+\lstinputlisting{code.1.5.txt}
+
+y su tipo de retorno es el mismo que el del método de la llamada.\\
+
+El resto de la sintaxis de ABS empleada en este trabajos se reduce al uso de los $if/else$ y del $while$, así como de la declaración de variables locales a los métodos y de asignaciones a varibles de los resultados de evaluación de expresiones aritmético-lógicas. La sintaxis referente a estas construcciones del lenguaje son prácticamente similares a las de Java.

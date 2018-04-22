@@ -1,0 +1,1 @@
+Fut<t_ret> ret = o!f(args);
