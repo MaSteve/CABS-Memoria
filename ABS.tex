@@ -56,8 +56,92 @@ De forma similar al desarrollo expuesto para CABS, en esta sección seguiremos u
 
 Un estado de un programa en ABS vendrá representado por los objetos creados en ejecución y por la información estática aportada por las clases e interfaces, es decir, el código de la implementación de los métodos tanto públicos como privados y la inicialización de los atributos. Por tanto definimos $\State_\ABS = \O \times \Cl$ donde los elementos de $\O$ serán una lista de objetos instanciados y los de $\Cl$ contendrán la definición de las clases e interfaces.\\
 
-Un objeto vendrá dado a su vez por un identificador único $o$, una cola de mensajes a la que llamaremos $\RT$ (Runtime tasks), un identificador de tarea que indique que mensaje está procesando el objeto en ese instante y la información del estado de los atributos mediante $\attr: \Var \hookrightarrow \V_\ABS$, una función que asigne a un nombre de variable un valor de $\ABS$. Puesto que los identificadores de objetos pueden venir dados por un número en $\Z$, se podría ver que $\V_\ABS$ es en esencia el mismo conjunto de valores que hemos definido para CABS según la implementación escogida.\\
+Un objeto vendrá dado a su vez por un identificador único $o$, su nombre de clase, una cola de mensajes a la que llamaremos $\RT$ (Runtime tasks), un identificador de tarea que indique que mensaje está procesando el objeto en ese instante y la información del estado de los atributos mediante $\attr: \Var \hookrightarrow \V_\ABS$, una función que asigne a un nombre de variable un valor de $\ABS$. Puesto que los identificadores de objetos pueden venir dados por un número en $\Z$, se podría ver que $\V_\ABS$ es en esencia el mismo conjunto de valores que hemos definido para CABS según la implementación escogida.\\
 
 El concepto de tarea recoge la información del ambito local $loc: \Var \hookrightarrow \V_\ABS$, el código del método $S \in \Stm_\ABS$ y un identificador único de tarea.\\
 
 Con estas herramientas básicas procedemos a dar una definción formal de la semántica de ABS.
+\begin{landscape}
+
+  \begin{prooftree*}
+      \hypo {is\_local(x)}
+      \hypo {is\_Int(x)}
+    \Infer[left label=$ $]2{(\O \leadsto (id, c, \RT \leadsto (loc, x = a\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc \ass{x}{\A \eval{a}_{loc, \attr}}, S, t), t, \attr)}
+  \end{prooftree*}
+
+  \begin{prooftree*}
+      \hypo {is\_attr(x)}
+      \hypo {is\_Int(x)}
+    \Infer[left label=$ $]2{(\O \leadsto (id, c, \RT \leadsto (loc, x = a\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, S, t), t, \attr \ass{x}{\A \eval{a}_{loc, \attr}})}
+  \end{prooftree*}
+
+  \begin{prooftree*}
+    \Infer[left label=$ $]0{(\O \leadsto (id, c, \RT \leadsto (loc, Int\, x = a\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc \ass{x}{\A \eval{a}_{loc, \attr}}, S, t), t, \attr)}
+  \end{prooftree*}
+
+  \begin{prooftree*}
+      \hypo {is\_local(x)}
+      \hypo {is\_Bool(x)}
+    \Infer[left label=$ $]2{(\O \leadsto (id, c, \RT \leadsto (loc, x = b\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc \ass{x}{\Bb \eval{b}_{loc, \attr}}, S, t), t, \attr)}
+  \end{prooftree*}
+
+  \begin{prooftree*}
+      \hypo {is\_attr(x)}
+      \hypo {is\_Bool(x)}
+    \Infer[left label=$ $]2{(\O \leadsto (id, c, \RT \leadsto (loc, x = b\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, S, t), t, \attr \ass{x}{\Bb \eval{b}_{loc, \attr}})}
+  \end{prooftree*}
+
+  \begin{prooftree*}
+    \Infer[left label=$ $]0{(\O \leadsto (id, c, \RT \leadsto (loc, Bool\, x = b\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc \ass{x}{\Bb \eval{b}_{loc, \attr}}, S, t), t, \attr)}
+  \end{prooftree*}
+
+  % Resto de instrucciones
+
+  \begin{prooftree*}
+      \hypo {\Bb \eval{b}_{loc, \attr} = \True}
+    \Infer[left label=$ $]1{(\O \leadsto (id, c, \RT \leadsto (loc, \If{b}{S_1}{S_2} S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, S_1 S, t), t, \attr)}
+  \end{prooftree*}
+
+  \begin{prooftree*}
+      \hypo {\Bb \eval{b}_{loc, \attr} = \False}
+    \Infer[left label=$ $]1{(\O \leadsto (id, c, \RT \leadsto (loc, \If{b}{S_1}{S_2} S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, S_2 S, t), t, \attr)}
+  \end{prooftree*}
+
+  \begin{prooftree*}
+    \Infer[left label=$ $]0{(\O \leadsto (id, c, \RT \leadsto (loc, \while{b}{S_1} S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, \Ifp{b}{S_1 \while{b}{S_1}} S, t), t, \attr)}
+  \end{prooftree*}
+
+  \begin{prooftree*}
+      \hypo{\Cl\eval{c'} = (\mbox{Inter}, attr_c, met, args_c)}
+      \hypo{check\_args(args_c, args)}
+    \Infer[left label=$ $]2{(\O \leadsto (id, c, \RT \leadsto (loc,  \mbox{Inter } inter = new\, c'(args)\; S, t), t, \attr), \Cl) \stns (\O:o \leadsto (id, c, \RT \leadsto (loc \ass{inter}{id'}, S, t), t, \attr)}
+  \end{prooftree*} donde $o = (id', [], \perp, \attr')$ con $id'$ un nuevo identificador de objeto no utilizado y $\attr' = attr_c \ass{args_c}{\E\eval{args}_{loc, \attr}}$ los atributos del nuevo objeto creado.
+
+  \begin{prooftree*}
+      \hypo{loc \cup attr \eval{inter} = id'}
+      \hypo{\Cl\eval{c'} = (\mbox{Inter}, attr_c, met, args_c)}
+      \hypo{contains(met, m)}
+      \hypo{check\_args(args_m, args)}
+    \Infer[left label=$ $]4{(\O \leadsto  (id', c', \RT', t', \attr') (id, c, \RT \leadsto (loc, inter!m(args)\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id', c', \RT':tsk, t', \attr') (id, c, \RT \leadsto (loc, S, t), t, \attr)}
+  \end{prooftree*} donde $tsk = (loc', S', t'')$ con $t''$ un identificador de tarea nuevo y $loc' = \nil\ass{args_m}{args}$ y $met\eval{m} = (S', args_m)$
+
+   \begin{prooftree*}
+      \hypo{loc \cup attr \eval{int} = id'}
+      \hypo{\Cl\eval{c'} = (\mbox{Inter}, attr_c, met, args_c)}
+      \hypo{contains(met, m)}
+      \hypo{check\_args(args_m, args)}
+    \Infer[left label=$ $]4{(\O \leadsto  (id', c', \RT', t', \attr') (id, c, \RT \leadsto (loc, Int\,x = await\,int!m(args)\; S, t), t, \attr), \Cl) \stns (\O \leadsto o' (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), t, \attr)}
+   \end{prooftree*} donde $o' = (id', c', \RT':tsk, t', \attr')$, $tsk = (loc', S', t'')$ con $t''$ un identificador de tarea nuevo y $loc' = \nil\ass{args_m}{args}$ y $met\eval{m} = (S', args_m)$
+
+  \begin{prooftree*}
+      \hypo{tsk = (loc', \varepsilon(\nu), t'')}
+    \Infer[left label=$ $]1{(\O \leadsto  (id', c', \RT' \leadsto tsk, t', \attr') (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), t, \attr), \Cl) \stns (\O \leadsto o' (id, c, \RT \leadsto (loc\ass{x}{\nu}, S, t), t, \attr)}
+  \end{prooftree*} donde $o' = (id', c', \RT', t', \attr')$
+
+  \begin{prooftree*}
+    \hypo{tsk = (loc', S, t'')}
+    \hypo{S \neq \varepsilon(\nu)}
+    \Infer[left label=$ $]2{(\O \leadsto  (id', c', \RT' \leadsto tsk, t', \attr') (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), t, \attr), \Cl) \stns (\O \leadsto o' (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), \perp, \attr)}
+  \end{prooftree*} donde $o' = (id', c', \RT', t', \attr')$
+
+\end{landscape}
