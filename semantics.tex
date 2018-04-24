@@ -12,11 +12,11 @@ Antes de hablar de la semántica propiamente dicha necesitamos definir unas estr
 
 En primer lugar definimos el conjunto de valores $\V = \Z \cup \B$ como la unión de los enteros y de los booleanos.\\
 
-Una primera parte de la representación del estado estará formada por las variables globales de nuestro programa. Definimos $\G = \Var \hookrightarrow \V$ el conjunto de funciones parciales del conjunto de variables al conjunto de valores. El estado actual de nuestras variables globales será una función de este conjunto y por lo general nos referiremos a ella con la letra $G$. Posteriormente cuando hablemos de variables locales también las definiremos como un conjunto de funciones similares pero que trataremos por separado por comodidad.\\
+Una primera parte de la representación del estado estará formada por las variables globales de nuestro programa. Definimos $\Gs = \Var \hookrightarrow \V$ el conjunto de funciones parciales del conjunto de variables al conjunto de valores. El estado actual de nuestras variables globales será una función de este conjunto y por lo general nos referiremos a ella con la letra $\G$. Posteriormente cuando hablemos de variables locales también las definiremos como un conjunto de funciones similares pero que trataremos por separado por comodidad.\\
 
-Por otro lado nos encontramos en nuestro lenguaje con la necesidad de definir un conjunto que recoja la información básica de las funciones y procedimientos. Definimos $\F = \Func \hookrightarrow (\T \times \Stm \times \Args \times (\Exp \cup \{\varepsilon\}))$ el conjunto de funciones parciales que asocia un nombre de función a su definición. Una función quedará definida por su tipo de retorno $t \in \T$, su código $S \in \Stm$, sus argumentos de entrada $\args \in \Args$ y su expresión de retorno $e \in \Exp \cup \{\varepsilon\}$. Según las necesidades, la expresión de retorno será una expresión booleana, una expresión aritmética o simplemente será la expresión vacia, empleada para los procedimientos.\\
+Por otro lado nos encontramos en nuestro lenguaje con la necesidad de definir un conjunto que recoja la información básica de las funciones y procedimientos. Definimos $\Fs = \Func \hookrightarrow (\T \times \Stm \times \Args \times (\Exp \cup \{\varepsilon\}))$ el conjunto de funciones parciales que asocia un nombre de función a su definición. Una función quedará definida por su tipo de retorno $t \in \T$, su código $S \in \Stm$, sus argumentos de entrada $\args \in \Args$ y su expresión de retorno $e \in \Exp \cup \{\varepsilon\}$. Según las necesidades, la expresión de retorno será una expresión booleana, una expresión aritmética o simplemente será la expresión vacia, empleada para los procedimientos.\\
 
-Para dar un significado a nuestro programas tenemos que definir qué va a representar para nosotros su estado de ejecución. Definimos el conjunto de estados $\State = \G \times \F \times \RP$ como una tupla que recoja la información de las variables globales y de las funciones definidas en nuestro programa $\P$ así como una pila de marcos de ejecución o runtime processes que contendrá la información local de los procesos (e.g. variables locales (¡pilas de ámbitos locales!), código y tipo (¿y expresión de retorno?)).\\
+Para dar un significado a nuestro programas tenemos que definir qué va a representar para nosotros su estado de ejecución. Definimos el conjunto de estados $\State = \Gs \times \Fs \times \RPs$ como una tupla que recoja la información de las variables globales y de las funciones definidas en nuestro programa $\P$ así como una pila de marcos de ejecución o runtime processes que contendrá la información local de los procesos (e.g. variables locales (¡pilas de ámbitos locales!), código y tipo (¿y expresión de retorno?)).\\
 
 La idea a seguir para definir nuestra semántica será apoyarnos en dos funciones auxiliares $\init$ y $\start$ que respectivamente inicializarán el estado global del programa y lanzarán a ejecución la función inicial $\main$. Pasemos pues a definir la primera de ellas.
 
@@ -24,11 +24,11 @@ La idea a seguir para definir nuestra semántica será apoyarnos en dos funcione
 Definimos la función $\init: \Prog \hookrightarrow \State$ de forma recursiva del siguiente modo.
 \begin{align*}
   \init(\varepsilon) &= (\nil, \nil, [])\\
-  \init(int \var \; \P) &= (G\ass{\var}{0}, F, RP) \text{ donde } \init(\P) = (\G, \F, \RP)\\
-  \init(bool \var \; \P) &= (G\ass{\var}{\False}, F, RP) \text{ donde } \init(\P) = (\G, \F, \RP)\\
-  \init(int \, \func(\args) \{ S\; \return a\} \P) &= (G, F\ass{\func}{(int, S, \args, a)}, RP) \\ &\text{ donde } \init(\P) = (\G, \F, \RP)\\
-  \init(bool \, \func(\args) \{ S\; \return b\} \P) &= (G, F\ass{\func}{(bool, S, \args, b)}, RP) \\ &\text{ donde } \init(\P) = (\G, \F, \RP)\\
-  \init(void \, \func(\args) \{ S\} \P) &= (G, F\ass{\func}{(void, S, \args, \varepsilon)}, RP) \\ &\text{ donde } \init(\P) = (\G, \F, \RP)\\
+  \init(int \var \; \P) &= (\G\ass{\var}{0}, \F, \RP) \text{ donde } \init(\P) = (\G, \F, \RP)\\
+  \init(bool \var \; \P) &= (\G\ass{\var}{\False}, \F, \RP) \text{ donde } \init(\P) = (\G, \F, \RP)\\
+  \init(int \, \func(\args) \{ S\; \return a\} \P) &= (\G, \F\ass{\func}{(int, S, \args, a)}, \RP) \\ &\text{ donde } \init(\P) = (\G, \F, \RP)\\
+  \init(bool \, \func(\args) \{ S\; \return b\} \P) &= (\G, \F\ass{\func}{(bool, S, \args, b)}, \RP) \\ &\text{ donde } \init(\P) = (\G, \F, \RP)\\
+  \init(void \, \func(\args) \{ S\} \P) &= (\G, \F\ass{\func}{(void, S, \args, \varepsilon)}, \RP) \\ &\text{ donde } \init(\P) = (\G, \F, \RP)\\
 \end{align*}
 \subsubsection{La función (regla) $\start$.}
 Definimos la función $\start: \State \hookrightarrow \State$ como
