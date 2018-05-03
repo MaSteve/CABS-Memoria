@@ -106,7 +106,13 @@ Buscamos definir la función semántica $\A: (\AExp \times \State) \hookrightarr
 \end{prooftree*}
 
 \begin{prooftree*}
-    \Infer[left label=$\assvc$]0{(\G, \F, \RP \leadsto (local:s,\var = v\;S))) \stns (\G, \F, \RP \leadsto (local\ass{\var}{v}:s, S)))}
+        \hypo{is\_local(var)}
+    \Infer[left label=$\assvc$]1{(\G, \F, \RP \leadsto (local:s,\var = v\;S))) \stns (\G, \F, \RP \leadsto (local\ass{\var}{v}:s, S)))}
+\end{prooftree*}
+
+\begin{prooftree*}
+        \hypo{is\_global(var)}
+    \Infer[left label=$\assvcg$]1{(\G, \F, \RP \leadsto (local:s,\var = v\;S))) \stns (\G\ass{\var}{v}, \F, \RP \leadsto (local:s, S)))}
 \end{prooftree*}
 
 %%%%%%%%%

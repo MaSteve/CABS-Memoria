@@ -156,21 +156,21 @@ Para la traducción de las funciones necesitamos previamente una traducción de 
 
 Usando esta traducción de argumentos tenemos que
 \begin{align*}
-  \C\eval{int\,\func(arg)\{S\}} v &= (\mbox{interface Int$\func$}\{
+  \C\eval{int\,\func(arg)\{S\,\return a\}} v &= (\mbox{interface Int$\func$}\{
   \mbox{$Int\, \func(\C_{arg}\,arg)\;$}\}\\
   & \mbox{class Imp$\func($GLOBAL globalval$)$ implements Int$\func\{$}\\
-  & Int\, func(\C_{arg}\,arg) \{ c \}\} , v'')
-  \mbox{ donde $\C\eval{S} v' = (c, v'')$} \\
-  \C\eval{bool\,\func(arg)\{S\}} v &= (\mbox{interface Int$\func$}\{
+  & Int\, func(\C_{arg}\,arg) \{ c\,c'\,\return \Aux\, (v'' - 1)\}\} , v'')\\
+  & \mbox{donde $\C\eval{S} v = (c, v')$ y } \C_\AExp\eval{a} v' = (c', v'')\\
+  \C\eval{bool\,\func(arg)\{S\,\return b\}} v &= (\mbox{interface Int$\func$}\{
   \mbox{$Bool\, \func(\C_{arg}\,arg)\;$}\}\\
   & \mbox{class Imp$\func($GLOBAL globalval$)$ implements Int$\func\{$}\\
-  & Bool\, func(\C_{arg}\,arg) \{ c \}\} , v'')
-  \mbox{ donde $\C\eval{S} v' = (c, v'')$} \\
+  & Bool\, func(\C_{arg}\,arg) \{ c\,c'\,\return \Aux\, (v'' - 1)\}\} , v'')\\
+  & \mbox{donde $\C\eval{S} v = (c, v')$ y } \C_\BExp\eval{b} v' = (c', v'')\\
   \C\eval{void\,\func(arg)\{S\}} v &= (\mbox{interface Int$\func$}\{
   \mbox{$Unit\, \func(\C_{arg}\,arg)\;$}\}\\
   & \mbox{class Imp$\func($GLOBAL globalval$)$ implements Int$\func\{$}\\
-  & Unit\, func(\C_{arg}\,arg) \{ c \}\} , v'')
-  \mbox{ donde $\C\eval{S} v' = (c, v'')$}
+  & Unit\, func(\C_{arg}\,arg) \{ c \}\} , v')
+  \mbox{ donde $\C\eval{S} v = (c, v')$}
 \end{align*}
 
 y para las variables globales tenemos

@@ -1,0 +1,88 @@
+\chapter{Corrección}
+
+A lo largo de este capítulo usaremos las definiciones de las semánticas previamente expuestas para comprobar que la traducción propuesta de CABS a ABS es correcta. En otras palabras, durante las próximas secciones, demostraremos que dado un código en CABS y partiendo de un estado inicial podemos ``ejecutar'' una serie de pasos hasta llegar a un nuevo estado que tiene un homólogo en ABS y que resulta de ejecutar la traducción desde un estado equivalente al inicial en CABS (y viceversa).\\
+
+Este procedimiento es conocido como bisimulación y nos permitirá hacer afirmaciones tan fuertes como las que buscamos, es decir, que si tenemos un código en CABS y dada su traducción sabemos, usando la herramientas ya desarrolladas para ABS, que cumple una cierta propiedad partiendo de un estado, sabremos entonces que el mismo resultado se sostiene para el código en CABS.
+
+\section{Equivalencia entre estados}
+
+Sea $(\G, \F, \RP)$ un estado en CABS y $(\O, \Cl)$ un estado en ABS. Diremos que estos estados son equivalentes si:
+\begin{itemize}
+\item dado $(id, c, \RT, t, \attr) \in \O$ el objeto correspondiente a la clase GlobalVariables, tenemos que las funciones $\G$ y $\attr$ son la misma.
+\item para todo nombre de función $\func$ con $\F(\func) = (t, S, args, a)$, tenemos que $\Cl\eval{\text{Imp}\func} = (\text{Int}\func, \nil, met, \args_c)$ donde $met\eval{\func}$ contiene la traducción de los argumentos $args$ y del código de la función y los argumentos de clase $\args_c$ contienen solo una variable con el tipo de la interfaz de las variables globales.
+\item cada elemento en $\RP$ se corresponde con un conjunto de tareas en los objetos de $\O$, en concreto, cada entorno de variables apilado se corresponde con los atributos (obviando variables auxiliares) de una tarea cuyo código traducido se corresponde con un segmento de instrucciones del código del proceso. Lo que se quiere decir con esto es que, mientras que las llamadas a función en CABS se corresponden con el apilamiento de un nuevo entorno de variables y la concatenación del código de la función con el código actual del proceso, en ABS se crea una nueva tarea a la que se espera para obtener el valor de retorno.
+\item en caso de existir un elemento $(local:s, x = e\; S) \in \RP$ donde $e$ tiene elementos en $\V$ ya calculados, se tiene que en la tarea del estado equivalente se han ejecutado ya las asignaciones a las variables auxiliares correspondientes con los valores ya calculados y, por tanto, quedan por calcular las asignaciones a variables auxiliares restantes en la expresión. En otras palabras, cada paso de evaluación de una expresión será una asignación en la traducción en ABS. Esto es válido tanto para enteros como para booleanos.
+\end{itemize}
+\section{Corrección de las expresiones aritmético-lógicas}
+Una de las peculiaridades que tiene CABS, es permitir en sus expresiones una notación para realizar llamadas a función con retorno de valor. Como ya notamos en el capítulo anterior, esto hace que la traducción se apoye en el uso de unas variables auxiliares que permiten dividir el cómputo de una expresión en el cómputo de las distintas subexpresiones que la componen.\\
+
+Cada expresión utilizada en un programa CABS se corresponde de forma unívoca con una variable auxiliar en ABS que almacenará el valor de la expresión cuando este esté disponible. De este modo, en todo momento podemos hacer uso de esta información, aunque, por simplificar la notación, no esté presente en el estado del programa.\\
+
+Dicha esta introducción, procedemos a comprobar en primer lugar que las asignaciones hechas en CABS se corresponden con la traducción de estas a ABS llegando de estados equivalentes a estados equivalentes.
+
+\subsection{Variables locales}
+
+\subsubsection{Caso $x = \nu$ con $\nu \in \V$}
+Sean $(\G, \F, \RP \leadsto (local:s,x = \nu\;S))$ y $(\O \leadsto (id, c, \RT \leadsto (loc, x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)$ estados equivalentes, donde la variable auxiliar $k$-esima es la variable asignada a la expresión $\nu$ de forma que $loc(aux\_var\_k) = \nu$.\\
+
+Tenemos que del estado $(\G, \F, \RP \leadsto (local:s,x = \nu\;S))$, aplicando la regla $\assvc$, llegamos al estado $(\G, \F, \RP \leadsto (local\ass{x}{\nu}:s, S))$ en CABS. Por otro lado, del estado equivalente en ABS $(\O \leadsto (id, c, \RT \leadsto (loc, x = aux\_var\_k\; S, t), t, \attr), \Cl)$, aplicando la regla de asignación local correspondiente, llegamos al estado $(\O \leadsto (id, c, \RT \leadsto (loc \ass{x}{\A \eval{aux\_var\_k}_{loc, \attr}}, S_\ABS, t), t, \attr), \Cl)$ y del hecho de que dicha variable auxiliar tenga el valor de $\nu$ llegamos inmediatamente a un estado equivalente.
+
+\subsubsection{Caso $x = n$}
+Sea $(\G, \F, \RP \leadsto (local:s,x = n\;S))$ y sea $(\O \leadsto (id, c, \RT \leadsto (loc, Int aux\_var\_k = n\; x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)$ su estado equivalente, donde la variable auxiliar $k$-esima es la variable asignada a la expresión $n$.\\
+
+En este caso, solo podemos aplicar para el proceso actual la regla $\assac$ que delega la acción en las reglas para expresiones aritmético-lógicas. La regla aplicable en esta situación es $\numa$ con lo que llegamos al estado $(\G, \F, \RP \leadsto (local:s,x = \N\eval{n}\;S))$.\\
+
+En el lado de ABS aplicamos la regla de asignación sobre la variable auxiliar llegando al estado $(\O \leadsto (id, c, \RT \leadsto (loc \ass{aux\_var\_k}{\A \eval{n}_{loc, \attr}}, x = aux\_var\_k\;S_\ABS, t), t, \attr), \Cl)$ preservandose la equivalencia entre estados al asignar el valor de la expresión a su variable auxiliar.
+
+\subsubsection{Caso $x = f(\cdots)$ (simplificación sin argumentos!!!)}
+Sean los estados equivalentes $(\G, \F, \RP \leadsto (local:s,x = f()\;S))$ y $(\O \leadsto (id, c, \RT \leadsto (loc, \mbox{Intf }  aux\_var\_(k-1) = new\, \mbox{Impf}(globalval) \; Int\, aux\_var\_k = await\,auxi\_var\_(k-1)!f()\; x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)$ donde la variable auxiliar $k$-esima es la variable asignada a la expresión $f()$.\\
+
+La semántica de CABS nos permite usar la regla $\assac$ con la regla $\calla$ resultando en el estado $(\G, \F, \RP \leadsto (\nil:local:s, S_F\,x = \Unstack{a}\;S))$ donde $a$ es la expresión de retorno de $f$.\\
+
+Por otro lado, en la semántica de ABS, podemos aplicar primero la regla de creacción de objetos y a continuación la regla de llamada síncrona, resultando el estado
+\begin{multline*}
+  (\O \leadsto (id', c', (\nil, S_\ABS^F, t'), \perp, \attr')\\
+  (id, c, \RT \leadsto (loc, Int\, aux\_var\_k = await\,t'\; x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)
+\end{multline*}
+
+Llegados a este punto tenemos un estado que es equivalente al resultante en la semántica de CABS puesto que el concepto de apilar un nuevo ámbito de variables en ABS se ve reflejado creando un objeto nuevo que tiene como única tarea asignada el cómputo del código traducido de la función $f$. El objeto original se ve pausado por el $await$ hasta que no termine de ejecutarse el código de $f$, imitando el concepto del código concatenado en CABS que no deja ejecutar resto de instrucciones hasta no terminar con las de la función.\\
+
+Otro detalle a tener en cuenta es el indicador de tarea actual. Tras dar los dos paso anteriores en la semántica de ABS se nos lleva a tener como tarea asignada en el nuevo objeto a $\perp$. Evidentemente, antes de poderse ejecutar la primera instrucción de $f$ es necesario que se ejecute la regla de selección de tarea. El hecho de que ningún objeto de nuestra traducción vaya a ejecutar más de una tarea (a excepción del objeto de variables globales del que hablaremos más adelante) nos permite extender la idea de equivalencia a este estado actual, puesto que consideramos que aplicar una regla de selección no afecta en esencia a la configuración actual en ABS ya que solo lo hacen los ``movimientos'' en el código.\\
+
+De forma similar, el hecho de tener que dar dos pasos tampoco afecta, pese a existir una concurrencia en la semántica. El motivo es que entre ambos pasos el objeto creado solo es referenciado por una variable auxiliar de modo que se garantiza que no puede ser modificado desde ningún otro punto de la ejecución. De este modo podemos volver a extender el concepto de equivalencia permitiendo que el paso intermedio de creación del objeto (omitido en este texto) pueda ser también considerado un estado que mantiene la equivalencia con $(\G, \F, \RP \leadsto (\nil:local:s, S_F\,x = \Unstack{a}\;S))$. Con esto se quiere decir que, al igual que las reglas de selección de tarea, la creación de objetos no altera tampoco el estado intrínseco del programa.
+
+\subsubsection{Caso $x = \Unstack{\nu}$ con $\nu \in \V$}
+Sean los estados equivalentes $(\G, \F, \RP \leadsto (local':local:s,x = \Unstack{\nu}\;S))$ y
+\begin{multline*}
+  (\O \leadsto (id', c', (loc', \return aux\_var\_k', t'), t', \attr')\\
+  (id, c, \RT \leadsto (loc, Int\, aux\_var\_k = await\,t'\; x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)
+\end{multline*}
+donde la variable auxiliar $k'$-esima es la variable asignada a la expresión $\nu$, que tiene su valor asignado en $loc'$, y la $k$-esima al unstack.\\
+
+En el caso de CABS, aplicar la regla $\assac$ con la regla $\unab$ para la expresión nos lleva al estado $(\G, \F, \RP \leadsto (local:s, x = \nu \; S))$.\\
+
+En el caso de ABS, podemos aplicar la regla de retorno que nos lleva a un estado intermedio
+\begin{multline*}
+  (\O \leadsto (id', c', (loc', \varepsilon(\A \eval{aux\_var\_k'}_{loc, \attr}), t'), t', \attr')\\
+  (id, c, \RT \leadsto (loc, Int\, aux\_var\_k = await\,t'\; x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)
+\end{multline*}
+
+Desde este estado se puede aplicar la regla del $await$ que permite recoger el valor de $\nu$ y asignarselo, en este caso, a la variable $aux\_var\_k$, llegando al estado
+\begin{multline*}
+  (\O \leadsto (id', c', [], \perp, \attr')\\
+  (id, c, \RT \leadsto (loc\ass{aux\_var\_k}{\nu}, x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)
+\end{multline*}
+
+que mantiene la equivalencia.\\
+
+De nuevo se nos presenta la discusión de los pasos múltiples. El mismo argumento que hemos presentado anteriormente es aplicable a esta situación.\\
+
+Cabe destacar que el concepto de desapilar un entorno en CABS queda reflejado en el hecho de que el objeto con el ámbito superior no vuelve a ser usado y queda vacio de tareas.
+
+\subsubsection{Caso $x = a_1 \odot a_2$}
+
+Antes de discutir este caso conviene ver que en CABS el cómputo de $a_1 \odot a_2$ precisa del cómputo de $a_1$ de modo que el argumento que vamos a seguir para el caso compuesto es asumir que todo va bien si nos encontraramos con la expresión $a_1$ y que por tanto la asunción se puede emplear para la expresión $a_1 \odot a_2$.\\
+
+Otro detalle importante a tener en cuenta es que no se empieza a procesar la expresión $a_2$ hasta que no hemos completado el cómputo de $a_1$, como se refleja en las reglas de la semántica de CABS. Esto se reflejará en ABS ya que las asignaciones de la expresión $a_2$ vienen precedidas por las de la expresión $a_1$.\\
+
+Dicho esto, sean
