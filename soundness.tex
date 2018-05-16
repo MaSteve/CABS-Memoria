@@ -124,12 +124,49 @@ El proceder con estos es identico en el sentido de aplicar la hipótesis de indu
 \subsubsection{Declaraciones de variable}
 Este caso es inmediato puesto que por definición en CABS una declaración inicializa la variable a cero (o false para los booleanos) a nivel semántico y en nuestra traducción forzamos esta situación con una declaración y una asignación. En ambas situaciones, con las reglas $\declic$ o $\declbc$ de CABS y las reglas (!!!) de ABS, llegamos en un paso a estados equivalentes.
 
-\subsubsection{Caso while}
-Sean los estados equivalentes $(\G, \F, \RP \leadsto (local:s, \while{b}{S_1}S))$ y $(\O \leadsto (id, c, \RT \leadsto (loc, \while{b}{S_\ABS^1} S_\ABS, t), t, \attr), \Cl)$.\\
-
-Aplicando la regla $\wac$ en el código en CABS llegamos a $(\G, \F, \RP \leadsto (local:s, \Ifp{b}{S_1\while{b}{S_1}}S))$. Del mismo modo, en ABS, aplicando la regla del while llegamos a $(\O \leadsto (id, c, \RT \leadsto (loc, \Ifp{b}{S_\ABS^1\while{b}{S_\ABS^1}} S_\ABS, t), t, \attr), \Cl)$, con lo que vemos que los dos estados se mantienen equivalentes.
-
 \subsubsection{Caso if}
-El if vuelve a presentar una peculiaridad en el desarrollo de nuestra demostración.
+El if vuelve a presentar una situación similar a la que hemos tenido con las expresiones aritméticas y la que hemos omitido para las expresiones booleanas.\\
+
+Tenemos que las dos reglas axiomáticas del if en CABS (la regla para el valor true y el valor false de la condición) son los casos base de un desarrollo inductivo como el que hemos comentado anteriormente y se corresponden con un único paso de ejecución en ABS con la regla del if. La tercera regla de CABS es sobre la que se emplea la hipótesis de inducción y se corresponde con los pasos de ejecución de la expresión booleana.\\
+
+De este modo, es fácil ver que volvemos a tener que la ejecución de un paso en el if en CABS (ya sea en la condición o en la decisión de que rama se toma) se corresponde con un paso de ejecución (obviando pasos no relevantes, como los de cambio de tarea) en ABS.
+
+\subsubsection{Caso while}
+El problema que se nos presenta con el while es que su traducción a ABS no preserva la equivalencia de estados inmediatamente al aplicar las reglas de la semántica. De hecho, en CABS el while junto con su condición mutan en un if equivalente resultante de desenrollar el blucle una vez, mientras que, en ABS, la traducción empieza por computar las expresiones boolenas de la condición y cuando tiene el resultado listo se convierte en un if para entonces sí volver a ser un estado equivalente.\\
+
+Hay varias formas de solucionar este problema. Una de ellas pasaría por hacer una modificación en la semántica de CABS, creando una prórroga antes de realizar la conversión al if. Esta opción, aunque complicaría un poco más la semántica del lenguaje, nos permitiría tener de nuevo una equivalencia paso a paso como la que hemos tenido hasta ahora. Las nuevas reglas del while en CABS serían las siguientes:
+
+
+\begin{prooftree*}
+  \hypo{\st{b}{(\G, \F, \RP \leadsto (local:s, \varepsilon))} \stbexp \st{b'}{(\G, \F, \RP \leadsto (s', S_{\B}))}}
+  \Infer[left label=$\wacalt$]1{
+     \begin{aligned}
+       (\G, \F, \RP \leadsto (local:s, \while{b}{S_1}S)) \stns \\
+       (\G, \F, \RP \leadsto (s', S_{\B}\,\while{b'}{S_1}S))
+     \end{aligned}
+  }
+\end{prooftree*}\\
+\begin{prooftree*}
+  \Infer[left label=$\wnuc$]0{
+    \begin{aligned}
+      (\G, \F, \RP \leadsto (local:s, \while{\nu}{S_1}S)) \stns \\
+      (\G, \F, \RP \leadsto (local:s, \Ifp{\nu}{S_1\while{b}{S_1}}\;S))
+    \end{aligned}
+  }
+\end{prooftree*} donde $\nu$ es un valor booleano y $b$ es la expresión booleana original de la condición del while.\\
+
+Una de las primeras asunciones que se tienen en cuenta en estas reglas es la estatismo del código. A la hora de representar las reglas semánticas se ha optado por una semántica de paso corto en la que el código evoluciona indicando lo que queda de ejecución. Este no es el caso real de las implementaciones habituales en las que el código se mantiene inmutable. No obstante, y por motivos de simplicidad, generalmente, se opta por esta aproximación en la que el código muta. Es por ello que en la regla $\wnuc$ tenemos que asumir que podemos recuperar la condición booleana original para poder reescribir el bucle original en el interior del if. Asunción que por otra parte que no es muy exigente.\\
+
+La segunda cuestión que nos debemos plantear es si sustituir la regla del while original por estas dos nuevas reglas no modifica el significado de los programas. La forma de ver que esto no ocurre pasa por usar inducción sobre la longitud de la secuencia de ejecución de la evaluación de la condición desde el estado $(\G, \F, \RP \leadsto (local:s, \while{b}{S_1}S))$, en la que solo se emplean las reglas del while y del if.\\
+
+La idea es que si $b \in \B$ tendríamos en un solo paso la misma transición que llega al estado $(\G, \F, \RP \leadsto (local:s, \Ifp{\nu}{S_1\while{b}{S_1}}\;S))$, luego el caso base estaría resuelto. Para cadenas de longitud $k$ suponemos que se cumple, tras la ejecución de esos $k$ pasos en ambas semánticas, la igualdad de los estados finales y veamos que se sigue para cadenas de $k+1$ pasos.\\
+
+Supongamos que el estado $(\G, \F, \RP \leadsto (local:s, \while{b}{S_1}S))$ necesita $k+1$ pasos en la semántica modificada para ``dar el salto'' al if. Aplicando la regla $\wacalt$ llegamos al estado $(\G, \F, \RP \leadsto (s', S_{\B}\,\while{b'}{S_1}S))$. Por otro lado, en la semántica original, el while se ve como un salto inmediato al estado $(\G, \F, \RP \leadsto (local:s, \Ifp{b}{S_1\;\while{b}{S_1}}S))$ sobre el que ahora se aplica la misma ejecución de la expresión booleana anterior (por ser la misma expresión $b$) y llegamos al estado $(\G, \F, \RP \leadsto (s', S_{\B}\,\Ifp{b'}{S_1\;\while{b}{S_1}}S))$. Ahora, aplicando la hipótesis de inducción, tenemos que ambos estados llegan al mismo estado en $k$ pasos con lo que concatenando con el paso anterior tenemos que la propiedad se mantiene.\\
+
+Una vez tenemos resueltas estas cuestiones, la equivalencia en la bisimulación entre CABS y ABS se sigue de un argumento completamente análogo al del caso del if.\\
+
+\textit{Opción alternativa.}\\
+
+Otro modo de concluir con el caso del while sería crear un azucar sintáctico para el while de ABS que permitiera agrupar en su sintaxis el código de las asignaciones para el cómputo de la condición. De este modo, se podría modificar la regla del while para que actuara sobre esta construcción auxiliar y pudiera realizar el mismo paso que la semántica de CABS original para llegar a un equivalente a la vez. Esta opción sería equivalente a la anterior pero por simplicidad se deja solo comentada.
 
 \subsubsection{Caso thread}

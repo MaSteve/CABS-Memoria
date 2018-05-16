@@ -48,7 +48,7 @@ De ahora en adelante nos referimos por el conjunto $\AExp$ a la unión de expres
 Buscamos definir la función semántica $\A: (\AExp \times \State) \hookrightarrow (\AExp \times \State)$ mediante las siguientes reglas:
 
 \begin{prooftree*}
-    \Infer[left label=$\numa$]0{\st{n}{(\G, \F, \RP \leadsto (s, S)))} \staexp \st{\N \eval{n}}{(\G, \F, \RP \leadsto (s, S)))}}
+    \Infer[left label=$\numa$]0{\st{n}{(\G, \F, \RP \leadsto (s, S))} \staexp \st{\N \eval{n}}{(\G, \F, \RP \leadsto (s, S))}}
 \end{prooftree*}
 
 \begin{prooftree*}
@@ -64,8 +64,8 @@ Buscamos definir la función semántica $\A: (\AExp \times \State) \hookrightarr
 \end{prooftree*}
 
 \begin{prooftree*}
-        \hypo{\st{a_1}{(\G, \F, \RP \leadsto (s, S)))} \staexp \st{a_1'}{(\G, \F, \RP \leadsto (s', S')))}}
-    \Infer[left label=$\opaa$]1{\st{a_1 \bigodot a_2}{(\G, \F, \RP \leadsto (s, S)))} \staexp \st{a_1' \bigodot a_2}{(\G, \F, \RP \leadsto (s', S')))}}
+        \hypo{\st{a_1}{(\G, \F, \RP \leadsto (s, S))} \staexp \st{a_1'}{(\G, \F, \RP \leadsto (s', S'))}}
+    \Infer[left label=$\opaa$]1{\st{a_1 \bigodot a_2}{(\G, \F, \RP \leadsto (s, S))} \staexp \st{a_1' \bigodot a_2}{(\G, \F, \RP \leadsto (s', S'))}}
 \end{prooftree*}
 
 \begin{prooftree*}
@@ -74,77 +74,77 @@ Buscamos definir la función semántica $\A: (\AExp \times \State) \hookrightarr
 \end{prooftree*}
 
 \begin{prooftree*}
-    \Infer[left label=$\opac$]0{\st{v_1 \bigodot v_2}{(\G, \F, \RP \leadsto (s, S)))} \staexp \st{v_1 \bigodot_{\N} v_2}{(\G, \F, \RP \leadsto (s, S)))}}
+    \Infer[left label=$\opac$]0{\st{v_1 \bigodot v_2}{(\G, \F, \RP \leadsto (s, S))} \staexp \st{v_1 \bigodot_{\N} v_2}{(\G, \F, \RP \leadsto (s, S))}}
 \end{prooftree*}
 
 \begin{prooftree*}
-        \hypo{\st{a}{(\G, \F, \RP \leadsto (s, S)))} \staexp \st{a'}{(\G, \F, \RP \leadsto (s', S')))}}
-    \Infer[left label=$\unaa$]1{\st{\Unstack{a}}{(\G, \F, \RP \leadsto (s, S)))} \staexp \st{\Unstack{a'}}{(\G, \F, \RP \leadsto (s', S')))}}
+        \hypo{\st{a}{(\G, \F, \RP \leadsto (s, S))} \staexp \st{a'}{(\G, \F, \RP \leadsto (s', S'))}}
+    \Infer[left label=$\unaa$]1{\st{\Unstack{a}}{(\G, \F, \RP \leadsto (s, S))} \staexp \st{\Unstack{a'}}{(\G, \F, \RP \leadsto (s', S'))}}
 \end{prooftree*}
 
 \begin{prooftree*}
-    \Infer[left label=$\unab$]0{\st{\Unstack{v}}{(\G, \F, \RP \leadsto (local:s, S)))} \staexp \st{v}{(\G, \F, \RP \leadsto (s, S)))}}
+    \Infer[left label=$\unab$]0{\st{\Unstack{v}}{(\G, \F, \RP \leadsto (local:s, S))} \staexp \st{v}{(\G, \F, \RP \leadsto (s, S))}}
 \end{prooftree*}
 
 \begin{prooftree*}
         \hypo{\F(\func) = (int, S_F, [], a)}
-    \Infer[left label=$\calla$]1{\st{\func()}{(\G, \F, \RP \leadsto (local:s, S)))} \staexp \st{\Unstack{a}}{(\G, \F, \RP \leadsto (\nil:local:s, S_F\;S)))}}
+    \Infer[left label=$\calla$]1{\st{\func()}{(\G, \F, \RP \leadsto (local:s, S))} \staexp \st{\Unstack{a}}{(\G, \F, \RP \leadsto (\nil:local:s, S_F\;S))}}
 \end{prooftree*}
 
 \subsubsection{Semántica (Instrucciones). (Hay que meter más tipos, limitar declaraciones y un largo etc)}
 \begin{prooftree*}
-    \Infer[left label=$\declic$]0{(\G, \F, \RP \leadsto (local:s, int \var;S))) \stns (\G, \F, \RP \leadsto (local\ass{\var}{0}:s, S)))}
+    \Infer[left label=$\declic$]0{(\G, \F, \RP \leadsto (local:s, int \var;S)) \stns (\G, \F, \RP \leadsto (local\ass{\var}{0}:s, S))}
 \end{prooftree*}
 
 \begin{prooftree*}
-    \Infer[left label=$\declbc$]0{(\G, \F, \RP \leadsto (local:s, bool \var;S))) \stns (\G, \F, \RP \leadsto (local\ass{\var}{\False}:s, S)))}
+    \Infer[left label=$\declbc$]0{(\G, \F, \RP \leadsto (local:s, bool \var;S)) \stns (\G, \F, \RP \leadsto (local\ass{\var}{\False}:s, S))}
 \end{prooftree*}
 
 \begin{prooftree*}
-        \hypo{\st{a}{(\G, \F, \RP \leadsto (local:s, \varepsilon)))} \staexp \st{a'}{(\G, \F, \RP \leadsto (s', S_{\A})))}}
-    \Infer[left label=$\assac$]1{(\G, \F, \RP \leadsto (local:s,\var = a\;S))) \stns (\G, \F, \RP \leadsto (s', S_{\A}\;\var = a'\;S)))}
+        \hypo{\st{a}{(\G, \F, \RP \leadsto (local:s, \varepsilon))} \staexp \st{a'}{(\G, \F, \RP \leadsto (s', S_{\A}))}}
+    \Infer[left label=$\assac$]1{(\G, \F, \RP \leadsto (local:s,\var = a\;S)) \stns (\G, \F, \RP \leadsto (s', S_{\A}\;\var = a'\;S))}
 \end{prooftree*}
 
 \begin{prooftree*}
         \hypo{is\_local(var)}
-    \Infer[left label=$\assvc$]1{(\G, \F, \RP \leadsto (local:s,\var = v\;S))) \stns (\G, \F, \RP \leadsto (local\ass{\var}{v}:s, S)))}
+    \Infer[left label=$\assvc$]1{(\G, \F, \RP \leadsto (local:s,\var = v\;S)) \stns (\G, \F, \RP \leadsto (local\ass{\var}{v}:s, S))}
 \end{prooftree*}
 
 \begin{prooftree*}
         \hypo{is\_global(var)}
-    \Infer[left label=$\assvcg$]1{(\G, \F, \RP \leadsto (local:s,\var = v\;S))) \stns (\G\ass{\var}{v}, \F, \RP \leadsto (local:s, S)))}
+    \Infer[left label=$\assvcg$]1{(\G, \F, \RP \leadsto (local:s,\var = v\;S)) \stns (\G\ass{\var}{v}, \F, \RP \leadsto (local:s, S))}
 \end{prooftree*}
 
 %%%%%%%%%
 \iffalse
 \begin{prooftree*}
-        \hypo{(\G, \F, \RP \leadsto (local:s, S_1))) \stns (\G, \F, \RP \leadsto (s', S_1')))}
-    \Infer[left label=$\compac$]1{(\G, \F, \RP \leadsto (local:s, S_1\;S_2))) \stns (\G, \F, \RP \leadsto (s', S_1'\;S_2)))}
+        \hypo{(\G, \F, \RP \leadsto (local:s, S_1)) \stns (\G, \F, \RP \leadsto (s', S_1'))}
+    \Infer[left label=$\compac$]1{(\G, \F, \RP \leadsto (local:s, S_1\;S_2)) \stns (\G, \F, \RP \leadsto (s', S_1'\;S_2))}
 \end{prooftree*}
 
 
 \begin{prooftree*}
-        \hypo{(\G, \F, \RP \leadsto (local:s, S_1))) \stns (\G, \F, \RP \leadsto (s', S_1')))}
-    \Infer[left label=$\compac$]1{(\G, \F, \RP \leadsto (local:s, S_1\;S_2))) \stns (\G, \F, \RP \leadsto (s', S_1'\;S_2)))}
+        \hypo{(\G, \F, \RP \leadsto (local:s, S_1)) \stns (\G, \F, \RP \leadsto (s', S_1'))}
+    \Infer[left label=$\compac$]1{(\G, \F, \RP \leadsto (local:s, S_1\;S_2)) \stns (\G, \F, \RP \leadsto (s', S_1'\;S_2))}
 \end{prooftree*}
 \fi
 %%%%%%%%%
 
 \begin{prooftree*}
-        \hypo{\st{b}{(\G, \F, \RP \leadsto (local:s, \varepsilon)))} \stbexp \st{b'}{(\G, \F, \RP \leadsto (s', S_{\B})))}}
-    \Infer[left label=$\ifac$]1{(\G, \F, \RP \leadsto (local:s, \If{b}{S_1}{S_2}S))) \stns (\G, \F, \RP \leadsto (s', S_{\B}\;\If{b'}{S_1}{S_2}S)))}
+        \hypo{\st{b}{(\G, \F, \RP \leadsto (local:s, \varepsilon))} \stbexp \st{b'}{(\G, \F, \RP \leadsto (s', S_{\B}))}}
+    \Infer[left label=$\ifac$]1{(\G, \F, \RP \leadsto (local:s, \If{b}{S_1}{S_2}S)) \stns (\G, \F, \RP \leadsto (s', S_{\B}\;\If{b'}{S_1}{S_2}S))}
 \end{prooftree*}
 
 \begin{prooftree*}
-    \Infer[left label=$\iftc$]0{(\G, \F, \RP \leadsto (local:s, \If{\True}{S_1}{S_2}S))) \stns (\G, \F, \RP \leadsto (local:s, S_1\;S)))}
+    \Infer[left label=$\iftc$]0{(\G, \F, \RP \leadsto (local:s, \If{\True}{S_1}{S_2}S)) \stns (\G, \F, \RP \leadsto (local:s, S_1\;S))}
 \end{prooftree*}
 
 \begin{prooftree*}
-    \Infer[left label=$\iffc$]0{(\G, \F, \RP \leadsto (local:s, \If{\False}{S_1}{S_2}S))) \stns (\G, \F, \RP \leadsto (local:s, S_2\;S)))}
+    \Infer[left label=$\iffc$]0{(\G, \F, \RP \leadsto (local:s, \If{\False}{S_1}{S_2}S)) \stns (\G, \F, \RP \leadsto (local:s, S_2\;S))}
 \end{prooftree*}
 
 \begin{prooftree*}
-        \Infer[left label=$\wac$]0{(\G, \F, \RP \leadsto (local:s, \while{b}{S_1}S))) \stns (\G, \F, \RP \leadsto (local:s, \Ifp{b}{S_1\;\while{b}{S_1}}S)))}
+        \Infer[left label=$\wac$]0{(\G, \F, \RP \leadsto (local:s, \while{b}{S_1}S)) \stns (\G, \F, \RP \leadsto (local:s, \Ifp{b}{S_1\;\while{b}{S_1}}S))}
 \end{prooftree*}
 
 
@@ -152,11 +152,11 @@ Buscamos definir la función semántica $\A: (\AExp \times \State) \hookrightarr
 %%%%%%%
 \iffalse
 \begin{prooftree*}
-    \Infer[left label=$\wtc$]0{(\G, \F, \RP \leadsto (local:s, \while{\True}{S_1}S))) \stns (\G, \F, \RP \leadsto (local:s, S_1\while{AHGGGG}{S_1}\;S)))}
+    \Infer[left label=$\wtc$]0{(\G, \F, \RP \leadsto (local:s, \while{\True}{S_1}S)) \stns (\G, \F, \RP \leadsto (local:s, S_1\while{AHGGGG}{S_1}\;S))}
 \end{prooftree*}
 
 \begin{prooftree*}
-    \Infer[left label=$\wfc$]0{(\G, \F, \RP \leadsto (local:s, \while{\False}{S_1}S))) \stns (\G, \F, \RP \leadsto (local:s, S)))}
+    \Infer[left label=$\wfc$]0{(\G, \F, \RP \leadsto (local:s, \while{\False}{S_1}S)) \stns (\G, \F, \RP \leadsto (local:s, S))}
 \end{prooftree*}
 \fi
 %%%%%%
@@ -167,5 +167,5 @@ Buscamos definir la función semántica $\A: (\AExp \times \State) \hookrightarr
 
 \begin{prooftree*}
         \hypo{\F(\func) = (t, S_F, [], e)}
-    \Infer[left label=$\threadc$]1{(\G, \F, \RP \leadsto (s, \thread \,\func()\;S))) \stns (\G, \F, (\RP \cup (\nil:[], S_F)) \leadsto (s, S))}
+    \Infer[left label=$\threadc$]1{(\G, \F, \RP \leadsto (s, \thread \,\func()\;S)) \stns (\G, \F, (\RP \cup (\nil:[], S_F)) \leadsto (s, S))}
 \end{prooftree*}

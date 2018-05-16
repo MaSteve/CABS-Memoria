@@ -143,9 +143,10 @@ Sea pues la función $\C: \CABS \rightarrow \Nat \rightarrow (ABS \times \Nat)$ 
   \C\eval{S_1 S_2} v &= (c_1 c_2, v'') \mbox{ donde $\C\eval{S_1} v = (c_1, v')$ y $\C\eval{S_2} v' = (c_2, v'')$} \\
   \C\eval{\If{b}{S_1}{S_2}} v &= (c_1\; \If{\Aux\, (v' - 1)}{c_2}{c_3}, v''') \\
   & \mbox{ donde $\C_\BExp\eval{b} v = (c_1, v')$, $\C\eval{S_1} v' = (c_2, v'')$ y $\C\eval{S_2} v'' = (c_3, v''')$} \\
-  \C\eval{\while{b}{S}} v &= (c_1\; \while{\Aux\, (v' - 1)}{c_2}, v'') \\
-  & \mbox{ donde $\C_\BExp\eval{b} v = (c_1, v')$ y $\C\eval{S} v' = (c_2, v'')$}
+  \C\eval{\while{b}{S}} v &= (c_1\; \while{\Aux\, (v' - 1)}{c_2 c_3\, \Aux\, (v' - 1) = \Aux\, (v''' - 1)\;}, v''') \\
+  & \mbox{ donde $\C_\BExp\eval{b} v = (c_1, v')$, $\C\eval{S} v' = (c_2, v'')$ y $\C_\BExp\eval{b} v'' = (c_3, v''')$}
 \end{align*}
+Sobre la traducción del while cabe destacar que es necesario traducir dos veces su condición y el uso de una asignación adicional. Esto es debido, en primer lugar, a que el concepto de while necesita evaluar antes de la ejy, en segundo lugar, a que las funciones de traducción de expresiones booleanas no contemplan la reutilización de variables.\\
 
 Para la traducción de las funciones necesitamos previamente una traducción de los argumentos $\C_{arg}: \Args \rightarrow \Args_\ABS$ que en esencia lo único que hace es cambiar los tipos de CABS a los de ABS. (Arrays!!!!)
 \begin{align*}
