@@ -170,3 +170,21 @@ Una vez tenemos resueltas estas cuestiones, la equivalencia en la bisimulación 
 Otro modo de concluir con el caso del while sería crear un azucar sintáctico para el while de ABS que permitiera agrupar en su sintaxis el código de las asignaciones para el cómputo de la condición. De este modo, se podría modificar la regla del while para que actuara sobre esta construcción auxiliar y pudiera realizar el mismo paso que la semántica de CABS original para llegar a un equivalente a la vez. Esta opción sería equivalente a la anterior pero por simplicidad se deja solo comentada.
 
 \subsubsection{Caso thread}
+
+El caso del $\thread$ vuelve a traer consigo la discusión que ya habíamos tenido con las llamadas a funciones con parámetros. Las funciones llamadas en paralelo con $\thread$ pueden verse de nuevo como un operador, con la diferencia de que no tienen un resultado en su retorno. De nuevo sería necesario analizar el proceso de la bisimulación para las funciones con $n$-paramétros (con $n$ variable) comprobando que se mantiene la equivalencia entre estados en cada uno de los pasos de la evaluación de los parámetros y, finalmente, en la creación final de los procesos.\\
+
+Por simplicidad en este trabajo hablaremos del caso de las funciones sin parámetros, puesto que los restantes casos se reducen a comprobar que la evaluación de expresiones aritmético-lógicas se sigue comportando bien al usarse como paso por valor en funciones en lugar de en asignaciones, como ya hemos detallado anteriormente.\\
+
+Sean, por tanto, los estados equivalentes $(\G, \F, \RP \leadsto (local:s, \thread \,\func()\;S))$ de CABS y $(\O \leadsto (id, c, \RT \leadsto (loc,  \mbox{Int$f$ } aux\_var\_k = new\, \mbox{Imp$f$}(globalval)\; aux\_var\_k!f()\; S_\ABS, t), t, \attr), \Cl)$ de ABS.\\
+
+En la semántica de CABS, podemos usar la regla $\threadc$ que en un paso nos lleva al estado $(\G, \F, (\RP \cup (\nil:[], S_F)) \leadsto (local:s, S)$ con lo que ya habríamos terminado con la creación del proceso, donde $S_F$ es el código de la función $f$ que pasará a ejecutarse en paralelo.\\
+
+En el caso de ABS, aplicando en un primer lugar la regla de creación de objetos llegaríamos a $(\O:(id', \mbox{Imp$f$}, [], \perp, \attr') \leadsto (id, c, \RT \leadsto (loc \ass{aux\_var\_k}{id'}, aux\_var\_k!f()\; S_\ABS, t), t, \attr), \Cl)$. Desde este estado el único objeto capaz de mandar tareas al nuevo objeto creado es el identificado por $id$ por tener en las variables locales de su tarea actual el identificador del nuevo objeto. Por tanto, la siguiente instrucción que se ejecuta, al aplicar la regla de paso de mensajes, nos lleva al estado $(\O:(id', \mbox{Imp$f$}, (\nil, S_\ABS^F, t''), \perp, \attr') \leadsto (id, c, \RT \leadsto (loc \ass{aux\_var\_k}{id'}, S_\ABS, t), t, \attr), \Cl)$ con lo que llegaríamos a un estado equivalente al que hemos llegado en la semántica de CABS.\\
+
+Cabe mencionar que la razón por la que ambos ámbitos de variables locales se encuentran a nil es porque al realizar la llamada concurrente a una función sin argumentos esta no puede contar con más información de partida que la que se puede obtener de las variables globales. Para el caso de las llamadas a funciones con argumento las reglas semánticas garantizan que estos estarán disponibles en el ámbito local.
+
+\section{Conclusión de la correción}
+
+Con esto concluimos la corrección de la traducción dando un paso en la semántica de CABS. Ahora bien, el objetivo de este capítulo era conseguir ver que la evolución del programa escrito en CABS era equivalente a la que se lleva en cabo con su traducción en ABS. Esto se obtiene haciendo uso de una inducción sobre el número de pasos en la ejecución.\\
+
+El caso base en el que damos cero pasos se mantiene trivialmente de partir de casos equivalentes. Para el caso $k+1$, tenemos por hipótesis de inducción que se cumple la equivalencia de la ejecuciones de longitud menor que $k$ y tenemos que dando un único paso podemos llegar a estados equivalentes desde los que quedan $k$ pasos. Por tanto se sigue que concatenando los pasos de las ejecuciones, la propiedad se mantiene para $k+1$.
