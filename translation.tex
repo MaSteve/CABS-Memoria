@@ -108,7 +108,6 @@ Un posible ejemplo de subconjunto $\Var_R$ podría ser $\{aux\_var\_v: v \in \Na
 Teniendo estas herramientas, resulta fácil pensar en definir la traducción de las expresiones como una función que toma una expresión en CABS junto con un natural $v$ y que devuelve una expresión en ABS junto con un natural que indique el siguiente natural no utilizado en la traducción. Si garantizamos no repetir un mismo n para dos expresiones distintas entonces garantizamos que las variables auxiliares no son usadas más allá de una única asignación y una única referencia.\\
 
 Especificamos esta idea con la definición de las funciones $\C_\AExp: \AExp \rightarrow \Nat \rightarrow (\ABS \times \Nat)$ y su homóloga  $\C_\BExp$ para las expresiones booleanas:
-
 \begin{align*}
   \C_\AExp\eval{n} v &= (Int\, (\Aux\, v) = n, v + 1) \\
   \C_\AExp\eval{x} v &= (Int\, (\Aux\, v) = x, v + 1) \mbox{ donde $x$ es variable entera local.} \\
@@ -119,12 +118,26 @@ Especificamos esta idea con la definición de las funciones $\C_\AExp: \AExp \ri
   \C_\BExp\eval{false} v &= (Bool\, (\Aux\, v) = False, v + 1) \\
   \C_\BExp\eval{true} v &= (Bool\, (\Aux\, v) = True, v + 1) \\
   \C_\BExp\eval{x} v &= (Bool\, (\Aux\, v) = x, v + 1) \mbox{ donde $x$ es variable booleana local.} \\
-  \C_\AExp\eval{x} v &= (Bool\, (\Aux\, v) = await \mbox{ globalval!get}x(), v + 1) \\
+  \C_\BExp\eval{x} v &= (Bool\, (\Aux\, v) = await \mbox{ globalval!get}x(), v + 1) \\
   &\mbox{ donde $x$ es variable booleana global.} \\
   \C_\BExp\eval{b_1 \odot_\Bb b_2} v &= (c_1\; c_2 \; Bool\, (\Aux\, v'') =  (\Aux\, (v' - 1))  \odot_\Bb  (\Aux\, (v'' - 1)) , v'' + 1) \\
   &\mbox{donde $\C_\BExp\eval{b_1} v = (c_1, v')$ y $\C_\BExp\eval{b_2}v' = (c_2, v'')$} \\
   \C_\BExp\eval{a_1 \odot a_2} v &= (c_1\; c_2 \; Bool\, (\Aux\, v'') =  (\Aux\, (v' - 1))  \odot  (\Aux\, (v'' - 1)) , v'' + 1) \\
-  &\mbox{donde $\C_\AExp\eval{a_1} v = (c_1, v')$ y $\C_\AExp\eval{a_2}v' = (c_2, v'')$ y $\odot$ comparador.} \\
+  &\mbox{donde $\C_\AExp\eval{a_1} v = (c_1, v')$ y $\C_\AExp\eval{a_2}v' = (c_2, v'')$ y $\odot$ comparador.}
+\end{align*}
+Para las llamadas a funciones supondremos por el momento que las interfaces y clases asociadas se encuentran traducidas en algún otro punto del código y que por tanto podemos hacer uso de sus nombres.
+
+\begin{align*}
+  \C_\AExp\eval{f(e_1 \dots e_n)} v^{1} &= (c_1 \dots c_n\\
+  &\mbox{Int$f\,(\Aux\, (v^{n+1})) =$ new Imp$f($globalval$)$} \\
+  &Int\, (\Aux\, (v^{n+1} + 1)) = (\Aux\, (v^{n+1}))!((\Aux\, (v^{2} - 1)), \dots,\\
+  &(\Aux\, (v^{n+1} - 1))), v^{n+1} + 2) \\
+  &\mbox{donde $\C_\Exp\eval{e_i} v^{i} = (c_i, v^{i+1})$ (escogiendo $\C_\AExp$ o $\C_\BExp$ según convenga)} \\
+  \C_\BExp\eval{f(e_1 \dots e_n)} v^{1} &= (c_1 \dots c_n\\
+  &\mbox{Int$f\,(\Aux\, (v^{n+1})) =$ new Imp$f($globalval$)$} \\
+  &Bool\, (\Aux\, (v^{n+1} + 1)) = (\Aux\, (v^{n+1}))!((\Aux\, (v^{2} - 1)), \dots,\\
+  &(\Aux\, (v^{n+1} - 1))), v^{n+1} + 2) \\
+  &\mbox{donde $\C_\Exp\eval{e_i} v^{i} = (c_i, v^{i+1})$ (escogiendo $\C_\AExp$ o $\C_\BExp$ según convenga)} \\
 \end{align*}
 
 \section{Traducción de código}
