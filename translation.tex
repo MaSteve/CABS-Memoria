@@ -197,4 +197,13 @@ y para las variables globales tenemos
   & \mbox{donde $\C_\AExp\eval{a} v = (c, v')$ y $var$ variable global entera} \\
   \C\eval{var = b\;} v &= (c\; await \mbox{ globalval!set}var(\Aux\, (v' - 1)), v') \\
   & \mbox{donde $\C_\BExp\eval{b} v = (c, v')$ y $var$ variable global booleana}
+\end{align*}\\
+
+Por último, hablaremos de la traducción del $\thread$. Como ya hemos comentado en las secciones anteriores, la traducción propuesta es similar a la de las llamadas a función con la diferencia de que no se espera a la resolución del valor futuro de retorno. Su regla es
+
+\begin{align*}
+\C\eval{\thread f(e_1 \dots e_n)} v^{1} &= (c_1 \dots c_n\\
+  &\mbox{Int$f\,(\Aux\, (v^{n+1})) =$ new Imp$f($globalval$)$} \\
+  &(\Aux\, (v^{n+1}))!((\Aux\, (v^{2} - 1)), \dots, (\Aux\, (v^{n+1} - 1))), v^{n+1} + 1) \\
+  &\mbox{donde $\C_\Exp\eval{e_i} v^{i} = (c_i, v^{i+1})$ (escogiendo $\C_\AExp$ o $\C_\BExp$ según convenga)} \\
 \end{align*}
