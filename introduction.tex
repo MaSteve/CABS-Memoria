@@ -1,0 +1,55 @@
+\chapter{Introducción}
+La idea de programa ha cambiado mucho a lo largo de la historia de la informática. En un principio, la mayoría de sistemas solo podían hacerse cargo de una única secuencia de instrucciones a la vez, lo que durante muchos años fue una limitación para los programas concurrentes.\\
+
+Hoy en día, con los avances en el hardware de las últimas décadas, las máquinas que usamos a diario permiten la ejecución simultanea de varios hilos de instrucción en sus procesadores multinúcleo. Es por esto que la mayoría de productos en el mercado están desarrollados con la idea de ejecutar varios hilos en paralelo.\\
+
+El problema que presenta la ejecución en paralelo es la presencia de una memoria compartida sobre la que los distintos hilos de ejecución pueden realizar modificaciones en cualquier instante de tiempo. Asociada a esta situación se encuentran los principales problemas de la programación concurrente como son los deathlocks, las condiciones de carrera o comportamientos impredecibles del programa.\\
+
+Sobre estos problemas se han abordado diferentes soluciones como pueden ser el uso de semáforos y cerrojos o implementaciones de algoritmos de más bajo nivel como el tie-braker, pero el uso de estos mecanismo puede ser complejo. Esto lleva a que la cantidad de errores presentes en un programa concurrente se mucho mayor que la que uno pueda cometer al desarrollar un programa con un solo hilo de ejecución.\\
+
+Es por esto, que en el terreno de la programación concurrente se sigue investigando para encontrar un modo definitivo que permita solucionar los problemas en el desarrollo de aplicaciones o que al menos permita indicar al programador si su código presenta posibles errores relacionados con una mala gestión de la concurrencia.\\
+
+Teoricamente, un programa se considera concurrente cuando cuenta con varias secuencias de instrucciones que pueden actuar sobre una memoria o estado y en el que la selección de que hilo o secuencia se ejecutará a continuación es escogida con cierta arbitrariedad. Más alla de tener varias instrucciones ejecutandose a la vez en el mismo procesador, nos podemos limitar a que solo una única instrucción se ejecuta a la vez pero desconocemos el orden en el que se ejecutará con respecto al resto de instrucciones. Esta noción es conocida como interleaving o entrelazamiento.\\
+
+Uno de los primeros asuntos estudiados es determinar, por ejemplo, el estado final al que se llega ejecutando un programa concurrente. Se entiende que la presencia de interleavings introduce cierta incertidumbre como podemos ver en el siguiente ejemplo:
+
+\begin{lstlisting}
+  int var;
+
+  proc f1() {
+    var := 1;
+  }
+
+  proc f2() {
+    var := 2;
+  }
+\end{lstlisting}
+
+Supongamos que $f1$ y $f2$ se ejecutan en paralelo. Cada una de ellas cuenta con una única instrucción de asignación sobre la variable $var$. Por lo que hemos comentado anteriormente, nuestro ordenador elegirá entre las dos secuencias de datos cual de ellas ejecutar en el siguiente paso. Digamos que primero se escoge la secuencia de $f1$ con lo que llegamos a un estado en el que $var = 1$. A continuación elegirá $f2$ puesto que la otra secuencia se habrá quedado vacia y destruirá el valor anteriormente asignado llegando al estado en el que $var = 2$.\\
+
+Sin embargo, si el interleaving hubiera el contrario, el valor destruido sería el $2$ y terminaríamos con $var = 1$. ¿Qué estado produce nuestro programa entonces? La respuesta es ambos, dependiendo de la ejecución. ¿Generalmente queremos esta situación? La respuesta suele ser no.\\
+
+En este ejemplo determinar los posibles estados finales de un programa es sencillo, pero no es el caso general. Los programas concurrentes padecen de una explosión exponencial en el número de interleavings en proporción al número de hilos y al número de instrucciones con los que cuentan.\\
+
+¿Y esta explosión exponencial afecta también al número de estados posibles a lo que se puede llegar con la ejecución de un programa concurrente cualquiera? La respuesta es depende. Veamos otro ejemplo.
+
+\begin{lstlisting}
+  int var1;
+  int var2;
+
+  proc f1() {
+    var1 := 1;  # 1
+    var1 := 2;  # 2
+  }
+
+  proc f2() {
+    var2 := 2;  # 3
+    var2 := 1;  # 4
+  }
+\end{lstlisting}
+
+En esta ocasión podemos notar que cada uno de los procedimientos asigna únicamente a una de las variables luego el estado final al que llega este programa es al que cumple que $var1 = 2$ y $var2 = 1$. Sin embargo, el número de interleavings es $5$, los que se corresponden con las secuencias ``$1, 2, 3, 4$'', ``$1, 3, 2, 4$'', ``$3, 1, 2, 4$'', ``$3, 1, 4, 2$'' y ``$3, 4, 1, 2$''.\\
+
+Luego aparentemente no todos los interleavings tienen la misma importancia y algunos de ellos (o en el caso de el ejemplo anterior todos) son equivalentes entre ellos lo que resulta en que estudiar todas las posibles ejecuciones a veces puede no implicar una amplia variedad de estados finales.\\
+
+Pero, por el momento, olvidémonos de cuando o no es necesario analizarlas todas ellas y pensemos en como de difícil puede presentársenos este problema.\\
