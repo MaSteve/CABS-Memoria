@@ -52,4 +52,18 @@ En esta ocasión podemos notar que cada uno de los procedimientos asigna únicam
 
 Luego aparentemente no todos los interleavings tienen la misma importancia y algunos de ellos (o en el caso de el ejemplo anterior todos) son equivalentes entre ellos lo que resulta en que estudiar todas las posibles ejecuciones a veces puede no implicar una amplia variedad de estados finales.\\
 
-Pero, por el momento, olvidémonos de cuando o no es necesario analizarlas todas ellas y pensemos en como de difícil puede presentársenos este problema.\\
+Pero, por el momento, olvidémonos de cuándo o no es necesario analizarlas todas ellas y pensemos en cómo de difícil puede presentársenos este problema.\\
+
+Empecemos por una instrucción como
+\begin{lstlisting}
+  int var = var1 + var2;
+\end{lstlisting}
+El significado que se puede dar de esta instrucción depende de qué consideramos que se puede ejecutar en paralelo y qué no. Es lo que se conoce como grano del paralelismo.\\
+
+Generalmente se hablan de dos opciones de grano. El grano grueso, considera que la suma de los variables del ejemplo se computa y se asigna en único paso. Por otro lado, el paralelismo de grano fino considera que en un primer paso se lee el valor almacenado en $var1$, en un segundo paso se procede del mismo modo con $var2$, en un tercer paso se computaría la suma de ambos valores y, por último, en un quinto paso se asignaría el resultado a $var$.\\
+
+Claramente, el número de interleavings con grano fino será mayor que con una política de grano grueso. ¿Cuál de estas dos por tanto es la que se suele usar? Depende. Las implementaciones reales de los ordenadores actuales suelen considerar un paralelismo de grano fino. Por ejemplo, los procesadores que soportan un conjunto de instrucciones de ARM, solo permiten operar con valores guardados en registro y por tanto deben realizar cada uno de los pasos anteriores contando el cargar valores de memoria a registro o viceversa más la ejecución de una instrucción aritmética. Este es el caso también de algunos lenguajes de programación como C/C++ o Java.\\
+
+También existe la posibilidad de controlar este comportamiento en un lenguaje de alto nivel en el que se garantice un grano grueso de paralelismo. De hecho, si aislamos la memoria de cada uno de los hilos de programa, el comportamiento de cualquiera de los dos granos es indiferente. Pero, ¿qué sentido tiene que cada uno de los hilos se ejecute con su propia región de memoria? Por si solo no tiene mucho sentido. Lo único que tendríamos son varios programas secuenciales que no interaccionan entre ellos y que a efectos teóricos no cuentan con ninguna concurrencia.\\
+
+No obstante, ¿qué ocurre si somos capaces de hacer que cada hilo sea capaz de comunicarse con el resto de secuencias mandando valores por un canal? En ese caso, sí tenemos algo más interesante. Este concepto es conocido como paso de mensajes.\\
