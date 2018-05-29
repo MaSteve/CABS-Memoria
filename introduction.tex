@@ -9,7 +9,7 @@ Sobre estos problemas se han abordado diferentes soluciones como pueden ser el u
 
 Es por esto, que en el terreno de la programación concurrente se sigue investigando para encontrar un modo definitivo que permita solucionar los problemas en el desarrollo de aplicaciones o que al menos permita indicar al programador si su código presenta posibles errores relacionados con una mala gestión de la concurrencia.\\
 
-Teoricamente, un programa se considera concurrente cuando cuenta con varias secuencias de instrucciones que pueden actuar sobre una memoria o estado y en el que la selección de que hilo o secuencia se ejecutará a continuación es escogida con cierta arbitrariedad. Más alla de tener varias instrucciones ejecutandose a la vez en el mismo procesador, nos podemos limitar a que solo una única instrucción se ejecuta a la vez pero desconocemos el orden en el que se ejecutará con respecto al resto de instrucciones. Esta noción es conocida como interleaving o entrelazamiento.\\
+Teóricamente, un programa se considera concurrente cuando cuenta con varias secuencias de instrucciones que pueden actuar sobre una memoria o estado y en el que la selección de que hilo o secuencia se ejecutará a continuación es escogida con cierta arbitrariedad. Más allá de tener varias instrucciones ejecutándose a la vez en el mismo procesador, nos podemos limitar a que solo una única instrucción se ejecuta a la vez pero desconocemos el orden en el que se ejecutará con respecto al resto de instrucciones. Esta noción es conocida como interleaving o entrelazamiento.\\
 
 Uno de los primeros asuntos estudiados es determinar, por ejemplo, el estado final al que se llega ejecutando un programa concurrente. Se entiende que la presencia de interleavings introduce cierta incertidumbre como podemos ver en el siguiente ejemplo:
 
@@ -25,7 +25,7 @@ Uno de los primeros asuntos estudiados es determinar, por ejemplo, el estado fin
   }
 \end{lstlisting}
 
-Supongamos que $f1$ y $f2$ se ejecutan en paralelo. Cada una de ellas cuenta con una única instrucción de asignación sobre la variable $var$. Por lo que hemos comentado anteriormente, nuestro ordenador elegirá entre las dos secuencias de datos cual de ellas ejecutar en el siguiente paso. Digamos que primero se escoge la secuencia de $f1$ con lo que llegamos a un estado en el que $var = 1$. A continuación elegirá $f2$ puesto que la otra secuencia se habrá quedado vacia y destruirá el valor anteriormente asignado llegando al estado en el que $var = 2$.\\
+Supongamos que $f1$ y $f2$ se ejecutan en paralelo. Cada una de ellas cuenta con una única instrucción de asignación sobre la variable $var$. Por lo que hemos comentado anteriormente, nuestro ordenador elegirá entre las dos secuencias de datos cual de ellas ejecutar en el siguiente paso. Digamos que primero se escoge la secuencia de $f1$ con lo que llegamos a un estado en el que $var = 1$. A continuación elegirá $f2$ puesto que la otra secuencia se habrá quedado vacía y destruirá el valor anteriormente asignado llegando al estado en el que $var = 2$.\\
 
 Sin embargo, si el interleaving hubiera el contrario, el valor destruido sería el $2$ y terminaríamos con $var = 1$. ¿Qué estado produce nuestro programa entonces? La respuesta es ambos, dependiendo de la ejecución. ¿Generalmente queremos esta situación? La respuesta suele ser no.\\
 
@@ -67,3 +67,19 @@ Claramente, el número de interleavings con grano fino será mayor que con una p
 También existe la posibilidad de controlar este comportamiento en un lenguaje de alto nivel en el que se garantice un grano grueso de paralelismo. De hecho, si aislamos la memoria de cada uno de los hilos de programa, el comportamiento de cualquiera de los dos granos es indiferente. Pero, ¿qué sentido tiene que cada uno de los hilos se ejecute con su propia región de memoria? Por si solo no tiene mucho sentido. Lo único que tendríamos son varios programas secuenciales que no interaccionan entre ellos y que a efectos teóricos no cuentan con ninguna concurrencia.\\
 
 No obstante, ¿qué ocurre si somos capaces de hacer que cada hilo sea capaz de comunicarse con el resto de secuencias mandando valores por un canal? En ese caso, sí tenemos algo más interesante. Este concepto es conocido como paso de mensajes.\\
+
+Cada hilo de ejecución ahora podrá en un momento dado escuchar el canal o escribir en él y modificar su comportamiento según los mensajes que reciba. Seguimos por tanto contando con los mismo problemas de la concurrencia reduciendo eso sí el número de interleavings a tener en cuenta.\\
+
+Imaginemos ahora que los mensajes mandados entre objetos son los que provocan la ejecución de los métodos que estos contienen. Esta es la idea en los modelos de concurrencia basados en actores.\\
+
+En estos modelos, cada objeto ejecuta sus tareas de forma concurrente con respecto a las del resto de objetos con la única restricción de que cada objeto solo puede ejecutar una única tarea a la vez. El resto de tareas esperan en una cola cuyo orden en principio no es determinable. El paso de mensajes indica qué método desea ejecutar un objeto (pudiendo ser uno propio o perteneciente a otro objeto) y, dependiendo del tipo de llamada, una tarea puede dejar paso a otra si aún no cuenta con los valores necesarios para proseguir.\\
+
+En este tipo de concurrencia se basan muchos lenguajes de programación como por ejemplo Erlang y Scala, además de ABS, el que va a ser nuestro compañero de viaje en este trabajo.\\
+
+La motivación de este trabajo es la creación de un lenguaje de programación básico que permita recrear una concurrencia entre procesos a nivel de grano fino y sobre el que podamos emplear las potentes herramientas ya elaboradas para el lenguaje ABS en la materia del análisis de programas concurrentes, como SYCO, al que dedicaremos un último tema.\\
+
+CABS es por tanto un lenguaje de programación con una sintaxis parecida a la de C con tipado estricto y estático, que incluye la posibilidad de usar funciones y arrays y que se mueve en el paradigma de la programación imperativa.\\
+
+En los siguientes capítulos describiremos la sintaxis y semántica de nuestro lenguaje así como la del lenguaje ABS sobre el que realizaremos la traducción de CABS. Posteriormente se demostrará la idea de la corrección de la traducción, lo que nos permitirá extrapolar las propiedades del código ABS traducido al código original en CABS. Entre estas propiedades pueden encontrarse las resultantes del uso de herramientas formales desarrolladas sobre ABS. Por último hablaremos de la implementación de esta traducción en un compilador de CABS a ABS desarrollado en Java usando JLex y CUP, herramientas empleadas en la asignatura de Procesadores del Lenguaje.\\
+
+¡Comencemos!
