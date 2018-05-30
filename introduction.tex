@@ -74,6 +74,8 @@ Imaginemos ahora que los mensajes mandados entre objetos son los que provocan la
 
 En estos modelos, cada objeto ejecuta sus tareas de forma concurrente con respecto a las del resto de objetos con la única restricción de que cada objeto solo puede ejecutar una única tarea a la vez. El resto de tareas esperan en una cola cuyo orden en principio no es determinable. El paso de mensajes indica qué método desea ejecutar un objeto (pudiendo ser uno propio o perteneciente a otro objeto) y, dependiendo del tipo de llamada, una tarea puede dejar paso a otra si aún no cuenta con los valores necesarios para proseguir.\\
 
+Se trata de una concurrencia donde el scheduler o planificador no puede desasignar a una tarea dentro de un objeto si esta no ha terminado o si no ha llegado a un punto de espera, funcionando cada objeto como una especie de monitor.\\
+
 En este tipo de concurrencia se basan muchos lenguajes de programación como por ejemplo Erlang y Scala, además de ABS, el que va a ser nuestro compañero de viaje en este trabajo.\\
 
 La motivación de este trabajo es la creación de un lenguaje de programación básico que permita recrear una concurrencia entre procesos a nivel de grano fino y sobre el que podamos emplear las potentes herramientas ya elaboradas para el lenguaje ABS en la materia del análisis de programas concurrentes, como SYCO, al que dedicaremos un último tema.\\

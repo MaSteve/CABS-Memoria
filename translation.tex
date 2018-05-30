@@ -24,19 +24,20 @@ Sin embargo, esta traducción nos lleva a un código ABS donde solo es posible u
 
 El motivo por el que ocurre esto es por el concepto de cog discutido anteriormente. (AÑADIR INTRO ABS!!!) En este programa existe un único cog que se corresponde con la instancia $prog$. Cuando la función $main$ llama asíncronamente a $f$ se realiza un paso de mensaje al mismo objeto, que lo almacena en una cola a la espera de poder ejecutarlo, es decir, a que termine la ejecución del mensaje actual que se corresponde con la llamada a $main$.\\
 
-Un intento para solucionar esta situación podría pasar por usar un $await$ en la llamada a $f$.
+Un intento para solucionar esta situación podría pasar por usar un $suspend$ tras llamar a $f$.
 
 \begin{lstlisting}
-   await this!f();
+  this!f();
+  suspend;
 \end{lstlisting}
 
-De este modo conseguiremos que el mensaje del $main$ pueda dejar paso a otro mensaje de la cola como la llamada a $f$ permitiendo los dos interleavings.\\
+De este modo conseguiremos que el mensaje del $main$ pueda dejar paso a otro mensaje de la cola como la llamada a $f$, permitiendo los dos interleavings.\\
 
-Pero, ¿qué ocurre si el cuerpo de $f$ y $main$ son un poco más largos como en el siguiente ejemplo?
+Pero, ¿qué ocurre si los cuerpos de $f$ y $main$ son un poco más largos como en el siguiente ejemplo?
 
 \lstinputlisting{code.2.2.txt}
 
-En este caso no hay forma de regresar a la función $main$ antes de que termine la ejecución de $f$ suponiendo que se escoja tras el await. De nuevo solo conseguimos la mitad de los 4 estados finales posibles.\\
+En este caso no hay forma de regresar a la función $main$ antes de que termine la ejecución de $f$ suponiendo que se escoja esta tras el $suspend$. De nuevo solo conseguimos la mitad de los 4 estados finales posibles.\\
 
 La única alternativa que nos queda es tener cada función en un cog distinto. Y realizar una instanciación cada vez que realicemos una llamada.\\
 
