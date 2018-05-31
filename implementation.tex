@@ -50,3 +50,22 @@ CUP (Construction of Useful Parsers) es un generador de analizadores sintáctico
 Con una sintaxis similar a la de YACC, se puede especificar la gramática del lenguaje para el que uno quiere crear un parser y CUP genera un analizador recogido en una clase de java.\\
 
 La gramática de CABS se encuentra en el fichero {\verb synt.cup } dentro del paquete {\verb parser }. La clase {\verb parser }, contenida también en el paquete anterior, es el archivo generado por CUP.
+
+\section{Estructura del compilador}
+
+El analizador sintáctico se apoya en gran medida en la estructura de nodos que el desarrollador del lenguaje determina para su creación. Puesto que tras la fase de parser se obtiene un primer árbol de sintaxis abstracta, es necesario ya para esta fase conocer cuáles son las clases empleadas para este proposito.\\
+
+La jerquía de los nodos empleados en CABS se divide en los siguientes paquetes:
+
+\begin{itemize}
+\item ControlStructures: contiene los bloques asociados a las estructuras de decisión como son los condicionales (IfNode) y lo bucles (LoopNode).
+\item Expressions: contiene los nodos del árbol de sintaxis abstracta asociados a las expresiones aritmético-lógicas. Las clases pertenecientes a este paquete son las asociadas a los enteros y booleanos (NumNode y BoolNode respectivamente), los operadores (OperatorNode), las expresiones binarias de dos operandos y un operador (BinaryExpression) y unarias de un operando y un operador (UnaryExpression).
+\item Functions: paquete formado con todas las clases asociadas a la declaración de funciones y procedimientos y sus llamadas, incluidas las de creación de un nuevo hilo.
+\item Variables: paquete compuesto por las clases empleadas en la declaración de variables y arrays y su uso en asignaciones y expresiones aritmético-lógicas.
+\end{itemize}
+
+Además de estos nodos, existen otros nodos más generales que permiten completar los árboles de sintaxis abstracta con el resto de construcciones típicas de un lenguaje de programación. Algunos de estos nodos son las asignaciones (AssNode), los bloques de código (BlockNode y GlobalBlockNode) o los tipos de retorno y de variables (TypeNode).\\
+
+La construcción del árbol de derivación se hace recursivamente, aprovechando la recursión propia de los analizadores sintácticos LALR. Posteriormente, el control del resto de fases es retomado por la clase {\verb Manager }, que se encarga de iniciar los sucesivos recorridos del árbol para inicializar las tablas de identificadores de símbolos, es decir, asociar a cada uso de una variable o función su declaración, y realizar la comprobación de tipos y la existencia de la función $main$.\\
+
+Por último, si llegados a este punto no hay ningún error de compilación, se procede a la generación de código, para lo cual, cada nodo cuenta con un método de traducción que propaga la llamada recursivamente a los nodos de los que depende. De este modo, aprovechando la estructura del árbol, se escribe de forma ordenada en un archivo las instrucciones del código destino.
