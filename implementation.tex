@@ -22,3 +22,17 @@ Puede decirse que la función actual de un compilador es la de traducir entre di
   \end{itemize}
 \item Back-end o fase de traducción: a partir del árbol de sintaxis abstracta y del resto de estructuras obtenidas en la etapa anterior, el compilador genera un código objeto entendible para la máquina o interprete para el que está destinado. En esta etapa también se pueden llevar a cabo algunas optimizaciones, pero hablar de ello no es nuestro objetivo.
 \end{itemize}
+
+\section{JLex}
+
+JLex\footnote{\url{https://www.cs.princeton.edu/~appel/modern/java/JLex/current/manual.html}} es un generador de analizadores léxicos en java desarrollado en la Universidad de Princeton. A partir de una especificación de los tokens de un lenguaje, JLex genera un autómata capaz de reconocerlos recogido en una clase de Java.\\
+
+El automata empleado en los analizadores léxicos es un autómata finito determinista, categoría en la que se encuentran los reconocedores de los lenguajes formales más básicos conocidos como lenguajes regulares.\\
+
+La especificación del analizador léxico de CABS se puede encontrar en el archivo {\verb parser.lex } dentro del paquete {\verb parser }. A su vez, dentro de este paquete se encuentran la clase {\verb Yytoken }, que será el tipo de objeto manipulado por el analizador sintáctico, y el archivo {\verb Yylex.java }, con las clases asociadas al autómata finito determinista.\\
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.36]{jlex.png}
+  \caption{Captura de las reglas para la generación del lexer.}
+\end{figure}
