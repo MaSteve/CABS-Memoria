@@ -31,8 +31,22 @@ El automata empleado en los analizadores léxicos es un autómata finito determi
 
 La especificación del analizador léxico de CABS se puede encontrar en el archivo {\verb parser.lex } dentro del paquete {\verb parser }. A su vez, dentro de este paquete se encuentran la clase {\verb Yytoken }, que será el tipo de objeto manipulado por el analizador sintáctico, y el archivo {\verb Yylex.java }, con las clases asociadas al autómata finito determinista.\\
 
-\begin{figure}[h]
+\begin{figure}
   \centering
-  \includegraphics[scale=0.36]{jlex.png}
+  \includegraphics[scale=0.35]{jlex.png}
   \caption{Captura de las reglas para la generación del lexer.}
 \end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.35]{parser.png}
+  \caption{Captura de las reglas de la gramática de CABS.}
+\end{figure}
+
+\section{CUP}
+
+CUP (Construction of Useful Parsers) es un generador de analizadores sintácticos LALR(1) desarrollado en Java y mantenido por la Universidad Técnica de Munich (TUM).\\
+
+Con una sintaxis similar a la de YACC, se puede especificar la gramática del lenguaje para el que uno quiere crear un parser y CUP genera un analizador recogido en una clase de java.\\
+
+La gramática de CABS se encuentra en el fichero {\verb synt.cup } dentro del paquete {\verb parser }. La clase {\verb parser }, contenida también en el paquete anterior, es el archivo generado por CUP.
