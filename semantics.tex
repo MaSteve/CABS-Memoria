@@ -1,10 +1,24 @@
-\chapter{Sintaxis y semántica (boceto)}
-\section{Sintaxis de CABS (Still in development)}
-Por el momento véase la especificación en el repositorio del compilador. Para sentar las bases de la notación que se usarán de ahora en adelante para definir la semántica diremos que $\P$ es un programa de nuestro lenguaje CABS formado por instrucciones globales como definición de variables globales (del estilo $t \var \;$ con tipo y nombre de variable) y definición de funciones.\\
+\chapter{Sintaxis y semántica}
+\section{Sintaxis de CABS}
+La mayoría de lenguajes de programación del mercado siguen una sintaxis común similiar a la que tiene el lenguaje original en el que se suelen basar que es C. A la hora de definir la sintaxis de CABS tomaremos como referencia de nuevo la de ese lenguaje.\\
 
-Las funciones estarán formadas por un tipo, un nombre de función, una lista de argumentos (posiblemente vacia), un cuerpo con instrucciónes $S \in \Stm$ y una expresión de retorno. Todo sigue una sintaxis sencilla C-like.\\
+Para sentar las bases de la notación que se usará de ahora en adelante para definir la semántica de nuestro lenguaje, diremos que $\P$ es un programa en CABS formado por instrucciones globales como lo son las declaraciones de variables globales y las declaraciones de funciones.\\
 
-Las instrucciones $S$ de un programa son las típicas de un lenguaje imperativo con asignaciones, operaciones aritmetico lógicas, instrucciones de control y, la joya de la corona, un $\thread$ para la ejecución de funciones con concurrencia imitando el comportamiento del fork en C.
+La declaración de variables constarán de un tipo y de un nombre de variable seguido de un punto y coma. Las funciones estarán formadas por un tipo de rotorno, un nombre de función, una lista de argumentos (es posible que sea vacia), un cuerpo con instrucciónes $S \in \Stm$ y una expresión de retorno. A modo de ilustración podemos ver el siguiente código
+
+\lstinputlisting{code.0.1.txt}
+
+donde se muestra la declaración de dos variables globales y de una función.\\
+
+Los tipos que manejaremos en nuestro lenguaje serán enteros y booleanos, cuyos identificadores serán \emph{int} y \emph{bool} respectivamente. Permitiremos además la declaración y el uso de arrays de enteros y booleanos en asignaciones y expresiones aritmético-lógicas y como argumentos de funciones. No se podrán usar como tipo de retorno. Un ejemplo del uso de arrays es el siguiente:
+
+\lstinputlisting{code.0.2.txt}
+
+Las instrucciones $S$ del cuerpo de una función de un programa son las típicas de un lenguaje imperativo, entre las que se encuentran las asignaciones, las operaciones aritmetico lógicas, las instrucciones de control, como los condicionales y los bucles y, la clave de un lenguaje con concurrencia, un $\thread$ para la ejecución de funciones en paralelo imitando el comportamiento de la librería pthread en C. Veamos un ejemplo que use esta última construcción:
+
+\lstinputlisting{code.0.3.txt}
+Como podemos ver, las llamadas concurrentes son similares a las llamadas a procedimientos habituales precedidas por la palabra reservada $\thread$.
+
 \section{Semántica de CABS (faltan arrays!!)}
 A continuación pasamos a hablar de la semántica del lenguaje CABS.
 \subsection{Preámbulo semántico}

@@ -1,0 +1,17 @@
+int array[10]; # Array global con 10 enteros
+int global_var; # Aventuramos que valdra 27, pero eso dependera de la semantica :)
+
+int f(int res, int arr[10]) {
+    int var;
+    var = 2 * res + arr[1];
+    return var;
+}
+
+int main() {
+    array[0] = 10;
+    array[1] = 5;
+    int res;
+    res = array[0] + 1;
+    global_var = f(res, array);
+    return 0;
+}

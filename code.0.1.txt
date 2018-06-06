@@ -1,0 +1,9 @@
+type global_var1;
+type global_var2;
+
+type nombre_de_funcion(args...) {
+  ...
+  codigo
+  ...
+  return exp
+}
