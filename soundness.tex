@@ -18,7 +18,9 @@ Una de las peculiaridades que tiene CABS, es permitir en sus expresiones una not
 
 Cada expresión utilizada en un programa CABS se corresponde de forma unívoca con una variable auxiliar en ABS que almacenará el valor de la expresión cuando este esté disponible. De este modo, en todo momento podemos hacer uso de esta información, aunque, por simplificar la notación, no esté presente en el estado del programa.\\
 
-Hecha esta introducción, procedemos a comprobar en primer lugar que las asignaciones hechas en CABS se corresponden con las de la traducción de estas a ABS, llegando de estados equivalentes a estados equivalentes en un solo paso.
+Hecha esta introducción, procedemos a comprobar en primer lugar que las asignaciones hechas en CABS se corresponden con las de la traducción de estas a ABS, llegando de estados equivalentes a estados equivalentes en un solo paso.\\
+
+En esta memoria expondremos solo el proceso para las expresiones ariméticas. El caso de las expresiones booleanas es completamente análogo salvo tipo y operadores empleados.
 
 \subsection{Variables locales}
 
@@ -34,7 +36,7 @@ En este caso, solo podemos aplicar para el proceso actual la regla $\assac$ que 
 
 En el lado de ABS aplicamos la regla de asignación sobre la variable auxiliar llegando al estado $(\O \leadsto (id, c, \RT \leadsto (loc \ass{aux\_var\_k}{\A \eval{n}_{loc, \attr}}, x = aux\_var\_k\;S_\ABS, t), t, \attr), \Cl)$ preservandose la equivalencia entre estados al asignar el valor de la expresión a su variable auxiliar.
 
-\subsubsection{Caso $x = f(\cdots)$ (simplificación sin argumentos!!!)}
+\subsubsection{Caso $x = f()$ (simplificación sin argumentos)}
 Sean los estados equivalentes $(\G, \F, \RP \leadsto (local:s,x = f()\;S))$ y $(\O \leadsto (id, c, \RT \leadsto (loc, \mbox{Intf }  aux\_var\_(k-1) = new\, \mbox{Impf}(globalval) \; Int\, aux\_var\_k = await\,auxi\_var\_(k-1)!f()\; x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)$ donde la variable auxiliar $k$-esima es la variable asignada a la expresión $f()$.\\
 
 La semántica de CABS nos permite usar la regla $\assac$ con la regla $\callab$ resultando en el estado $(\G, \F, \RP \leadsto (\nil:local:s, S_F\,x = \Unstack{a}\;S))$ donde $a$ es la expresión de retorno de $f$.\\
@@ -75,7 +77,7 @@ Desde este estado se puede aplicar la regla del $await$ que permite recoger el v
 
 que mantiene la equivalencia.\\
 
-De nuevo se nos presenta la discusión de los pasos múltiples. El mismo argumento que hemos presentado anteriormente es aplicable a esta situación.\\
+De nuevo se nos presenta la discusión de los pasos múltiples. El mismo argumento que hemos presentado anteriormente es aplicable a esta situación y podemos extender la equivalencia de estados a los estados intermedios por los que se pasa en la semántica de ABS para llevar a cabo el return.\\
 
 Cabe destacar que el concepto de desapilar un entorno en CABS queda reflejado en el hecho de que el objeto con el ámbito superior no vuelve a ser usado y queda vacío de tareas.
 
@@ -94,7 +96,7 @@ donde $c_1$ es el código asociado a $a_1$, $c_2$ el asociado a $a_2$ y $aux\_va
 
 En concreto tenemos que la última instrucción de $c_1$, por el modo en que hemos definido la traducción, se corresponde con una asignación a su variable auxiliar. Por el modo en que están definidas las expresiones aritméticas, podemos aplicar inducción estructural con lo que, por hipotesis de inducción tenemos que los estados equivalentes $(\G, \F, \RP \leadsto (local:s,x = a_1\;S))$ y $(\O \leadsto (id, c, \RT \leadsto (loc, c_1\,x = aux\_var\_k_1\; S_\ABS, t), t, \attr), \Cl)$ llegan en un solo paso a los estados equivalentes $(\G, \F, \RP \leadsto (local:s,x = a_1'\;S))$ y $(\O \leadsto (id, c, \RT \leadsto (loc, c_1'\,x = aux\_var\_k_1\; S_\ABS, t), t, \attr), \Cl)$.\\
 
-Teniendo en cuenta esto y el lema (escribir lema!!! La idea es que si tienes como código $S_1$ y un estado $s$ y se ejecuta un paso para llegar a $S_1'$ y $s'$ tenemos que de $S_1 S_2$ y $s$ pasamos a $S_1' S_2$ y $s'$), llegamos a que de los estados originales llegamos en un paso a los estados $(\G, \F, \RP \leadsto (local:s,x = a_1' \odot a_2\;S))$ y
+Teniendo en cuenta esto y que si tenemos un código en ABS, $S_1$, que en un paso desde un estado dado al que denotaremos por $s$ se llega a un estado $s'$ con código $S_1'$ entonces tendríamos un comportamiento similar con el código $S_1 S_2$ y $S_1' S_2$ (en otras palabras, el concatenar código por detrás no altera el significado de los estados intermedios), llegamos a que de los estados originales llegamos en un paso a los estados $(\G, \F, \RP \leadsto (local:s,x = a_1' \odot a_2\;S))$ y
 \begin{multline*}
   (\O \leadsto (id, c, \RT \leadsto (loc, c_1' c_2 \,Int\,aux\_var\_k\ = aux\_var\_k_1 \odot aux\_var\_k_2 \;\\
   x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)
@@ -117,12 +119,14 @@ Podemos considerar la llamada a una función con argumentos o la instrucción un
 
 El proceder con estos es identico en el sentido de aplicar la hipótesis de inducción con las subexpresiones y componer de nuevo con el operador. La llamada final a la función cuando están preparados todos los operandos o la ejecución del unstack están reflejados ya en los casos base presentados al principio de la subsección.
 
-\subsection{Variables globales (TODO!!!)}
+\subsection{Variables globales}
+
+El uso de variables globales no altera el argumento que hemos seguido anteriormente para las variables locales. La diferencia que existe es la necesidad de hacer varios pasos extra tanto para lecturas como para escrituras en el lado de ABS. Las llamadas al objeto globalval pausan el hilo de ejecución desde el que se llaman al ir precedidas de un await. La semántica de ABS, al emplear el paradigma de concurrencia de actores, nos permite ver estas llamadas como si fueran atómicas, de modo que, se pueden obviar los pasos intermedios de selección de tarea y paso de mensaje para el objeto de variables globales y entender que el proceso de espera del await es análogo al que uno puede encontrar en CABS cuando uno de los elementos de la lista $\RP$ no se ejecuta porque la semántica ha elegido arbitrariamente escoger otro. Dicho esto y lo anteriormente discutido en el capítulo de traducción podemos concluir la corrección de la traducción en el uso de variables globales.
 
 \section{Corrección del resto de instrucciones}
 
 \subsubsection{Declaraciones de variable}
-Este caso es inmediato puesto que por definición en CABS una declaración inicializa la variable a cero (o false para los booleanos) a nivel semántico y en nuestra traducción forzamos esta situación con una declaración y una asignación. En ambas situaciones, con las reglas $\declic$ o $\declbc$ de CABS y las reglas (!!!) de ABS, llegamos en un paso a estados equivalentes.
+Este caso es inmediato puesto que por definición en CABS una declaración inicializa la variable a cero (o false para los booleanos) a nivel semántico y en nuestra traducción forzamos esta situación con una declaración y una asignación. En ambas situaciones, con las reglas $\declic$ o $\declbc$ de CABS y las reglas $\decla$ y $\declb$ de ABS, llegamos en un paso a estados equivalentes.
 
 \subsubsection{Caso if}
 El if vuelve a presentar una situación similar a la que hemos tenido con las expresiones aritméticas y la que hemos omitido para las expresiones booleanas.\\
