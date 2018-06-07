@@ -292,3 +292,35 @@ donde $var$ es una variable entera. Para variables boolenas las regla es análog
 \end{prooftree*}
 
 \end{landscape}
+
+\subsection{Ejemplos}
+
+Sea el ejemplo en CABS
+\lstinputlisting{code.0.3.txt}
+Tras aplicar las reglas $\init$ y $start$ nos encontraremos en el estado
+$$
+(\G, \F, (\nil, \thread \,f(1)\;\thread \,f(2)\;))
+$$
+La primera regla que podemos ejecutar es $\threadcb$ lo que nos lleva al estado
+$$
+(\G, \F, (\nil\ass{value}{1}, var = value\;):(\nil, \thread \,f(2)\;))
+$$
+A continuación, es posible que se siga ejecutando el hilo inicial, lo que nos llevaría a
+$$
+(\G, \F, (\nil\ass{value}{1}, var = value\;):(\nil\ass{value}{2}, var = value\;):(\nil, \varepsilon))
+$$
+Ahora podemos escoger ejecutar el primer hilo que hemos creado y llevar a cabo la evaluación de la variable $value$ y su correspondiente asignación, lo que hacen dos pasos en nuestra semántica, el uso de $\assac$ y el uso de $\assvc$, llegando a
+$$
+(\G\ass{var}{1}, \F, (\nil\ass{value}{1}, \varepsilon):(\nil\ass{value}{2}, var = value\;):(\nil, \varepsilon))
+$$
+y a continuación puede ejecutarse el siguiente hilo que de una forma análoga nos conduce al estado
+$$
+(\G\ass{var}{2}, \F, (\nil\ass{value}{1}, \varepsilon):(\nil\ass{value}{2}, \varepsilon):(\nil, \varepsilon))
+$$
+Por último, aplicando tres veces la regla $\enac$ llegaríamos a
+$$
+(\G\ass{var}{2}, \F, [])
+$$
+que nos marca el estado de fin de ejecución.\\
+
+Como hemos podido ver, en un instante dado es posible que podamos elegir entre varias reglas, lo que refleja el indeterminismo de la concurrencia.
