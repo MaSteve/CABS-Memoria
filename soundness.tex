@@ -37,7 +37,7 @@ En el lado de ABS aplicamos la regla de asignación sobre la variable auxiliar l
 \subsubsection{Caso $x = f(\cdots)$ (simplificación sin argumentos!!!)}
 Sean los estados equivalentes $(\G, \F, \RP \leadsto (local:s,x = f()\;S))$ y $(\O \leadsto (id, c, \RT \leadsto (loc, \mbox{Intf }  aux\_var\_(k-1) = new\, \mbox{Impf}(globalval) \; Int\, aux\_var\_k = await\,auxi\_var\_(k-1)!f()\; x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)$ donde la variable auxiliar $k$-esima es la variable asignada a la expresión $f()$.\\
 
-La semántica de CABS nos permite usar la regla $\assac$ con la regla $\calla$ resultando en el estado $(\G, \F, \RP \leadsto (\nil:local:s, S_F\,x = \Unstack{a}\;S))$ donde $a$ es la expresión de retorno de $f$.\\
+La semántica de CABS nos permite usar la regla $\assac$ con la regla $\callab$ resultando en el estado $(\G, \F, \RP \leadsto (\nil:local:s, S_F\,x = \Unstack{a}\;S))$ donde $a$ es la expresión de retorno de $f$.\\
 
 Por otro lado, en la semántica de ABS, podemos aplicar primero la regla de creacción de objetos y a continuación la regla de llamada síncrona, resultando el estado
 \begin{multline*}
@@ -177,7 +177,7 @@ Por simplicidad en este trabajo hablaremos del caso de las funciones sin paráme
 
 Sean, por tanto, los estados equivalentes $(\G, \F, \RP \leadsto (local:s, \thread \,\func()\;S))$ de CABS y $(\O \leadsto (id, c, \RT \leadsto (loc,  \mbox{Int$f$ } aux\_var\_k = new\, \mbox{Imp$f$}(globalval)\; aux\_var\_k!f()\; S_\ABS, t), t, \attr), \Cl)$ de ABS.\\
 
-En la semántica de CABS, podemos usar la regla $\threadc$ que en un paso nos lleva al estado $(\G, \F, (\RP \cup (\nil:[], S_F)) \leadsto (local:s, S)$ con lo que ya habríamos terminado con la creación del proceso, donde $S_F$ es el código de la función $f$ que pasará a ejecutarse en paralelo.\\
+En la semántica de CABS, podemos usar la regla $\threadcb$ que en un paso nos lleva al estado $(\G, \F, (\RP \cup (\nil:[], S_F)) \leadsto (local:s, S)$ con lo que ya habríamos terminado con la creación del proceso, donde $S_F$ es el código de la función $f$ que pasará a ejecutarse en paralelo.\\
 
 En el caso de ABS, aplicando en un primer lugar la regla de creación de objetos llegaríamos a $(\O:(id', \mbox{Imp$f$}, [], \perp, \attr') \leadsto (id, c, \RT \leadsto (loc \ass{aux\_var\_k}{id'}, aux\_var\_k!f()\; S_\ABS, t), t, \attr), \Cl)$. Desde este estado el único objeto capaz de mandar tareas al nuevo objeto creado es el identificado por $id$ por tener en las variables locales de su tarea actual el identificador del nuevo objeto. Por tanto, la siguiente instrucción que se ejecuta, al aplicar la regla de paso de mensajes, nos lleva al estado $(\O:(id', \mbox{Imp$f$}, (\nil, S_\ABS^F, t''), \perp, \attr') \leadsto (id, c, \RT \leadsto (loc \ass{aux\_var\_k}{id'}, S_\ABS, t), t, \attr), \Cl)$ con lo que llegaríamos a un estado equivalente al que hemos llegado en la semántica de CABS.\\
 

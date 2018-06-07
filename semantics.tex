@@ -56,13 +56,12 @@ $$
 Con esto conseguimos crear un nuevo marco de ejecución con el código inicial de main. Nótese que la función inicializa la pila de ambitos de variables locales con el ambito $\nil$ que no contiene ninguna variable inicializada.
 
 \subsubsection{Semántica (Expresiones aritmético-lógicas).}
-(Primero hablemos de las funciones aritméticas que ya son un jaleo. Se trata de expresiones con operandos, numerales y variables junto con llamadas funciones (por el momento como si no tuvieran argumentos!!!)).\\
+Las primeras reglas que queremos definir serán las de las expresiones aritmético-lógicas. Nuestro lenguaje permite la llamada a funciones con valor de retorno, lo que hace que tengamos que, desde un principio, manejar unas reglas que garanticen la no terminación de la evaluación de las expresiones. Será por ello que tengamos que dar una definición de una función parcial que dada una expresión nos devuelva otra expresión más simplificada, pudiendo emplear el estado del programa para ello y permitiendo modificaciones del mismo, hasta eventualmente quedarnos con un valor $v \in \V$, lo que consideramos la expresión más simplificada.\\
 
-Tenemos que definir una función (parcial) que dada una expresión (aritmética reducida) nos devuelva otra expresión más simplificada, pudiendo emplear un estado para ello (permitiendo modificaciones del mismo), hasta eventualmente quedarnos con un valor (entero por el momento).\\
-
-De ahora en adelante nos referimos por el conjunto $\AExp$ a la unión de expresiones aritméticas y valores enteros.\\
+Empecemos por dar una definición en el caso de las expresiones enteras. De ahora en adelante nos referimos por el conjunto $\AExp$ a la unión de expresiones aritméticas y valores enteros.\\
 
 Buscamos definir la función semántica $\A: (\AExp \times \State) \hookrightarrow (\AExp \times \State)$ mediante las siguientes reglas:
+\begin{landscape}
 
 \begin{prooftree*}
     \Infer[left label=$\numa$]0{\st{n}{(\G, \F, \RP \leadsto (s, S))} \staexp \st{\N \eval{n}}{(\G, \F, \RP \leadsto (s, S))}}
@@ -70,8 +69,7 @@ Buscamos definir la función semántica $\A: (\AExp \times \State) \hookrightarr
 
 \begin{prooftree*}
         \hypo{local(x) = v}
-        \hypo{G(x) = \Undef}
-    \Infer[left label=$\varal$]2{\st{x}{(\G, \F, \RP \leadsto (local:s, S))} \staexp \st{v}{(\G, \F, \RP \leadsto (local:s, S))}}
+    \Infer[left label=$\varal$]1{\st{x}{(\G, \F, \RP \leadsto (local:s, S))} \staexp \st{v}{(\G, \F, \RP \leadsto (local:s, S))}}
 \end{prooftree*}
 
 \begin{prooftree*}
@@ -79,6 +77,8 @@ Buscamos definir la función semántica $\A: (\AExp \times \State) \hookrightarr
         \hypo{local(x) = undef}
     \Infer[left label=$\varag$]2{\st{x}{(\G, \F, \RP \leadsto (local:s, S))} \staexp \st{v}{(\G, \F, \RP \leadsto (local:s, S))}}
 \end{prooftree*}
+
+donde $x$ es variable entera.
 
 \begin{prooftree*}
         \hypo{\st{a_1}{(\G, \F, \RP \leadsto (s, S))} \staexp \st{a_1'}{(\G, \F, \RP \leadsto (s', S'))}}
@@ -94,6 +94,8 @@ Buscamos definir la función semántica $\A: (\AExp \times \State) \hookrightarr
     \Infer[left label=$\opac$]0{\st{v_1 \bigodot v_2}{(\G, \F, \RP \leadsto (s, S))} \staexp \st{v_1 \bigodot_{\N} v_2}{(\G, \F, \RP \leadsto (s, S))}}
 \end{prooftree*}
 
+donde $\bigodot$ es alguno de los operadores del lenguaje que tienen su homólogo semántico $\bigodot_{\N}$.
+
 \begin{prooftree*}
         \hypo{\st{a}{(\G, \F, \RP \leadsto (s, S))} \staexp \st{a'}{(\G, \F, \RP \leadsto (s', S'))}}
     \Infer[left label=$\unaa$]1{\st{\Unstack{a}}{(\G, \F, \RP \leadsto (s, S))} \staexp \st{\Unstack{a'}}{(\G, \F, \RP \leadsto (s', S'))}}
@@ -104,9 +106,100 @@ Buscamos definir la función semántica $\A: (\AExp \times \State) \hookrightarr
 \end{prooftree*}
 
 \begin{prooftree*}
-        \hypo{\F(\func) = (int, S_F, [], a)}
-    \Infer[left label=$\calla$]1{\st{\func()}{(\G, \F, \RP \leadsto (local:s, S))} \staexp \st{\Unstack{a}}{(\G, \F, \RP \leadsto (\nil:local:s, S_F\;S))}}
+      \hypo{\F(\func) = (int, S_F, args_F, a)}
+      \hypo{check\_args(args_F, args)}
+      \hypo{eval(args) = args'}
+    \Infer[left label=$\callaa$]3{\st{\func(args)}{(\G, \F, \RP \leadsto (local:s, S))} \staexp \st{\func(args')}{(\G, \F, \RP \leadsto (local:s, S))}}
 \end{prooftree*}
+
+\begin{prooftree*}
+      \hypo{\F(\func) = (int, S_F, args_F, a)}
+      \hypo{check\_args(args_F, args)}
+      \hypo{eval(args) = v_1:\dots:v_n}
+    \Infer[left label=$\callab$]3{\st{\func(args)}{(\G, \F, \RP \leadsto (local:s, S))} \staexp \st{\Unstack{a}}{(\G, \F, \RP \leadsto (\nil\ass{args}{v_1:\dots:v_n}:local:s, S_F\;S))}}
+\end{prooftree*}
+donde $check\_args$ es una función auxiliar que comprueba la corrección de tipos y el número de argumentos y donde $eval$ indica que los argumentos de la función son evaluados hasta conseguir los valores de $\V$ finales, haciendo uso de las reglas de la semántica de expresiones. De este modo se justifica que para ejecutar una función sea necesario evaluar uno a uno los argumentos de la función. De hecho, $eval$ puede hacer uso de las reglas para expresiones booleanas en el caso de las funciones con parámetros mixtos. Dichas reglas son las que definen $\Bb: (\BExp \times \State) \hookrightarrow (\BExp \times \State)$.
+
+\begin{prooftree*}
+    \Infer[left label=$\ttr$]0{\st{true}{(\G, \F, \RP \leadsto (s, S))} \stbexp \st{\text{true}}{(\G, \F, \RP \leadsto (s, S))}}
+\end{prooftree*}
+
+\begin{prooftree*}
+    \Infer[left label=$\ffr$]0{\st{false}{(\G, \F, \RP \leadsto (s, S))} \stbexp \st{\text{false}}{(\G, \F, \RP \leadsto (s, S))}}
+\end{prooftree*}
+
+\begin{prooftree*}
+        \hypo{local(x) = v}
+    \Infer[left label=$\bvaral$]1{\st{x}{(\G, \F, \RP \leadsto (local:s, S))} \stbexp \st{v}{(\G, \F, \RP \leadsto (local:s, S))}}
+\end{prooftree*}
+
+\begin{prooftree*}
+        \hypo{G(x) = v}
+        \hypo{local(x) = undef}
+    \Infer[left label=$\bvarag$]2{\st{x}{(\G, \F, \RP \leadsto (local:s, S))} \staexp \st{v}{(\G, \F, \RP \leadsto (local:s, S))}}
+\end{prooftree*}
+
+donde $x$ es una variable booleana.
+
+\begin{prooftree*}
+        \hypo{\st{b_1}{(\G, \F, \RP \leadsto (s, S))} \stbexp \st{b_1'}{(\G, \F, \RP \leadsto (s', S'))}}
+    \Infer[left label=$\bopaa$]1{\st{b_1 \bigodot b_2}{(\G, \F, \RP \leadsto (s, S))} \stbexp \st{b_1' \bigodot b_2}{(\G, \F, \RP \leadsto (s', S'))}}
+\end{prooftree*}
+
+\begin{prooftree*}
+        \hypo{\st{b_2}{(\G, \F, \RP \leadsto (s, S)))} \stbexp \st{b_2'}{(\G, \F, \RP \leadsto (s', S')))}}
+    \Infer[left label=$\bopab$]1{\st{v \bigodot b_2}{(\G, \F, \RP \leadsto (s, S)))} \stbexp \st{v \bigodot b_2'}{(\G, \F, \RP \leadsto (s', S')))}}
+\end{prooftree*}
+
+\begin{prooftree*}
+    \Infer[left label=$\bopac$]0{\st{v_1 \bigodot v_2}{(\G, \F, \RP \leadsto (s, S))} \stbexp \st{v_1 \bigodot_{\Bb} v_2}{(\G, \F, \RP \leadsto (s, S))}}
+\end{prooftree*}
+
+donde $\bigodot$ es alguno de los operadores del lenguaje que tienen su homólogo semántico $\bigodot_{\Bb}$ booleano.
+
+\begin{prooftree*}
+        \hypo{\st{a_1}{(\G, \F, \RP \leadsto (s, S))} \staexp \st{a_1'}{(\G, \F, \RP \leadsto (s', S'))}}
+    \Infer[left label=$\abopaa$]1{\st{a_1 \bigodot a_2}{(\G, \F, \RP \leadsto (s, S))} \stbexp \st{a_1' \bigodot a_2}{(\G, \F, \RP \leadsto (s', S'))}}
+\end{prooftree*}
+
+\begin{prooftree*}
+        \hypo{\st{a_2}{(\G, \F, \RP \leadsto (s, S)))} \staexp \st{a_2'}{(\G, \F, \RP \leadsto (s', S')))}}
+    \Infer[left label=$\abopab$]1{\st{v \bigodot a_2}{(\G, \F, \RP \leadsto (s, S)))} \stbexp \st{v \bigodot a_2'}{(\G, \F, \RP \leadsto (s', S')))}}
+\end{prooftree*}
+
+\begin{prooftree*}
+    \Infer[left label=$\abopac$]0{\st{v_1 \bigodot v_2}{(\G, \F, \RP \leadsto (s, S))} \stbexp \st{v_1 \bigodot_{\Bb} v_2}{(\G, \F, \RP \leadsto (s, S))}}
+\end{prooftree*}
+
+donde $\bigodot$ es alguno de los operadores del lenguaje que tienen su homólogo semántico $\bigodot_{\A\Bb}$ de comparación de enteros.
+
+\begin{prooftree*}
+        \hypo{\st{b}{(\G, \F, \RP \leadsto (s, S))} \stbexp \st{b'}{(\G, \F, \RP \leadsto (s', S'))}}
+    \Infer[left label=$\bunaa$]1{\st{\Unstack{b}}{(\G, \F, \RP \leadsto (s, S))} \stbexp \st{\Unstack{b'}}{(\G, \F, \RP \leadsto (s', S'))}}
+\end{prooftree*}
+
+\begin{prooftree*}
+    \Infer[left label=$\bunab$]0{\st{\Unstack{v}}{(\G, \F, \RP \leadsto (local:s, S))} \stbexp \st{v}{(\G, \F, \RP \leadsto (s, S))}}
+\end{prooftree*}
+
+\begin{prooftree*}
+      \hypo{\F(\func) = (bool, S_F, args_F, a)}
+      \hypo{check\_args(args_F, args)}
+      \hypo{eval(args) = args'}
+    \Infer[left label=$\bcallaa$]3{\st{\func(args)}{(\G, \F, \RP \leadsto (local:s, S))} \stbexp \st{\func(args')}{(\G, \F, \RP \leadsto (local:s, S))}}
+\end{prooftree*}
+
+\begin{prooftree*}
+      \hypo{\F(\func) = (bool, S_F, args_F, a)}
+      \hypo{check\_args(args_F, args)}
+      \hypo{eval(args) = v_1:\dots:v_n}
+    \Infer[left label=$\bcallab$]3{\st{\func(args)}{(\G, \F, \RP \leadsto (local:s, S))} \stbexp \st{\Unstack{a}}{(\G, \F, \RP \leadsto (\nil\ass{args}{v_1:\dots:v_n}:local:s, S_F\;S))}}
+\end{prooftree*}
+
+que repiten de forma similar lo que ya teníamos para la llamada de funciones ariméticas.
+
+%%%%%%%%%%%
+%%%%%%%%%%%
 
 \subsubsection{Semántica (Instrucciones). (Hay que meter más tipos, limitar declaraciones y un largo etc)}
 \begin{prooftree*}
@@ -131,6 +224,8 @@ Buscamos definir la función semántica $\A: (\AExp \times \State) \hookrightarr
         \hypo{is\_global(var)}
     \Infer[left label=$\assvcg$]1{(\G, \F, \RP \leadsto (local:s,\var = v\;S)) \stns (\G\ass{\var}{v}, \F, \RP \leadsto (local:s, S))}
 \end{prooftree*}
+
+donde $var$ es una variable entera. Para variables boolenas las regla es análoga.
 
 %%%%%%%%%
 \iffalse
@@ -183,6 +278,17 @@ Buscamos definir la función semántica $\A: (\AExp \times \State) \hookrightarr
 \end{prooftree*}
 
 \begin{prooftree*}
-        \hypo{\F(\func) = (t, S_F, [], e)}
-    \Infer[left label=$\threadc$]1{(\G, \F, \RP \leadsto (s, \thread \,\func()\;S)) \stns (\G, \F, (\RP \cup (\nil:[], S_F)) \leadsto (s, S))}
+      \hypo{\F(\func) = (t, S_F, args_F, e)}
+      \hypo{check\_args(args_F, args)}
+      \hypo{eval(args) = args'}
+    \Infer[left label=$\threadca$]3{(\G, \F, \RP \leadsto (s, \thread \,\func(args)\;S)) \stns (\G, \F, (\RP \leadsto (s,  \thread \,\func(args')\;S))}
 \end{prooftree*}
+
+\begin{prooftree*}
+      \hypo{\F(\func) = (t, S_F, args_F, e)}
+      \hypo{check\_args(args_F, args)}
+      \hypo{eval(args) = v_1:\dots:v_n}
+    \Infer[left label=$\threadcb$]3{(\G, \F, \RP \leadsto (s, \thread \,\func(args)\;S)) \stns (\G, \F, (\RP \cup (\nil\ass{args}{v_1:\dots:v_n}:[], S_F)) \leadsto (s, S))}
+\end{prooftree*}
+
+\end{landscape}
