@@ -1,0 +1,50 @@
+module Cabs;
+import * from ABS.StdLib;
+
+interface GLOBAL {
+  Int getvar();
+  Unit setvar(Int val);
+}
+class GlobalVariables() implements GLOBAL {
+  Int var = 0;
+
+  Int getvar() {
+    return var;
+  }
+
+  Unit setvar(Int val) {
+    var = val;
+  }
+}
+
+interface Intf {
+  Unit f(Int value);
+}
+
+interface Intmain {
+  Int main();
+}
+
+class Impf(GLOBAL globalval) implements Intf {
+  Unit f(Int value) {
+    await globalval!setvar(value);
+  }
+}
+
+class Impmain(GLOBAL globalval) implements Intmain {
+  Int main() {
+    Intf funcf1 = new Impf(globalval);
+    funcf1!f(1);
+
+    Intf funcf2 = new Impf(globalval);
+    funcf2!f(2);
+
+    return 0;
+  }
+}
+
+{
+  GLOBAL globalval = new GlobalVariables();
+  Intmain prog = new Impmain(globalval);
+  await prog!main();
+}

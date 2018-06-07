@@ -163,4 +163,48 @@ Con estas definiciones básicas procedemos a dar una definción formal de la sem
 
 \section{Extensión semántica y sintáctica}
 
-Además de las definiciones anteriores asociadas al lenguaje ABS, puede resultar interesante añadir una serie de estructuras auxiliares a modo de azúcar sintáctico que puedan facilitarnos el camino en los siguientes capítulos de este trabajo.\\
+Además de las definiciones anteriores asociadas al lenguaje ABS, puede resultar interesante añadir una serie de estructuras auxiliares a modo de azúcar sintáctico que puedan facilitarnos el camino en los siguientes capítulos de este trabajo. Es por ello por lo que hemos introducido en la semántica la notación $await\,t$ para indicar que esperamos a que termine la tarea con identificador $t$ y que recuperamos su valor de retorno. Este tipo de construcción y otras más pueden no existir en el lenguaje original ABS, pero nosotros haremos uso de ellas como mera notación para expresar el significado del resto de construcciones sí presentes en el lenguaje.\\
+
+\section{Ejemplos}
+
+Sea el código en ABS
+\lstinputlisting{code.1.6.txt}
+
+Tras ejecutar el código de inicialización, en el que creamos el objeto $globaval$ e instanciamos un objeto que contiene la implementación de $main$ a la que llamamos con la instrucción $await\, prog!main()\;$, nos encontramos en un estado
+$$
+((0, GlobalVariables, [], \perp, \nil\ass{var}{0}):(1, Impmain, (\nil, S, 0), \perp, \nil\ass{globalval}{0}), \Cl)
+$$
+
+donde $S$ es el código de $main$. La taréa 0 del objeto 1 puede entrar a ejecutarse con la regla $\selabs$ y podemos suponer que se ejecuta por completo, dando lugar por el camino a la creación de dos objetos de la clase $Impf$, lo que nos lleva al estado
+\begin{multline*}
+  ((0, GlobalVariables, [], \perp, \nil\ass{var}{0}):\\
+  (1, Impmain, (\nil, \epsilon(0), 0), \perp, \nil\ass{globalval}{0}):\\
+  (2, Impf, (\nil\ass{value}{1}, S', 1), \perp, \nil\ass{globalval}{0}):\\
+  (3, Impf ,(\nil\ass{value}{2}, S', 2), \perp, \nil\ass{globalval}{0}), \Cl)
+\end{multline*}
+donde $S' = await\, globalval!setvar(value)\;$.\\
+
+En cualquier momento pueden ser seleccionadas las tareas 1 y 2 en sus respectivos objetos, creando dos tareas en el objeto 0, asociadas a cada una de las asignaciones sobre la variable global $var$. Llegando por ejemplo al estado
+\begin{multline*}
+  ((0, GlobalVariables, (\nil\ass{val}{1}, S'', 3):(\nil\ass{val}{2}, S'',4), \perp, \nil\ass{var}{0}):\\
+  (1, Impmain, (\nil, \epsilon(0), 0), \perp, \nil\ass{globalval}{0}):\\
+  (2, Impf, (\nil\ass{value}{1}, await\,3, 1), \perp, \nil\ass{globalval}{0}):\\
+  (3, Impf ,(\nil\ass{value}{2}, await\,4, 2), \perp, \nil\ass{globalval}{0}), \Cl)
+\end{multline*}
+donde $S''$ es el código que asigna $val$ al atributo $var$ de la clase.\\
+
+Ahora la regla $\selabs$ puede escoger alguna de las dos tareas del objeto 0. Es en este punto donde la selección de tarea dará lugar a los dos entrelazamientos posibles del programa. Suponiendo que primero se ejecute la tarea 3 y posteriormente la tarea 4 se llega a
+\begin{multline*}
+  ((0, GlobalVariables, (\nil\ass{val}{1}, \varepsilon, 3):(\nil\ass{val}{2}, \varepsilon, 4), \perp, \nil\ass{var}{2}):\\
+  (1, Impmain, (\nil, \epsilon(0), 0), \perp, \nil\ass{globalval}{0}):\\
+  (2, Impf, (\nil\ass{value}{1}, await\,3, 1), \perp, \nil\ass{globalval}{0}):\\
+  (3, Impf ,(\nil\ass{value}{2}, await\,4, 2), \perp, \nil\ass{globalval}{0}), \Cl)
+\end{multline*}
+
+En este momento los $await$ de las tareas 1 y 2 pueden concluir y llegamos al estado final
+\begin{multline*}
+  ((0, GlobalVariables, (\nil\ass{val}{1}, \varepsilon, 3):(\nil\ass{val}{2}, \varepsilon, 4), \perp, \nil\ass{var}{2}):\\
+  (1, Impmain, (\nil, \epsilon(0), 0), \perp, \nil\ass{globalval}{0}):\\
+  (2, Impf, (\nil\ass{value}{1}, \varepsilon, 1), \perp, \nil\ass{globalval}{0}):\\
+  (3, Impf ,(\nil\ass{value}{2}, \varepsilon, 2), \perp, \nil\ass{globalval}{0}), \Cl)
+\end{multline*}
