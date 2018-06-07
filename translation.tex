@@ -6,32 +6,32 @@ Además de dichas estructuras, es necesario emplear algunos trucos para poder ve
 En este capítulo discutiremos este tema de una forma abstracta para posteriomente poder llevar a cabo la implementación de un compilador correcto.
 
 \section{Variables globales y funciones}
-La ausencia de memoría compartida entre los distintos cogs hace que la idea de variable global no sea inmediata. Del mismo modo, es necesario discutir el concepto de función al estilo de C, pese a que los métodos de una interfaz en ABS sean públicos y a primera vista similares.\\
+La ausencia de memoría compartida entre los distintos \emph{COGs} (Concurrent Object Group) o conjunto de tareas de un objeto hace que la idea de variable global no sea inmediata. Del mismo modo, es necesario discutir el concepto de función al estilo de C, pese a que los métodos de una interfaz en ABS sean públicos y a primera vista similares.\\
 
-Una primera aproximación vendría dada por el uso de una única clase en la que encapsular todo nuestro programa. Esta clase implementaría una interfaz con todas las cabeceras de las funciones de nuestro programa. Además contaría entre sus atributos las variables globales, consiguiendo de este modo una visibilidad completa desde cualquier punto del programa.\\
+Una primera aproximación vendría dada por el uso de una única clase en la que encapsular todo nuestro programa. Esta clase implementaría una interfaz con todas las cabeceras de las funciones de nuestro programa. Además contaría entre sus atributos con las variables globales, consiguiendo de este modo una visibilidad completa desde cualquier punto del programa.\\
 
 Veamos que ocurre con el siguiente código de ejemplo en CABS. En él se puede ver como se llama a la función $f$ con $\thread$ haciendo que las dos asignaciones de la variable $var1$ puedan entrelazarse.\\
 
 \lstinputlisting{example.txt}
 
-En otras palabras, queremos que nuestra traducción a ABS pueda llegar a ambos interleavings, es decir, que el valor final de $var1$ pueda ser $1$ o $2$.\\
+En otras palabras, queremos que nuestra traducción a ABS pueda llegar a ambos \emph{interleavings}, es decir, que el valor final de $var1$ pueda ser $1$ o $2$.\\
 
 Empleando la primera aproximación, obtendríamos un código similar al siguiente.
 
 \lstinputlisting{code.2.1.txt}
 
-Sin embargo, esta traducción nos lleva a un código ABS donde solo es posible uno de los dos interleavings (concretamente el que termina con $var1$ valiendo $2$).\\
+Sin embargo, esta traducción nos lleva a un código ABS donde solo es posible uno de los dos \emph{interleavings} (concretamente el que termina con $var1$ valiendo $2$).\\
 
-El motivo por el que ocurre esto es por el concepto de cog discutido anteriormente. (AÑADIR INTRO ABS!!!) En este programa existe un único cog que se corresponde con la instancia $prog$. Cuando la función $main$ llama asíncronamente a $f$ se realiza un paso de mensaje al mismo objeto, que lo almacena en una cola a la espera de poder ejecutarlo, es decir, a que termine la ejecución del mensaje actual que se corresponde con la llamada a $main$.\\
+El motivo por el que ocurre esto es por la cola de tareas del objeto que hemos discutido anteriormente. En este programa existe un único objeto que se corresponde con la instancia $prog$. Cuando la función $main$ llama asíncronamente a $f$ se realiza un paso de mensaje al mismo objeto, que lo almacena en una cola a la espera de poder ejecutarlo, es decir, a que termine la ejecución del mensaje actual que se corresponde con la llamada a $main$.\\
 
-Un intento para solucionar esta situación podría pasar por usar un $suspend$ tras llamar a $f$.
+Un intento para solucionar esta situación podría pasar por usar un $suspend$ tras llamar a $f$. Esto forzaría la deselección de la tarea actual y permitiría escoger entre retomarla o empezar con el otro mensaje que se encuentra en la cola.
 
 \begin{lstlisting}
   this!f();
   suspend;
 \end{lstlisting}
 
-De este modo conseguiremos que el mensaje del $main$ pueda dejar paso a otro mensaje de la cola como la llamada a $f$, permitiendo los dos interleavings.\\
+De este modo conseguiremos que el mensaje del $main$ pueda dejar paso a la llamada a $f$, permitiendo los dos \emph{interleavings}.\\
 
 Pero, ¿qué ocurre si los cuerpos de $f$ y $main$ son un poco más largos como en el siguiente ejemplo?
 
@@ -39,44 +39,46 @@ Pero, ¿qué ocurre si los cuerpos de $f$ y $main$ son un poco más largos como 
 
 En este caso no hay forma de regresar a la función $main$ antes de que termine la ejecución de $f$ suponiendo que se escoja esta tras el $suspend$. De nuevo solo conseguimos la mitad de los 4 estados finales posibles.\\
 
-La única alternativa que nos queda es tener cada función en un cog distinto. Y realizar una instanciación cada vez que realicemos una llamada.\\
+Como emplear un $suspend$ detrás de cada instrucción haría difícil de entender el código resultante, la única alternativa que nos queda es tener cada función en un objeto distinto y realizar una instanciación cada vez que queramos realizar una llamada.\\
 
-Esta situación resuelve los problemas anteriormente planteados porque cada cog actúa como si se ejecutara en un procesador independiente. Queda ahora resolver cómo conseguir que haya variables compartidas entre los distintos cogs.\\
+Esta situación resuelve los problemas anteriormente planteados porque cada cola de tareas de un objeto actúa como si se ejecutara en un procesador independiente. Queda ahora resolver cómo conseguir que haya variables compartidas entre los distintos COGs.\\
 
-La solución pasa por crear un cog independiente en el que se almacenen las variables globales como atributos a los que solo se pueda acceder a través de unos métodos getters y setters. Este cog sería el primero en crearse y se pasaría como parámetro en la creación de los sucesivos.\\
+La solución pasa por crear un objeto independiente en el que se almacenen las variables globales como atributos, a los que solo se pueda acceder a través de unos métodos \emph{getters} y \emph{setters}. Este objeto sería el primero en crearse y se pasaría como parámetro en la creación de los sucesivos como un parámetro de clase.\\
 
-Las llamadas a los mencionados getters and setters podrían hacerse usando una llamada asíncrona e inmediatamente haciendo un $await$ de esta. Este $await$ sería necesario tanto para lecturas (como se vio en la discusión de los Future (!!!!!)) como en las escrituras, puesto que un mismo cog podría intentar hacer dos escrituras seguidas sobre la misma variable y el orden de ellas debe mantenerse.\\
+Las llamadas a los mencionados \emph{getters} and \emph{setters} podrían hacerse usando una llamada asíncrona e inmediatamente haciendo un $await$ de esta. Este $await$ sería necesario tanto para lecturas (como se vio en la discusión de los tipos futuros en el capítulo anterior) como en las escrituras, puesto que un mismo objeto podría intentar hacer dos escrituras seguidas sobre la misma variable y el orden de ellas debe mantenerse. Esto último se puede ver en el siguiente ejemplo:
+\begin{lstlisting}
+  globalval!setvar(1);
+  globalval!setvar(2);
+\end{lstlisting}
 
-Usando esta idea el último ejemplo se podría traducir al siguiente código ABS:
+Si no realizamos un $await$ en las llamadas asíncronas, podríamos tener la situación en la que el \emph{scheduler} invirtiera el orden efectivo de ejecución de las llamadas, lo que daría un comportamiento no predecible en una situación en la que se esperaría siempre obtener el mismo resultado.\\
+
+Usando esta idea para las variables globales, el último ejemplo se podría traducir al siguiente código ABS:
 
 \lstinputlisting{code.2.3.txt}
 
-Analicemos por qué esto funciona. La ejecución de $f$ y del resto de la función $main$ se ejecutan ahora en paralelo. Ambas funciones tienen acceso al objeto $globalval$ por ser un parámetro de clase. Cuando $f$ o $main$ realizan una escritura sobre $var1$ llaman al método setter correspondiente. Puede ocurrir que uno de los dos cogs realice la llamada y obtenga el valor de retorno antes que el otro llame al método o que los dos llamen a la vez (relativamente) y hagan un await.\\
+Analicemos por qué esto funciona. La ejecución de $f$ y del resto de la función $main$ se ejecutan ahora en paralelo. Ambas funciones tienen acceso al objeto $globalval$ por ser un parámetro de clase. Cuando $f$ o $main$ realizan una escritura sobre $var1$ llaman al método setter correspondiente. Puede ocurrir que uno de los dos objetos realice la llamada y obtenga el valor de retorno antes que el otro llame al método o que los dos llamen a la vez (relativamente) y hagan un await.\\
 
-En este segundo caso hay que analizar que no haya problemas de deadlock. Los métodos del cog $globalval$ no realizan ninguna llamada a ninguna otra función. Solamente cogen el valor solicitado y lo devuelven, en el caso de las lecturas, o escriben un valor en un atributo, en el caso de las escrituras. Cuando dos o más llamadas a un método ocurren a la vez estas se introducen en la cola de mensajes del cog y se gestionan arbitrariamente. De este modo se garantiza que las llamadas a $globalval$ terminan en algún momento y la arbitrariedad en la gestión de las llamadas garantizan la existencia de todos los interleavings posibles sobre la variable $var1$.\\
+En este segundo caso hay que analizar que no haya problemas de deadlock. Los métodos del objeto $globalval$ no realizan ninguna llamada a ninguna otra función. Solamente cogen el valor solicitado y lo devuelven, en el caso de las lecturas, o escriben un valor en un atributo, en el caso de las escrituras. Cuando dos o más llamadas a un método ocurren a la vez estas se introducen en la cola de mensajes del objeto y se gestionan arbitrariamente. De este modo se garantiza que las llamadas a $globalval$ terminan en algún momento y la arbitrariedad en la gestión de las llamadas garantiza la existencia de todos los interleavings posibles sobre la variable $var1$.\\
 
-Del mismo modo se procede con la variable $var2$. Y gracias al $await$ dentro de un mismo cog (como en la función $f$) se garantiza que no hay un desorden entre la asignación a $var1$ y la asignación a $var2$. De forma análoga esto funcionaría con un ejemplo en el que se hicieran lecturas.\\
+Del mismo modo se procede con la variable $var2$. Además, gracias al $await$, dentro de un mismo método, como en la función $f$, se garantiza que no hay un desorden entre las asignaciones, en el caso de $f$, las asignaciones a $var1$ y a $var2$. De forma análoga esto funcionaría con un ejemplo en el que se hicieran lecturas a una variable global.\\
 
-Con esto hemos conseguido solucionar el problema de las variables globales y a la vez hemos obtenido una concurrencia de grano fino entre las distintas hebras de CABS al separar las lecturas de la escrituras en dos llamadas asíncronas distintas.
+Con esto hemos conseguido solucionar el problema de las variables globales y a la vez hemos obtenido una concurrencia de grano fino entre las distintas hebras de CABS al separar las lecturas de las escrituras en dos llamadas asíncronas distintas.
 
 \section{Arrays locales y globales}
 
-ABS cuenta un tipo genérico de lista recursiva de coste de acceso lineal. Se trata de un tipo inmutable que no permite la modificación del contenido de la lista una vez creada.\\
+ABS cuenta un tipo genérico de lista recursiva de coste de acceso lineal. Se trata de un tipo inmutable que no permite la modificación del contenido de la lista una vez creada. Pese a tener estas restricciones podemos conseguir un comportamiento similar al de un array común obviando el coste de las operaciones.\\
 
-Pese a tener estas restricciones podemos conseguir un comportamiento similar al de un array común obviando el coste de las operaciones.\\
-
-Para ello nos interesa encapsular el tipo lista en una clase ABS que implemente una interfaz con dos métodos que aporten el concepto de array:
-un getter y un setter de elementos por posición.\\
+Para ello nos interesará encapsular el tipo lista en una clase ABS que implemente una interfaz con dos métodos que aporten el concepto de array:
+un \emph{getter} y un \emph{setter} de elementos por posición.\\
 
 La implementación de un array de enteros quedaría del siguiente modo:
 
 \lstinputlisting{code.2.4.txt}
 
-La implementación del setter pasa por iterar sobre la lista hasta encontrar la posición solicitada para posteriormente concatenar dos listas con el elemento modificado en medio.\\
+La implementación del \emph{setter} pasa por iterar sobre la lista hasta encontrar la posición solicitada para posteriormente concatenar dos listas con el elemento modificado en medio. El \emph{getter} por otro lado emplea una llamada a una función de ABS que obtiene el elemento n-ésimo de un lista. Una implementación similar se puede hacer para el otro tipo de nuestro lenguaje CABS: los booleanos.\\
 
-Una implementación similar se puede hacer para el otro tipo de nuestro lenguaje CABS: los booleanos.\\
-
-El hecho de tener ahora nuestro tipo array encapsulado en una clase ABS nos permite utilizarlo con facilidad para implementar los arrays globales. Para este propósito podemos crear un método $init$ que se encarge de la creación de los objetos array y unos métodos $getters$ y $setters$ modificados que se encarguen de realizar las llamadas a los métodos finales del array.\\
+El hecho de tener ahora nuestro tipo array encapsulado en una clase ABS nos permite utilizarlo con facilidad para implementar los arrays globales. Para este propósito podemos crear un método $init$ que se encarge de la creación de los objetos array y unos métodos \emph{getters} y \emph{setters} modificados que se encarguen de realizar las llamadas a los métodos finales del array. La razón del método $init$ es porque ABS no permite la creación de objetos al declarar los atributos de una clase, cosa que sí permite con los tipos primitivos.\\
 
 El código generado para el siguiente ejemplo
 
@@ -86,9 +88,11 @@ quedaría de este modo:
 
 \lstinputlisting{code.2.6.txt}
 
-Por último, sería conveniente (y lo será más adelante en la traducción de las funciones) tener un método que nos devuelva el array global para usarlo con algunos fines locales. Esto se consigue con un método $retrieve$ que implemente la clase $GlobalVariables$. Para el ejemplo anterior, quedaría como
+Por último, sería conveniente (y lo será más adelante en la traducción de las funciones) tener un método que nos devuelva el array global para usarlo con algunos fines locales (concretamente el paso de arrays por referencia en los argumentos de una función). Esto se consigue con un método $retrieve$ que implemente la clase $GlobalVariables$. Para el ejemplo anterior, quedaría como
 
 \lstinputlisting{code.2.7.txt}
+
+No hay que decir que las clases que hemos implementado en esta sección permiten su uso en cualquier ámbito local de un método, con lo que también contaremos con arrays locales en ABS.
 
 \subsection{Arrays multidimensionales}
 
