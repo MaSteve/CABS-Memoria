@@ -1,6 +1,6 @@
 \chapter{ABS: sintaxis y semántica}
 
-ABS (REFERENCIAS!!!) es un lenguaje de modelado para sistemas distribuidos con orientación a objetos y concurrencia basada en actores, donde los objetos de una clase ejecutan sus métodos en función de los mensajes recibidos por otros actores.\\
+ABS\footnote{\url{http://abs-models.org/}} es un lenguaje de modelado para sistemas distribuidos con orientación a objetos y concurrencia basada en actores, donde los objetos de una clase ejecutan sus métodos en función de los mensajes recibidos por otros actores.\\
 
 Sobre este lenguaje se han construido una serie de herramientas para el análisis de programas concurrentes que estamos interesados en mantener para nuestro lenguaje CABS, mediante una traducción de código.\\
 
@@ -8,7 +8,7 @@ Antes de poder continuar con el trabajo de traducción, es necesario hacer una i
 
 \section{Sintaxis}
 
-Como muestra su manual (ref!!!), ABS es un lenguaje que permite el uso de una amplia variedad de construcciones que van desde la definición de tipos de datos algebraicos hasta la definición de funciones dentro de los métodos de una clase.\\
+Como muestra su manual\footnote{\url{http://abs-models.org/documentation/manual/}}, ABS es un lenguaje que permite el uso de una amplia variedad de construcciones que van desde la definición de tipos de datos algebraicos hasta la definición de funciones dentro de los métodos de una clase.\\
 
 De todas estas construcciones, para este trabajo emplearemos principalmente la definición de clases e interfaces del lenguaje.\\
 
@@ -28,7 +28,7 @@ La declaración de clases en ABS es similar a la de Java con la peculiaridad de 
 
 \lstinputlisting{code.1.3.txt}
 
-La declaración de atributos de una clase es idéntica a la de Java, con la ausencia de las palabras reservadas $private$, $public$ o $protected$. La visibilidad de todos los atributos es privada. Del mismo modo las implementaciones de métodos siguen el mismo estilo. Un método es por tanto público si está definido en la interfaz que implementa la clase, en caso contrario es privado.\\
+La declaración de atributos de una clase es idéntica a la de Java, con la ausencia de las palabras reservadas $private$, $public$ o $protected$. La visibilidad de todos los atributos es privada. Del mismo modo, las implementaciones de métodos siguen el mismo estilo. Un método es por tanto público si está definido en la interfaz que implementa la clase, en caso contrario es privado.\\
 
 Una característica especial de las clases de ABS es la posibilidad de definirlas con una lista de argumentos accesibles desde cualquier punto de la clase. Esta propiedad será ampliamente explotada con posterioridad para la implementación del concepto de variable global.\\
 
@@ -46,7 +46,7 @@ Cuando queramos realizar una llamada síncrona, es decir, una llamada para la qu
 
 y su tipo de retorno es el mismo que el del método de la llamada.\\
 
-El resto de la sintaxis de ABS empleada en este trabajos se reduce al uso de los $if/else$ y del $while$, así como de la declaración de variables locales a los métodos y de asignaciones a varibles de los resultados de evaluación de expresiones aritmético-lógicas. La sintaxis referente a estas construcciones del lenguaje son prácticamente similares a las de Java.
+El resto de la sintaxis de ABS empleada en este trabajos se reduce al uso de los $if/else$ y del $while$, así como de la declaración de variables locales en los métodos y de asignaciones a varibles de los resultados de la evaluación de expresiones aritmético-lógicas. La sintaxis referente a estas construcciones del lenguaje son prácticamente similares a las de Java.\\
 
 El concepto de función $main$ en ABS lo cumple un conjunto de instrucciones ABS escritas entre llaves y situadas al final del archivo del código.
 
@@ -54,14 +54,16 @@ El concepto de función $main$ en ABS lo cumple un conjunto de instrucciones ABS
 
 De forma similar al desarrollo expuesto para CABS, en esta sección seguiremos unos pasos similares para definir la semántica del lenguaje ABS.\\
 
-Un estado de un programa en ABS vendrá representado por los objetos creados en ejecución y por la información estática aportada por las clases e interfaces, es decir, el código de la implementación de los métodos tanto públicos como privados y la inicialización de los atributos. Por tanto definimos $\State_\ABS = \O \times \Cl$ donde los elementos de $\O$ serán una lista de objetos instanciados y los de $\Cl$ contendrán la definición de las clases e interfaces.\\
+Un estado de un programa en ABS vendrá representado por los objetos creados en ejecución y por la información estática aportada por las clases e interfaces, es decir, el código de la implementación de los métodos, tanto públicos como privados, y la inicialización de los atributos. Por tanto definimos $\State_\ABS$ como tuplas $(\O, \Cl)$ donde el elemento $\O$ será una lista de objetos instanciados y $\Cl$ contendrá la definición de las clases e interfaces. Este último elemento será una lista de definiciones indexada por un identificador de clase. Contendrá elementos de la forma $(\mbox{Inter}, attr_c, met, args_c)$ donde, en orden de izquierda a derecha, se tiene el nombre de interfaz que implementa una clase, los atributos o \emph{fields} de la clase, los métodos que implementa junto con su definición (es decir, código y argumentos) y los argumentos de clase.\\
 
-Un objeto vendrá dado a su vez por un identificador único $o$, su nombre de clase, una cola de mensajes a la que llamaremos $\RT$ (Runtime tasks), un identificador de tarea que indique que mensaje está procesando el objeto en ese instante y la información del estado de los atributos mediante $\attr: \Var \hookrightarrow \V_\ABS$, una función que asigne a un nombre de variable un valor de $\ABS$. Puesto que los identificadores de objetos pueden venir dados por un número en $\Z$, se podría ver que $\V_\ABS$ es en esencia el mismo conjunto de valores que hemos definido para CABS según la implementación escogida.\\
+Un objeto vendrá dado a su vez por un identificador único $o$, su nombre de clase, una cola de mensajes a la que llamaremos $\RT$ (Runtime tasks), un identificador de tarea que indique que mensaje está procesando el objeto en ese instante y la información del estado de los atributos mediante $\attr: \Var \hookrightarrow \V_\ABS$, una función que asigne a un nombre de variable un valor de ABS. Puesto que los identificadores de objetos pueden venir dados por un número en $\Z$, se puede ver que $\V_\ABS$ es en esencia el mismo conjunto de valores que hemos definido para CABS. Por comodidad escogeremos esta opción. Es importante tener esto en cuenta puesto que, si usaramos otro tipo de identificador para los objetos, sería necesario definir el conjunto de valores de ABS de otro modo y habría de tenerse en cuenta en el resto de argumentos formales que llevaremos a cabo que los valores en CABS no serían los mismos que en ABS. El papel de $\attr$ será el mismo que tenían los elementos de $\loc$ en la semántica de CABS, permitiendo ahora tener objetos a los que se puede acceder usando un nombre de variable de $\Var$.\\
 
-El concepto de tarea recoge la información del ambito local $loc: \Var \hookrightarrow \V_\ABS$, el código del método $S \in \Stm_\ABS$ y un identificador único de tarea.\\
+El concepto de tarea recoge la información del ambito local $loc: \Var \hookrightarrow \V_\ABS$, el código del método $S \in \Stm_\ABS$ y un identificador único de tarea. Con esto quedan definidos los elementos $\RT$. No hay que confundir las variables de ámbito local $loc$, declaradas dentro de un método, con los atributos del objeto $\attr$ que son un añadido al contar con orientación a objetos.\\
 
-Con estas herramientas básicas procedemos a dar una definción formal de la semántica de ABS.
+Con estas definiciones básicas procedemos a dar una definción formal de la semántica de ABS.
 \begin{landscape}
+
+\subsection{Reglas de derivación en ABS}
 
   \begin{prooftree*}
       \hypo {is\_local(x)}

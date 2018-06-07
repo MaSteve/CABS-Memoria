@@ -297,7 +297,7 @@ donde $var$ es una variable entera. Para variables boolenas las regla es análog
 
 Sea el ejemplo en CABS
 \lstinputlisting{code.0.3.txt}
-Tras aplicar las reglas $\init$ y $start$ nos encontraremos en el estado
+Tras aplicar las reglas $\init$ y $\start$ nos encontraremos en el estado
 $$
 (\G, \F, (\nil, \thread \,f(1)\;\thread \,f(2)\;))
 $$
@@ -324,3 +324,11 @@ $$
 que nos marca el estado de fin de ejecución.\\
 
 Como hemos podido ver, en un instante dado es posible que podamos elegir entre varias reglas, lo que refleja el indeterminismo de la concurrencia.
+
+\subsection{Arrays}
+
+Como hemos comentado desde el principio de este trabajo, CABS admite el uso de arrays de enteros y booleanos en sus programas, usando la sintaxis de C. No obstante, y por motivos de simplicidad, excluiremos los arrays de los argumentos formales sobre la traducción. Es por este motivo por el que no se hace una mención especial a ellos en la semántica. Se entiende que añadir los arrays al argumento sería inmediato pese a ser engorroso. Podemos suponer que los arrays se verían como una colección de variables de un tipo asociadas a un índice de modo que su uso en las expresiones aritmético-lógicas sería inmediato, así como en las asignaciones.\\
+
+El único problema que puede surgir sería en el paso por referencia de arrays en funciones. En primer lugar, haría falta contemplar el concepto de paso por referencia puesto que la semántica expuesta en este capítulo solo especifica el paso por valor de argumentos enteros o booleanos. Esto se podría hacer introduciendo un tipo puntero que referenciaría los accesos y asignaciones al array original que puede estar, por ejemplo, alojado en la pila de otro proceso distinto.\\
+
+Esta idea queda por tanto abierta a futuros trabajos que puedan estar interesados en ampliar lo expuesto en este documento. No obstante, la implementación de ellos sí queda contemplada en el compilador final de CABS.
