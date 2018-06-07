@@ -135,9 +135,22 @@ Con estas definiciones básicas procedemos a dar una definción formal de la sem
     \Infer[left label=$\tskabsb$]4{(\O \leadsto  (id', c', \RT', t', \attr') (id, c, \RT \leadsto (loc, Int\,x = await\,int!m(args)\; S, t), t, \attr), \Cl) \stns (\O \leadsto o' (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), t, \attr), \Cl)}
    \end{prooftree*} donde $o' = (id', c', \RT':tsk, t', \attr')$, $tsk = (loc', S', t'')$ con $t''$ un identificador de tarea nuevo y $loc' = \nil\ass{args_m}{args}$ y $met\eval{m} = (S', args_m)$
 
+   \begin{prooftree*}
+      \hypo{loc \cup attr \eval{int} = id'}
+      \hypo{\Cl\eval{c'} = (\mbox{Inter}, attr_c, met, args_c)}
+      \hypo{contains(met, m)}
+      \hypo{check\_args(args_m, args)}
+    \Infer[left label=$\tskabsbb$]4{(\O \leadsto  (id', c', \RT', t', \attr') (id, c, \RT \leadsto (loc, await\,int!m(args)\; S, t), t, \attr), \Cl) \stns (\O \leadsto o' (id, c, \RT \leadsto (loc, await\,t'\; S, t), t, \attr), \Cl)}
+   \end{prooftree*} donde $o' = (id', c', \RT':tsk, t', \attr')$, $tsk = (loc', S', t'')$ con $t''$ un identificador de tarea nuevo y $loc' = \nil\ass{args_m}{args}$ y $met\eval{m} = (S', args_m)$
+
   \begin{prooftree*}
       \hypo{tsk = (loc', \varepsilon(\nu), t'')}
     \Infer[left label=$\retabs$]1{(\O \leadsto  (id', c', \RT' \leadsto tsk, t', \attr') (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), t, \attr), \Cl) \stns (\O \leadsto o' (id, c, \RT \leadsto (loc\ass{x}{\nu}, S, t), t, \attr), \Cl)}
+  \end{prooftree*} donde $o' = (id', c', \RT', t', \attr')$
+
+  \begin{prooftree*}
+      \hypo{tsk = (loc', \varepsilon(\nu), t'')}
+    \Infer[left label=$\retabsb$]1{(\O \leadsto  (id', c', \RT' \leadsto tsk, t', \attr') (id, c, \RT \leadsto (loc, await\,t'\; S, t), t, \attr), \Cl) \stns (\O \leadsto o' (id, c, \RT \leadsto (loc, S, t), t, \attr), \Cl)}
   \end{prooftree*} donde $o' = (id', c', \RT', t', \attr')$
 
   \begin{prooftree*}
