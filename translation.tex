@@ -96,21 +96,17 @@ No hay que decir que las clases que hemos implementado en esta sección permiten
 
 \subsection{Arrays multidimensionales}
 
-El lenguaje CABS permite en su sintaxis declarar arrays multidimensionales al estilo de C. ABS no cuenta con un tipo de datos similar, pero, gracias a la propuesta previamente expuesta, podemos simular el comportamiento de las matrices estableciendo una biyección con la representación de un array de tamaño el producto de las dimensiones de la matriz. En otras palabras, la traducción implementada en este trabajo considera las matrices como un array unidimensional.\\
+El lenguaje CABS permite en su sintaxis declarar arrays multidimensionales al estilo de C. ABS no cuenta con un tipo de datos similar, pero, gracias a la propuesta previamente expuesta, podemos simular el comportamiento de las matrices estableciendo una biyección con la representación de un array de tamaño el producto de los tamaños de las dimensiones de la matriz. En otras palabras, la traducción implementada en este trabajo considera las matrices como un array unidimensional.\\
 
-A modo de explicación, sea $mat$ una matriz multidimensional entera en $int^{N_1} \times \dots \times int^{N_D}$ y supongamos que queremos acceder a la posición $(i_1, \dots, i_D)$ donde $\forall j \in \{1, \dots, D\}$ tenemos $i_j \in \{0, \dots, N_j - 1\}$, entonces la posición $p$ correspondiente a dicho elemento en un array en $int^{\prod_{i = 1}^{D} N_i}$ vendría dada por $p = \sum_{i = 1}^{D} i_i \cdot (\prod_{j=1}^{i} N_j)$ (cuadradar con implementación!!!!).
+A modo de explicación, sea $mat$ una matriz multidimensional entera en $int^{N_1} \times \dots \times int^{N_D}$ y supongamos que queremos acceder a la posición $(i_1, \dots, i_D)$ donde $\forall j \in \{1, \dots, D\}$ tenemos $i_j \in \{0, \dots, N_j - 1\}$, entonces la posición $p$ correspondiente a dicho elemento en un array en $int^{\prod_{i = 1}^{D} N_i}$ vendría dada por $p = \sum_{l = 1}^{D} i_l \cdot (\prod_{j=1}^{l - 1} N_j)$.
 
-\section{Expresiones aritméticas (faltan arrays y funciones!!!!)}
+\section{Expresiones aritméticas}
 
-CABS presenta una gran flexibilidad en sus expresiones aritmético-lógicas no presente en ABS. La sintaxis de ABS obliga a que el valor de retorno devuelto por una función solo pueda ser asignado a una variable, no pudiendo ser usado inmediatamente en una expresión del mismo tipo que el de retorno.\\
+CABS presenta una gran flexibilidad en sus expresiones aritmético-lógicas no presentes en ABS. La sintaxis de ABS obliga a que el valor de retorno devuelto por una función solo pueda ser asignado a una variable, no pudiendo ser usado inmediatamente en una expresión del mismo tipo que el de retorno. Esto nos obliga a traducir las expresiones aritméticas en una serie de asignaciones auxiliares cuyas variables posteriormente se operan con los valores almacenados en ellas. Será por tanto necesario tener un modo de obtener nombres de variables auxiliares que no se referencien en ningún otro punto del programa traducido.\\
 
-Esto nos obliga a traducir las expresiones aritméticas en una serie de asignaciones auxiliares que posteriormente se operan con los valores almacenados. Será por tanto necesario tener un modo de obtener nombres de variables auxiliares que no se referencien en ningún otro punto del programa traducido.\\
+Sea por tanto $\Aux: \Nat \rightarrow \Var$ una función definida sobre los enteros que devuelve el n-ésimo nombre de variable {\it libre}. En un sentido estricto esta función debería tomar como argumento el programa en CABS y la traducción parcial en ABS para saber qué nombres de variable han sido ya usados. A modo de simplificación podemos evitar esto reservando un conjunto de nombres de varibles para este propósito que no sean accesibles al usuario. Esta es la idea que posteriomente se llevará a cabo en la implementación del compilador. De ahora en adelante nos referiremos a este conjunto como $\Var_R \subset \Var$. Un posible ejemplo de subconjunto $\Var_R$ podría ser $\{aux\_var\_v: v \in \Nat\}$, que por tener la misma cardinalidad que $\Nat$ nos permite crear una biyección inmediata.\\
 
-Sea por tanto $\Aux: \Nat \rightarrow \Var$ una función definidas sobre los enteros que devuelve el n-ésimo nombre de variable {\it libre}. En un sentido estricto esta función debería tomar como argumento el programa en CABS (y la traducción parcial) para saber qué nombres de variable son usados. A modo de simplificación podemos evitar esto reservando un conjunto de nombres de varibles para este propósito que no sean accesibles al usuario. Esta es la idea que posteriomente se llevará a cabo en la implementación del compilador.(Referencia!!!!) De ahora en adelante nos referiremos a este conjunto como $\Var_R \subset \Var$.\\
-
-Un posible ejemplo de subconjunto $\Var_R$ podría ser $\{aux\_var\_v: v \in \Nat\}$, que por tener la misma cardinalidad que $\Nat$ nos permite crear una biyección inmediata.\\
-
-Teniendo estas herramientas, resulta fácil pensar en definir la traducción de las expresiones como una función que toma una expresión en CABS junto con un natural $v$ y que devuelve una expresión en ABS junto con un natural que indique el siguiente natural no utilizado en la traducción. Si garantizamos no repetir un mismo n para dos expresiones distintas entonces garantizamos que las variables auxiliares no son usadas más allá de una única asignación y una única referencia.\\
+Teniendo esto en cuenta, resulta fácil pensar en definir la traducción de las expresiones como una función que toma una expresión en CABS junto con un natural $v$ y que devuelve una expresión en ABS junto con un natural que indique el siguiente natural no utilizado en la traducción. Si garantizamos no repetir un mismo n para dos expresiones distintas entonces garantizamos que las variables auxiliares no son usadas más allá de una única asignación y una única referencia.\\
 
 Especificamos esta idea con la definición de las funciones $\C_\AExp: \AExp \rightarrow \Nat \rightarrow (\ABS \times \Nat)$ y su homóloga  $\C_\BExp$ para las expresiones booleanas:
 \begin{align*}
@@ -157,7 +153,11 @@ Sea pues la función $\C: \CABS \rightarrow \Nat \rightarrow (ABS \times \Nat)$ 
   \C\eval{var = a\;} v &= (c\; var = (\Aux\, (v' - 1)), v') \\
   & \mbox{donde $\C_\AExp\eval{a} v = (c, v')$ y $var$ variable local entera} \\
   \C\eval{var = b\;} v &= (c\; var = (\Aux\, (v' - 1)), v') \\
-  & \mbox{donde $\C_\BExp\eval{b} v = (c, v')$ y $var$ variable local booleana} \\
+  & \mbox{donde $\C_\BExp\eval{b} v = (c, v')$ y $var$ variable local booleana} \\ %%
+  \C\eval{var = a\;} v &= (c\; await \mbox{ globalval!set}var(\Aux\, (v' - 1)), v') \\
+  & \mbox{donde $\C_\AExp\eval{a} v = (c, v')$ y $var$ variable global entera} \\
+  \C\eval{var = b\;} v &= (c\; await \mbox{ globalval!set}var(\Aux\, (v' - 1)), v') \\
+  & \mbox{donde $\C_\BExp\eval{b} v = (c, v')$ y $var$ variable global booleana} \\ %%
   \C\eval{S_1 S_2} v &= (c_1 c_2, v'') \mbox{ donde $\C\eval{S_1} v = (c_1, v')$ y $\C\eval{S_2} v' = (c_2, v'')$} \\
   \C\eval{\If{b}{S_1}{S_2}} v &= (c_1\; \If{\Aux\, (v' - 1)}{c_2}{c_3}, v''') \\
   & \mbox{ donde $\C_\BExp\eval{b} v = (c_1, v')$, $\C\eval{S_1} v' = (c_2, v'')$ y $\C\eval{S_2} v'' = (c_3, v''')$} \\
@@ -170,7 +170,7 @@ En segundo lugar, hace falta mencionar que las funciones de traducción de expre
 
 Es por esto por lo que podemos entender que en la traducción del código se puede indistintamente sustituir el código $c_3$ por $c_2$ en la regla del while si por motivos de simplicidad hiciera falta a la hora de desarrollar la corrección de esta traducción. En una implementación real esto no es inmediato porque los compiladores o interpretes de ABS no permiten la declaración duplicada de variables, problema que en este trabajo no nos atañe a nivel abstracto.\\
 
-Para la traducción de las funciones necesitamos previamente una traducción de los argumentos $\C_{arg}: \Args \rightarrow \Args_\ABS$ que en esencia lo único que hace es cambiar los tipos de CABS a los de ABS. (Arrays!!!!)
+Para la traducción de las funciones necesitamos previamente una traducción de los argumentos $\C_{arg}: \Args \rightarrow \Args_\ABS$ que en esencia lo único que hace es cambiar los tipos de CABS a los de ABS.
 \begin{align*}
   \C_{arg}\,\varepsilon &= \varepsilon\\
   \C_{arg}\, (int \, var,\,arg) &= Int\,var,\,\C_{arg}\, arg\\
@@ -212,3 +212,7 @@ Por último, hablaremos de la traducción del $\thread$. Como ya hemos comentado
   &(\Aux\, (v^{n+1}))!((\Aux\, (v^{2} - 1)), \dots, (\Aux\, (v^{n+1} - 1))), v^{n+1} + 1) \\
   &\mbox{donde $\C_\Exp\eval{e_i} v^{i} = (c_i, v^{i+1})$ (escogiendo $\C_\AExp$ o $\C_\BExp$ según convenga)} \\
 \end{align*}
+
+\subsection{Traducción de arrays}
+
+Como comentamos ya en el capítulo sobre la semántica de CABS, los arrays quedarán excluidos de la demostración formal y es por ello por lo que hemos decidido no incluirlos en la definición de la traducción. No obstante, la implementación sí los tiene en cuenta y lleva a cabo la compilación teniendo en cuenta lo comentado en la sección sobre arrays de este capítulo.
