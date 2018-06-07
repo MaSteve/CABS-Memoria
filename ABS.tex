@@ -68,55 +68,55 @@ Con estas definiciones básicas procedemos a dar una definción formal de la sem
   \begin{prooftree*}
       \hypo {is\_local(x)}
       \hypo {is\_Int(x)}
-    \Infer[left label=$ $]2{(\O \leadsto (id, c, \RT \leadsto (loc, x = a\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc \ass{x}{\A \eval{a}_{loc, \attr}}, S, t), t, \attr), \Cl)}
+    \Infer[left label=$\assa$]2{(\O \leadsto (id, c, \RT \leadsto (loc, x = a\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc \ass{x}{\A \eval{a}_{loc, \attr}}, S, t), t, \attr), \Cl)}
   \end{prooftree*}
 
   \begin{prooftree*}
       \hypo {is\_attr(x)}
       \hypo {is\_Int(x)}
-    \Infer[left label=$ $]2{(\O \leadsto (id, c, \RT \leadsto (loc, x = a\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, S, t), t, \attr \ass{x}{\A \eval{a}_{loc, \attr}}), \Cl)}
+    \Infer[left label=$\assb$]2{(\O \leadsto (id, c, \RT \leadsto (loc, x = a\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, S, t), t, \attr \ass{x}{\A \eval{a}_{loc, \attr}}), \Cl)}
   \end{prooftree*}
 
   \begin{prooftree*}
-    \Infer[left label=$ $]0{(\O \leadsto (id, c, \RT \leadsto (loc, Int\, x = a\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc \ass{x}{\A \eval{a}_{loc, \attr}}, S, t), t, \attr), \Cl)}
+    \Infer[left label=$\decla$]0{(\O \leadsto (id, c, \RT \leadsto (loc, Int\, x = a\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc \ass{x}{\A \eval{a}_{loc, \attr}}, S, t), t, \attr), \Cl)}
   \end{prooftree*}
 
   \begin{prooftree*}
       \hypo {is\_local(x)}
       \hypo {is\_Bool(x)}
-    \Infer[left label=$ $]2{(\O \leadsto (id, c, \RT \leadsto (loc, x = b\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc \ass{x}{\Bb \eval{b}_{loc, \attr}}, S, t), t, \attr), \Cl)}
+    \Infer[left label=$\assc$]2{(\O \leadsto (id, c, \RT \leadsto (loc, x = b\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc \ass{x}{\Bb \eval{b}_{loc, \attr}}, S, t), t, \attr), \Cl)}
   \end{prooftree*}
 
   \begin{prooftree*}
       \hypo {is\_attr(x)}
       \hypo {is\_Bool(x)}
-    \Infer[left label=$ $]2{(\O \leadsto (id, c, \RT \leadsto (loc, x = b\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, S, t), t, \attr \ass{x}{\Bb \eval{b}_{loc, \attr}}), \Cl)}
+    \Infer[left label=$\assd$]2{(\O \leadsto (id, c, \RT \leadsto (loc, x = b\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, S, t), t, \attr \ass{x}{\Bb \eval{b}_{loc, \attr}}), \Cl)}
   \end{prooftree*}
 
   \begin{prooftree*}
-    \Infer[left label=$ $]0{(\O \leadsto (id, c, \RT \leadsto (loc, Bool\, x = b\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc \ass{x}{\Bb \eval{b}_{loc, \attr}}, S, t), t, \attr), \Cl)}
+    \Infer[left label=$\declb$]0{(\O \leadsto (id, c, \RT \leadsto (loc, Bool\, x = b\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc \ass{x}{\Bb \eval{b}_{loc, \attr}}, S, t), t, \attr), \Cl)}
   \end{prooftree*}
 
   % Resto de instrucciones
 
   \begin{prooftree*}
       \hypo {\Bb \eval{b}_{loc, \attr} = \True}
-    \Infer[left label=$ $]1{(\O \leadsto (id, c, \RT \leadsto (loc, \If{b}{S_1}{S_2} S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, S_1 S, t), t, \attr), \Cl)}
+    \Infer[left label=$\aiftabs$]1{(\O \leadsto (id, c, \RT \leadsto (loc, \If{b}{S_1}{S_2} S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, S_1 S, t), t, \attr), \Cl)}
   \end{prooftree*}
 
   \begin{prooftree*}
       \hypo {\Bb \eval{b}_{loc, \attr} = \False}
-    \Infer[left label=$ $]1{(\O \leadsto (id, c, \RT \leadsto (loc, \If{b}{S_1}{S_2} S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, S_2 S, t), t, \attr), \Cl)}
+      \Infer[left label=$\aiffabs$]1{(\O \leadsto (id, c, \RT \leadsto (loc, \If{b}{S_1}{S_2} S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, S_2 S, t), t, \attr), \Cl)}
   \end{prooftree*}
 
   \begin{prooftree*}
-    \Infer[left label=$ $]0{(\O \leadsto (id, c, \RT \leadsto (loc, \while{b}{S_1} S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, \Ifp{b}{S_1 \while{b}{S_1}} S, t), t, \attr), \Cl)}
+    \Infer[left label=$\wabs$]0{(\O \leadsto (id, c, \RT \leadsto (loc, \while{b}{S_1} S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, \Ifp{b}{S_1 \while{b}{S_1}} S, t), t, \attr), \Cl)}
   \end{prooftree*}
 
   \begin{prooftree*}
       \hypo{\Cl\eval{c'} = (\mbox{Inter}, attr_c, met, args_c)}
       \hypo{check\_args(args_c, args)}
-    \Infer[left label=$ $]2{(\O \leadsto (id, c, \RT \leadsto (loc,  \mbox{Inter } inter = new\, c'(args)\; S, t), t, \attr), \Cl) \stns (\O:o \leadsto (id, c, \RT \leadsto (loc \ass{inter}{id'}, S, t), t, \attr), \Cl)}
+    \Infer[left label=$\oabs$]2{(\O \leadsto (id, c, \RT \leadsto (loc,  \mbox{Inter } inter = new\, c'(args)\; S, t), t, \attr), \Cl) \stns (\O:o \leadsto (id, c, \RT \leadsto (loc \ass{inter}{id'}, S, t), t, \attr), \Cl)}
   \end{prooftree*} donde $o = (id', c', [], \perp, \attr')$ con $id'$ un nuevo identificador de objeto no utilizado y $\attr' = attr_c \ass{args_c}{\E\eval{args}_{loc, \attr}}$ los atributos del nuevo objeto creado.
 
   \begin{prooftree*}
@@ -124,7 +124,7 @@ Con estas definiciones básicas procedemos a dar una definción formal de la sem
       \hypo{\Cl\eval{c'} = (\mbox{Inter}, attr_c, met, args_c)}
       \hypo{contains(met, m)}
       \hypo{check\_args(args_m, args)}
-    \Infer[left label=$ $]4{(\O \leadsto  (id', c', \RT', t', \attr') (id, c, \RT \leadsto (loc, inter!m(args)\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id', c', \RT':tsk, t', \attr') (id, c, \RT \leadsto (loc, S, t), t, \attr), \Cl)}
+    \Infer[left label=$\tskabsa$]4{(\O \leadsto  (id', c', \RT', t', \attr') (id, c, \RT \leadsto (loc, inter!m(args)\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id', c', \RT':tsk, t', \attr') (id, c, \RT \leadsto (loc, S, t), t, \attr), \Cl)}
   \end{prooftree*} donde $tsk = (loc', S', t'')$ con $t''$ un identificador de tarea nuevo y $loc' = \nil\ass{args_m}{args}$ y $met\eval{m} = (S', args_m)$
 
    \begin{prooftree*}
@@ -132,31 +132,31 @@ Con estas definiciones básicas procedemos a dar una definción formal de la sem
       \hypo{\Cl\eval{c'} = (\mbox{Inter}, attr_c, met, args_c)}
       \hypo{contains(met, m)}
       \hypo{check\_args(args_m, args)}
-    \Infer[left label=$ $]4{(\O \leadsto  (id', c', \RT', t', \attr') (id, c, \RT \leadsto (loc, Int\,x = await\,int!m(args)\; S, t), t, \attr), \Cl) \stns (\O \leadsto o' (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), t, \attr), \Cl)}
+    \Infer[left label=$\tskabsb$]4{(\O \leadsto  (id', c', \RT', t', \attr') (id, c, \RT \leadsto (loc, Int\,x = await\,int!m(args)\; S, t), t, \attr), \Cl) \stns (\O \leadsto o' (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), t, \attr), \Cl)}
    \end{prooftree*} donde $o' = (id', c', \RT':tsk, t', \attr')$, $tsk = (loc', S', t'')$ con $t''$ un identificador de tarea nuevo y $loc' = \nil\ass{args_m}{args}$ y $met\eval{m} = (S', args_m)$
 
   \begin{prooftree*}
       \hypo{tsk = (loc', \varepsilon(\nu), t'')}
-    \Infer[left label=$ $]1{(\O \leadsto  (id', c', \RT' \leadsto tsk, t', \attr') (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), t, \attr), \Cl) \stns (\O \leadsto o' (id, c, \RT \leadsto (loc\ass{x}{\nu}, S, t), t, \attr), \Cl)}
+    \Infer[left label=$\retabs$]1{(\O \leadsto  (id', c', \RT' \leadsto tsk, t', \attr') (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), t, \attr), \Cl) \stns (\O \leadsto o' (id, c, \RT \leadsto (loc\ass{x}{\nu}, S, t), t, \attr), \Cl)}
   \end{prooftree*} donde $o' = (id', c', \RT', t', \attr')$
 
   \begin{prooftree*}
     \hypo{tsk = (loc', S, t'')}
     \hypo{S \neq \varepsilon(\nu)}
-    \Infer[left label=$ $]2{(\O \leadsto  (id', c', \RT' \leadsto tsk, t', \attr') (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), t, \attr), \Cl) \stns (\O \leadsto o' (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), \perp, \attr), \Cl)}
+    \Infer[left label=$\waitabs$]2{(\O \leadsto  (id', c', \RT' \leadsto tsk, t', \attr') (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), t, \attr), \Cl) \stns (\O \leadsto o' (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), \perp, \attr), \Cl)}
   \end{prooftree*} donde $o' = (id', c', \RT', t', \attr')$
 
   \begin{prooftree*}
-    \Infer[left label=$ $]0{(\O \leadsto (id, c, \RT \leadsto (loc, S, t), \perp, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, S, t), t, \attr), \Cl)}
+    \Infer[left label=$\selabs$]0{(\O \leadsto (id, c, \RT \leadsto (loc, S, t), \perp, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, S, t), t, \attr), \Cl)}
   \end{prooftree*}
 
   % Return: igual conviene tener algo más en la task que indique que está activa o muerta.
   \begin{prooftree*}
-    \Infer[left label=$ $]0{(\O \leadsto (id, c, \RT \leadsto (loc, \return a\;S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, \varepsilon(\A \eval{a}_{loc, \attr}), t), \perp, \attr), \Cl)}
+    \Infer[left label=$\eabs$]0{(\O \leadsto (id, c, \RT \leadsto (loc, \return a\;S, t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, \varepsilon(\A \eval{a}_{loc, \attr}), t), \perp, \attr), \Cl)}
   \end{prooftree*}
 
   \begin{prooftree*}
-    \Infer[left label=$ $]0{(\O \leadsto (id, c, \RT \leadsto (loc, \varepsilon(\nu), t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, \varepsilon(\nu), t), \perp, \attr), \Cl)}
+    \Infer[left label=$\dselabs$]0{(\O \leadsto (id, c, \RT \leadsto (loc, \varepsilon(\nu), t), t, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, \varepsilon(\nu), t), \perp, \attr), \Cl)}
   \end{prooftree*}
 
 \end{landscape}
