@@ -179,11 +179,21 @@ El caso del $\thread$ vuelve a traer consigo la discusión que ya habíamos teni
 
 Por simplicidad en este trabajo hablaremos del caso de las funciones sin parámetros, puesto que los restantes casos se reducen a comprobar que la evaluación de expresiones aritmético-lógicas se sigue comportando bien al usarse como paso por valor en funciones en lugar de en asignaciones, como ya hemos detallado anteriormente.\\
 
-Sean, por tanto, los estados equivalentes $(\G, \F, \RP \leadsto (local:s, \thread \,\func()\;S))$ de CABS y $(\O \leadsto (id, c, \RT \leadsto (loc,  \mbox{Int$f$ } aux\_var\_k = new\, \mbox{Imp$f$}(globalval)\; aux\_var\_k!f()\; S_\ABS, t), t, \attr), \Cl)$ de ABS.\\
+Sean, por tanto, los estados equivalentes $(\G, \F, \RP \leadsto (local:s, \thread \,\func()\;S))$ de CABS y
+\begin{multline*}
+  (\O \leadsto (id, c, \RT \leadsto \\
+  (loc,  \mbox{Int$f$ } aux\_var\_k = new\, \mbox{Imp$f$}(globalval)\; aux\_var\_k!f()\; S_\ABS, t), t, \attr), \Cl)
+\end{multline*}
+de ABS.\\
 
 En la semántica de CABS, podemos usar la regla $\threadcb$ que en un paso nos lleva al estado $(\G, \F, (\RP \cup (\nil:[], S_F)) \leadsto (local:s, S)$ con lo que ya habríamos terminado con la creación del proceso, donde $S_F$ es el código de la función $f$ que pasará a ejecutarse en paralelo.\\
 
-En el caso de ABS, aplicando en un primer lugar la regla de creación de objetos llegaríamos a $(\O:(id', \mbox{Imp$f$}, [], \perp, \attr') \leadsto (id, c, \RT \leadsto (loc \ass{aux\_var\_k}{id'}, aux\_var\_k!f()\; S_\ABS, t), t, \attr), \Cl)$. Desde este estado el único objeto capaz de mandar tareas al nuevo objeto creado es el identificado por $id$ por tener en las variables locales de su tarea actual el identificador del nuevo objeto. Por tanto, la siguiente instrucción que se ejecuta, al aplicar la regla de paso de mensajes, nos lleva al estado $(\O:(id', \mbox{Imp$f$}, (\nil, S_\ABS^F, t''), \perp, \attr') \leadsto (id, c, \RT \leadsto (loc \ass{aux\_var\_k}{id'}, S_\ABS, t), t, \attr), \Cl)$ con lo que llegaríamos a un estado equivalente al que hemos llegado en la semántica de CABS.\\
+En el caso de ABS, aplicando en un primer lugar la regla de creación de objetos llegaríamos a
+\begin{multline*}
+  (\O:(id', \mbox{Imp$f$}, [], \perp, \attr') \\
+  \leadsto (id, c, \RT \leadsto (loc \ass{aux\_var\_k}{id'}, aux\_var\_k!f()\; S_\ABS, t), t, \attr), \Cl)
+\end{multline*}
+Desde este estado el único objeto capaz de mandar tareas al nuevo objeto creado es el identificado por $id$ por tener en las variables locales de su tarea actual el identificador del nuevo objeto. Por tanto, la siguiente instrucción que se ejecuta, al aplicar la regla de paso de mensajes, nos lleva al estado $(\O:(id', \mbox{Imp$f$}, (\nil, S_\ABS^F, t''), \perp, \attr') \leadsto (id, c, \RT \leadsto (loc \ass{aux\_var\_k}{id'}, S_\ABS, t), t, \attr), \Cl)$ con lo que llegaríamos a un estado equivalente al que hemos llegado en la semántica de CABS.\\
 
 Cabe mencionar que la razón por la que ambos ámbitos de variables locales se encuentran a $\nil$ es porque al realizar la llamada concurrente a una función sin argumentos esta no puede contar con más información de partida que la que se puede obtener de las variables globales. Para el caso de las llamadas a funciones con argumento las reglas semánticas garantizan que estos estarán disponibles en el ámbito local.
 

@@ -124,29 +124,29 @@ Con estas definiciones básicas procedemos a dar una definición formal de la se
       \hypo{\Cl\eval{c'} = (\mbox{Inter}, attr_c, met, args_c)}
       \hypo{contains(met, m)}
       \hypo{check\_args(args_m, args)}
-    \Infer[left label=$\tskabsa$]4{(\O \leadsto  (id', c', \RT', t', \attr') (id, c, \RT \leadsto (loc, inter!m(args)\; S, t), t, \attr), \Cl) \stns (\O \leadsto (id', c', \RT':tsk, t', \attr') (id, c, \RT \leadsto (loc, S, t), t, \attr), \Cl)}
-  \end{prooftree*} donde $tsk = (loc', S', t'')$ con $t''$ un identificador de tarea nuevo y $loc' = \nil\ass{args_m}{args}$ y $met\eval{m} = (S', args_m)$
+    \Infer[left label=$\tskabsa$]4{(\O \leadsto  (id', c', \RT', t', \attr') (id, c, \RT \leadsto (loc, inter!m(args)\; S, t), t, \attr), \Cl) \stns st}
+  \end{prooftree*} donde $tsk = (loc', S', t'')$ con $t''$ un identificador de tarea nuevo, $loc' = \nil\ass{args_m}{args}$ y $met\eval{m} = (S', args_m)$ y el nuevo estado $st = (\O \leadsto (id', c', \RT':tsk, t', \attr') (id, c, \RT \leadsto (loc, S, t), t, \attr), \Cl)$
 
    \begin{prooftree*}
       \hypo{loc \cup attr \eval{int} = id'}
       \hypo{\Cl\eval{c'} = (\mbox{Inter}, attr_c, met, args_c)}
       \hypo{contains(met, m)}
       \hypo{check\_args(args_m, args)}
-    \Infer[left label=$\tskabsb$]4{(\O \leadsto  (id', c', \RT', t', \attr') (id, c, \RT \leadsto (loc, Int\,x = await\,int!m(args)\; S, t), t, \attr), \Cl) \stns (\O \leadsto o' (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), t, \attr), \Cl)}
-   \end{prooftree*} donde $o' = (id', c', \RT':tsk, t', \attr')$, $tsk = (loc', S', t'')$ con $t''$ un identificador de tarea nuevo y $loc' = \nil\ass{args_m}{args}$ y $met\eval{m} = (S', args_m)$
+    \Infer[left label=$\tskabsb$]4{(\O \leadsto  (id', c', \RT', t', \attr') (id, c, \RT \leadsto (loc, Int\,x = await\,int!m(args)\; S, t), t, \attr), \Cl) \stns st}
+   \end{prooftree*} donde $o' = (id', c', \RT':tsk, t', \attr')$, $tsk = (loc', S', t'')$ con $t''$ un identificador de tarea nuevo y $loc' = \nil\ass{args_m}{args}$, $met\eval{m} = (S', args_m)$ y $st = (\O \leadsto o' (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), t, \attr), \Cl)$
 
    \begin{prooftree*}
       \hypo{loc \cup attr \eval{int} = id'}
       \hypo{\Cl\eval{c'} = (\mbox{Inter}, attr_c, met, args_c)}
       \hypo{contains(met, m)}
       \hypo{check\_args(args_m, args)}
-    \Infer[left label=$\tskabsbb$]4{(\O \leadsto  (id', c', \RT', t', \attr') (id, c, \RT \leadsto (loc, await\,int!m(args)\; S, t), t, \attr), \Cl) \stns (\O \leadsto o' (id, c, \RT \leadsto (loc, await\,t'\; S, t), t, \attr), \Cl)}
-   \end{prooftree*} donde $o' = (id', c', \RT':tsk, t', \attr')$, $tsk = (loc', S', t'')$ con $t''$ un identificador de tarea nuevo y $loc' = \nil\ass{args_m}{args}$ y $met\eval{m} = (S', args_m)$
+    \Infer[left label=$\tskabsbb$]4{(\O \leadsto  (id', c', \RT', t', \attr') (id, c, \RT \leadsto (loc, await\,int!m(args)\; S, t), t, \attr), \Cl) \stns st}
+   \end{prooftree*} donde $o' = (id', c', \RT':tsk, t', \attr')$, $tsk = (loc', S', t'')$ con $t''$ un identificador de tarea nuevo y $loc' = \nil\ass{args_m}{args}$, $met\eval{m} = (S', args_m)$ y $st = (\O \leadsto o' (id, c, \RT \leadsto (loc, await\,t'\; S, t), t, \attr), \Cl)$
 
   \begin{prooftree*}
       \hypo{tsk = (loc', \varepsilon(\nu), t'')}
-    \Infer[left label=$\retabs$]1{(\O \leadsto  (id', c', \RT' \leadsto tsk, t', \attr') (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), t, \attr), \Cl) \stns (\O \leadsto o' (id, c, \RT \leadsto (loc\ass{x}{\nu}, S, t), t, \attr), \Cl)}
-  \end{prooftree*} donde $o' = (id', c', \RT', t', \attr')$
+    \Infer[left label=$\retabs$]1{(\O \leadsto  (id', c', \RT' \leadsto tsk, t', \attr') (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), t, \attr), \Cl) \stns st}
+  \end{prooftree*} donde $o' = (id', c', \RT', t', \attr')$ y $st = (\O \leadsto o' (id, c, \RT \leadsto (loc\ass{x}{\nu}, S, t), t, \attr), \Cl)$
 
   \begin{prooftree*}
       \hypo{tsk = (loc', \varepsilon(\nu), t'')}
@@ -156,8 +156,8 @@ Con estas definiciones básicas procedemos a dar una definición formal de la se
   \begin{prooftree*}
     \hypo{tsk = (loc', S, t'')}
     \hypo{S \neq \varepsilon(\nu)}
-    \Infer[left label=$\waitabs$]2{(\O \leadsto  (id', c', \RT' \leadsto tsk, t', \attr') (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), t, \attr), \Cl) \stns (\O \leadsto o' (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), \perp, \attr), \Cl)}
-  \end{prooftree*} donde $o' = (id', c', \RT', t', \attr')$
+    \Infer[left label=$\waitabs$]2{(\O \leadsto  (id', c', \RT' \leadsto tsk, t', \attr') (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), t, \attr), \Cl) \stns st}
+  \end{prooftree*} donde $o' = (id', c', \RT', t', \attr')$ y $st = (\O \leadsto o' (id, c, \RT \leadsto (loc, Int\,x = await\,t'\; S, t), \perp, \attr), \Cl)$
 
   \begin{prooftree*}
     \Infer[left label=$\selabs$]0{(\O \leadsto (id, c, \RT \leadsto (loc, S, t), \perp, \attr), \Cl) \stns (\O \leadsto (id, c, \RT \leadsto (loc, S, t), t, \attr), \Cl)}
