@@ -117,7 +117,7 @@ Con estas definiciones básicas procedemos a dar una definición formal de la se
       \hypo{\Cl\eval{c'} = (\mbox{Inter}, attr_c, met, args_c)}
       \hypo{check\_args(args_c, args)}
     \Infer[left label=$\oabs$]2{(\O \leadsto (id, c, \RT \leadsto (loc,  \mbox{Inter } inter = new\, c'(args)\; S, t), t, \attr), \Cl) \stns (\O:o \leadsto (id, c, \RT \leadsto (loc \ass{inter}{id'}, S, t), t, \attr), \Cl)}
-  \end{prooftree*} donde $o = (id', c', [], \perp, \attr')$ con $id'$ un nuevo identificador de objeto no utilizado y $\attr' = attr_c \ass{args_c}{\E\eval{args}_{loc, \attr}}$ los atributos del nuevo objeto creado.
+  \end{prooftree*} donde $o = (id', c', [], \perp, \attr')$ con $id'$ un nuevo identificador de objeto no utilizado y $\attr' = attr_c \ass{args_c}{\E\eval{args}_{loc, \attr}}$ los atributos del nuevo objeto creado. La función $\E$ evalúa los argumentos escogiendo entre $\A$ y $\Bb$ según sea un entero o un booleano.
 
   \begin{prooftree*}
       \hypo{loc \cup attr \eval{inter} = id'}
