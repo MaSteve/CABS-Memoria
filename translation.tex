@@ -10,7 +10,7 @@ La ausencia de memoria compartida entre los distintos \emph{COGs} (Concurrent Ob
 
 Una primera aproximación vendría dada por el uso de una única clase en la que encapsular todo nuestro programa. Esta clase implementaría una interfaz con todas las cabeceras de las funciones de nuestro programa. Además contaría entre sus atributos con las variables globales, consiguiendo de este modo una visibilidad completa desde cualquier punto del programa.\\
 
-Veamos que ocurre con el siguiente código de ejemplo en CABS. En él se puede ver como se llama a la función $f$ con $\thread$ haciendo que las dos asignaciones de la variable $var1$ puedan entrelazarse.\\
+Veamos qué ocurre con el siguiente código de ejemplo en CABS. En él se puede ver como se llama a la función $f$ con $\thread$ haciendo que las dos asignaciones de la variable $var1$ puedan entrelazarse.\\
 
 \lstinputlisting{example.txt}
 
@@ -106,7 +106,7 @@ CABS presenta una gran flexibilidad en sus expresiones aritmético-lógicas no p
 
 Sea por tanto $\Aux: \Nat \rightarrow \Var$ una función definida sobre los enteros que devuelve el n-ésimo nombre de variable {\it libre}. En un sentido estricto esta función debería tomar como argumento el programa en CABS y la traducción parcial en ABS para saber qué nombres de variable han sido ya usados. A modo de simplificación podemos evitar esto reservando un conjunto de nombres de variables para este propósito que no sean accesibles al usuario. Esta es la idea que posteriormente se llevará a cabo en la implementación del compilador. De ahora en adelante nos referiremos a este conjunto como $\Var_R \subset \Var$. Un posible ejemplo de subconjunto $\Var_R$ podría ser $\{aux\_var\_v: v \in \Nat\}$, que por tener la misma cardinalidad que $\Nat$ nos permite crear una biyección inmediata.\\
 
-Teniendo esto en cuenta, resulta fácil pensar en definir la traducción de las expresiones como una función que toma una expresión en CABS junto con un natural $v$ y que devuelve una expresión en ABS junto con un natural que indique el siguiente natural no utilizado en la traducción. Si garantizamos no repetir un mismo n para dos expresiones distintas entonces garantizamos que las variables auxiliares no son usadas más allá de una única asignación y una única referencia.\\
+Teniendo esto en cuenta, resulta fácil pensar en definir la traducción de las expresiones como una función que toma una expresión en CABS junto con un natural $v$ y que devuelve una expresión en ABS junto con un natural que indique el siguiente natural no utilizado en la traducción. Si garantizamos no repetir un mismo $n$ para dos expresiones distintas entonces garantizamos que las variables auxiliares no son usadas más allá de una única asignación y una única referencia.\\
 
 Especificamos esta idea con la definición de las funciones $\C_\AExp: \AExp \rightarrow \Nat \rightarrow (\ABS \times \Nat)$ y su homóloga  $\C_\BExp$ para las expresiones booleanas:
 \begin{align*}
@@ -143,7 +143,7 @@ Para las llamadas a funciones supondremos por el momento que las interfaces y cl
 
 \section{Traducción de código}
 
-Tras esta introducción, podemos vislumbrar que aspecto tendrá la traducción de código llevada a cabo en este trabajo. Obviaremos el preámbulo de los programas ABS, que incluirá la definición de los clases Array, y nos centraremos en otros aspectos más importantes.\\
+Tras esta introducción, podemos vislumbrar qué aspecto tendrá la traducción de código llevada a cabo en este trabajo. Obviaremos el preámbulo de los programas ABS, que incluirá la definición de los clases Array, y nos centraremos en otros aspectos más importantes.\\
 
 Sea pues la función $\C: \CABS \rightarrow \Nat \rightarrow (ABS \times \Nat)$ nuestra función de traducción de CABS a ABS definida recursivamente del siguiente modo:
 
@@ -166,7 +166,7 @@ Sea pues la función $\C: \CABS \rightarrow \Nat \rightarrow (ABS \times \Nat)$ 
 \end{align*}
 Sobre la traducción del while cabe destacar que es necesario traducir dos veces su condición y el uso de una asignación adicional. Esto es debido a que el concepto de while obliga a evaluar su condición antes de la ejecución de su cuerpo en cada una de las iteraciones para decidir si el salto se toma o no. Por el modo en que se han traducido las expresiones aritmético-lógicas, la condición en ABS de un while se reduce a comprobar el valor asignado a una variable auxiliar y es por esto por lo que, sobre dicha variable, se hará una asignación adicional al final de toda iteración.\\
 
-En segundo lugar, hace falta mencionar que las funciones de traducción de expresiones booleanas no contemplan la reutilización de variables, por lo que aunque la condición sea la misma, se emplearan unos nombres de variables nuevos al final del cuerpo del while respecto a los que se usaban al evaluar la condición fuera del cuerpo. A efectos prácticos, es fácil demostrar que los nombres de las variables auxiliares no influyen en el cómputo de la expresión booleana. De hecho se ve claramente que la traducción es la misma salvo un offset en el natural que identifica a las variables auxiliares.\\
+En segundo lugar, hace falta mencionar que las funciones de traducción de expresiones booleanas no contemplan la reutilización de variables, por lo que aunque la condición sea la misma, se emplearán unos nombres de variables nuevos al final del cuerpo del while respecto a los que se usaban al evaluar la condición fuera del cuerpo. A efectos prácticos, es fácil demostrar que los nombres de las variables auxiliares no influyen en el cómputo de la expresión booleana. De hecho se ve claramente que la traducción es la misma salvo un offset en el natural que identifica a las variables auxiliares.\\
 
 Es por esto por lo que podemos entender que en la traducción del código se puede indistintamente sustituir el código $c_3$ por $c_2$ en la regla del while si por motivos de simplicidad hiciera falta a la hora de desarrollar la corrección de esta traducción. En una implementación real esto no es inmediato porque los compiladores o interpretes de ABS no permiten la declaración duplicada de variables, problema que en este trabajo no nos atañe a nivel abstracto.\\
 
