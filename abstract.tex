@@ -17,7 +17,17 @@ La idea de este trabajo consiste en facilitar el uso de las herramientas de test
 
 \chapter*{Abstract}
 \thispagestyle{empty}
-abs
+The advance in computers during the last decades has brought the opportunity to take advantage  of the new processors which are able to execute several threads at the same time. That is the reason why concurrent programs are getting more and more common in a wide variety of situations, including, for example, scientific software and mobile apps.\\
+
+Nevertheless, concurrent software development has additional risks, such as deadlocks and data races, which are not present in sequential programs. That is why it is necessary to use validation techniques, such as software testing, in order to check the behavior of these programs and their requirements.\\
+
+However, the usual techniques are not effective due to the nondeterministic behavior of these programs and trying to search all the possible interleavings is an intractable problem due to its exponential cost. However, in the actor model paradigm, due to the absence of share memory and the non-preemptive scheduling, the number of interleavings is much lower.\\
+
+One of the best techniques for avoiding the state explosion is the Partial Order Reduction (POR) algorithm. This algorithm can merge several redundant derivation into the same equivalence class. Nowadays, some researchers are still working on this. In this thesis, we will use a specific implementation of this technique called SYCO.\\
+
+SYCO is a software tool developed for ABS, a modeling language for concurrent programming based on the actor model. We can obtain the possible final states of a concurrent program using the state of the art in the Dynamic Partial Order Reduction (DPOR) algorithm. However, ABS implementations are far away from a real implementation of the final program in one of the main languages, such as Java or C/C++. In addition, actor model concurrency is not the paradigm used in those languages.\\
+
+The idea of this thesis is to develop a programming language, similar to C, with a fine-grain concurrency support and to make easier the use of the tools developed for ABS in C programs. The name of this language is CABS. (Did you catch the joke?)\\
 
 \newpage
 \thispagestyle{empty}

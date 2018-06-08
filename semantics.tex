@@ -201,7 +201,7 @@ que repiten de forma similar lo que ya teníamos para la llamada de funciones ar
 %%%%%%%%%%%
 %%%%%%%%%%%
 
-\subsubsection{Semántica (Instrucciones). (Hay que meter más tipos, limitar declaraciones y un largo etc)}
+\subsubsection{Semántica (Instrucciones).}
 \begin{prooftree*}
     \Infer[left label=$\declic$]0{(\G, \F, \RP \leadsto (local:s, int \var;S)) \stns (\G, \F, \RP \leadsto (local\ass{\var}{0}:s, S))}
 \end{prooftree*}
@@ -225,7 +225,7 @@ que repiten de forma similar lo que ya teníamos para la llamada de funciones ar
     \Infer[left label=$\assvcg$]1{(\G, \F, \RP \leadsto (local:s,\var = v\;S)) \stns (\G\ass{\var}{v}, \F, \RP \leadsto (local:s, S))}
 \end{prooftree*}
 
-donde $var$ es una variable entera. Para variables booleanas las regla es análoga.
+donde $var$ es una variable entera. Para variables booleanas las reglas son análogas.
 
 %%%%%%%%%
 \iffalse
