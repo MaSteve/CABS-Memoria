@@ -8,11 +8,11 @@ En este capítulo, resumiremos el funcionamiento del compilador desarrollado com
 
 La historia de los compiladores se remonta a los años 50 del siglo pasado. En aquella época, la compilación de programas consistía en sustituir las líneas de un lenguaje de alto nivel por el código de las rutinas a las que hacían referencia.\\
 
-En torno a esos años y en la siguiente década, se establecieron las bases para la actual teoría de autómatas. Los lenguajes formales quedan clasificados por la jerarquía de Chomsky en función de su expresividad. Los primeros lenguajes de programación empiezan a surgir moviendose en el ámbito de las gramáticas incontextuales, que son aquellas que se pueden procesar con un autómata con pila.\\
+En torno a esos años y en la siguiente década, se establecieron las bases para la actual teoría de autómatas. Los lenguajes formales quedan clasificados por la jerarquía de Chomsky en función de su expresividad. Los primeros lenguajes de programación empiezan a surgir moviéndose en el ámbito de las gramáticas incontextuales, que son aquellas que se pueden procesar con un autómata con pila.\\
 
 Es en esta categoría donde podemos encontrar a la mayoría de lenguajes de programación. En concreto, se buscan aquellos subconjuntos de gramáticas en los que se puede garantizar que existe un reconocedor o autómata determinista. Algunos ejemplos de gramáticas son la $LL(k)$, la $LR(k)$ y la $LALR(k)$.\\
 
-Puede decirse que la función actual de un compilador es la de traducir entre distintos lenguajes basandose en una teoría formal y preservando una cierta corrección entre los lenguajes de origen y destino. Las fases por las que pasa un compilador son las siguientes:
+Puede decirse que la función actual de un compilador es la de traducir entre distintos lenguajes basándose en una teoría formal y preservando una cierta corrección entre los lenguajes de origen y destino. Las fases por las que pasa un compilador son las siguientes:
 \begin{itemize}
 \item Front-end o fase de análisis: que se compone a su vez en
   \begin{itemize}
@@ -27,7 +27,7 @@ Puede decirse que la función actual de un compilador es la de traducir entre di
 
 JLex\footnote{\url{https://www.cs.princeton.edu/~appel/modern/java/JLex/current/manual.html}} es un generador de analizadores léxicos en java desarrollado en la Universidad de Princeton. A partir de una especificación de los tokens de un lenguaje, JLex genera un autómata capaz de reconocerlos recogido en una clase de Java.\\
 
-El automata empleado en los analizadores léxicos es un autómata finito determinista, categoría en la que se encuentran los reconocedores de los lenguajes formales más básicos conocidos como lenguajes regulares.\\
+El autómata empleado en los analizadores léxicos es un autómata finito determinista, categoría en la que se encuentran los reconocedores de los lenguajes formales más básicos conocidos como lenguajes regulares.\\
 
 La especificación del analizador léxico de CABS se puede encontrar en el archivo {\verb parser.lex } dentro del paquete {\verb parser }. A su vez, dentro de este paquete se encuentran la clase {\verb Yytoken }, que será el tipo de objeto manipulado por el analizador sintáctico, y el archivo {\verb Yylex.java }, con las clases asociadas al autómata finito determinista.\\
 
@@ -53,9 +53,9 @@ La gramática de CABS se encuentra en el fichero {\verb synt.cup } dentro del pa
 
 \section{Estructura del compilador}
 
-El analizador sintáctico se apoya en gran medida en la estructura de nodos que el desarrollador del lenguaje determina para su creación. Puesto que tras la fase de parser se obtiene un primer árbol de sintaxis abstracta, es necesario ya para esta fase conocer cuáles son las clases empleadas para este proposito.\\
+El analizador sintáctico se apoya en gran medida en la estructura de nodos que el desarrollador del lenguaje determina para su creación. Puesto que tras la fase de parser se obtiene un primer árbol de sintaxis abstracta, es necesario ya para esta fase conocer cuáles son las clases empleadas para este propósito.\\
 
-La jerquía de los nodos empleados en CABS se divide en los siguientes paquetes:
+La jerarquía de los nodos empleados en CABS se divide en los siguientes paquetes:
 
 \begin{itemize}
 \item ControlStructures: contiene los bloques asociados a las estructuras de decisión como son los condicionales (IfNode) y lo bucles (LoopNode).

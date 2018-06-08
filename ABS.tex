@@ -38,7 +38,7 @@ De los operadores de llamada a métodos de ABS, nosotros solo nos preocuparemos 
 
 \lstinputlisting{code.1.4.txt}
 
-La idea de esta llamada es mandar un mensaje al objeto $o$ para que ejecute su método $f$. Esta llamada devuelve un tipo futuro. El tipo futuro permite entre otras cosas saber cuando se ha concluido la ejecución del mensaje y en este caso recuperar el valor de rotorno del método.\\
+La idea de esta llamada es mandar un mensaje al objeto $o$ para que ejecute su método $f$. Esta llamada devuelve un tipo futuro. El tipo futuro permite entre otras cosas saber cuando se ha concluido la ejecución del mensaje y en este caso recuperar el valor de retorno del método.\\
 
 Cuando queramos realizar una llamada síncrona, es decir, una llamada para la que no deseamos continuar la ejecución de un mensaje antes de conocer el valor de retorno del método llamado, emplearemos un $await$. La idea del await es paralizar la ejecución del mensaje actual, permitiendo a otros mensajes del objeto ser ejecutados, y esperar a que la variable futura de la llamada tenga un valor, es decir, que la llamada haya concluido. La construcción $await$ tiene la siguiente sintaxis
 
@@ -46,7 +46,7 @@ Cuando queramos realizar una llamada síncrona, es decir, una llamada para la qu
 
 y su tipo de retorno es el mismo que el del método de la llamada.\\
 
-El resto de la sintaxis de ABS empleada en este trabajos se reduce al uso de los $if/else$ y del $while$, así como de la declaración de variables locales en los métodos y de asignaciones a varibles de los resultados de la evaluación de expresiones aritmético-lógicas. La sintaxis referente a estas construcciones del lenguaje son prácticamente similares a las de Java.\\
+El resto de la sintaxis de ABS empleada en este trabajos se reduce al uso de los $if/else$ y del $while$, así como de la declaración de variables locales en los métodos y de asignaciones a variables de los resultados de la evaluación de expresiones aritmético-lógicas. La sintaxis referente a estas construcciones del lenguaje son prácticamente similares a las de Java.\\
 
 El concepto de función $main$ en ABS lo cumple un conjunto de instrucciones ABS escritas entre llaves y situadas al final del archivo del código.
 
@@ -56,11 +56,11 @@ De forma similar al desarrollo expuesto para CABS, en esta sección seguiremos u
 
 Un estado de un programa en ABS vendrá representado por los objetos creados en ejecución y por la información estática aportada por las clases e interfaces, es decir, el código de la implementación de los métodos, tanto públicos como privados, y la inicialización de los atributos. Por tanto definimos $\State_\ABS$ como tuplas $(\O, \Cl)$ donde el elemento $\O$ será una lista de objetos instanciados y $\Cl$ contendrá la definición de las clases e interfaces. Este último elemento será una lista de definiciones indexada por un identificador de clase. Contendrá elementos de la forma $(\mbox{Inter}, attr_c, met, args_c)$ donde, en orden de izquierda a derecha, se tiene el nombre de interfaz que implementa una clase, los atributos o \emph{fields} de la clase, los métodos que implementa junto con su definición (es decir, código y argumentos) y los argumentos de clase.\\
 
-Un objeto vendrá dado a su vez por un identificador único $o$, su nombre de clase, una cola de mensajes a la que llamaremos $\RT$ (Runtime tasks), un identificador de tarea que indique que mensaje está procesando el objeto en ese instante y la información del estado de los atributos mediante $\attr: \Var \hookrightarrow \V_\ABS$, una función que asigne a un nombre de variable un valor de ABS. Puesto que los identificadores de objetos pueden venir dados por un número en $\Z$, se puede ver que $\V_\ABS$ es en esencia el mismo conjunto de valores que hemos definido para CABS. Por comodidad escogeremos esta opción. Es importante tener esto en cuenta puesto que, si usaramos otro tipo de identificador para los objetos, sería necesario definir el conjunto de valores de ABS de otro modo y habría de tenerse en cuenta en el resto de argumentos formales que llevaremos a cabo que los valores en CABS no serían los mismos que en ABS. El papel de $\attr$ será el mismo que tenían los elementos de $\loc$ en la semántica de CABS, permitiendo ahora tener objetos a los que se puede acceder usando un nombre de variable de $\Var$.\\
+Un objeto vendrá dado a su vez por un identificador único $o$, su nombre de clase, una cola de mensajes a la que llamaremos $\RT$ (Runtime tasks), un identificador de tarea que indique que mensaje está procesando el objeto en ese instante y la información del estado de los atributos mediante $\attr: \Var \hookrightarrow \V_\ABS$, una función que asigne a un nombre de variable un valor de ABS. Puesto que los identificadores de objetos pueden venir dados por un número en $\Z$, se puede ver que $\V_\ABS$ es en esencia el mismo conjunto de valores que hemos definido para CABS. Por comodidad escogeremos esta opción. Es importante tener esto en cuenta puesto que, si usáramos otro tipo de identificador para los objetos, sería necesario definir el conjunto de valores de ABS de otro modo y habría de tenerse en cuenta en el resto de argumentos formales que llevaremos a cabo que los valores en CABS no serían los mismos que en ABS. El papel de $\attr$ será el mismo que tenían los elementos de $\loc$ en la semántica de CABS, permitiendo ahora tener objetos a los que se puede acceder usando un nombre de variable de $\Var$.\\
 
-El concepto de tarea recoge la información del ambito local $loc: \Var \hookrightarrow \V_\ABS$, el código del método $S \in \Stm_\ABS$ y un identificador único de tarea. Con esto quedan definidos los elementos $\RT$. No hay que confundir las variables de ámbito local $loc$, declaradas dentro de un método, con los atributos del objeto $\attr$ que son un añadido al contar con orientación a objetos.\\
+El concepto de tarea recoge la información del ámbito local $loc: \Var \hookrightarrow \V_\ABS$, el código del método $S \in \Stm_\ABS$ y un identificador único de tarea. Con esto quedan definidos los elementos $\RT$. No hay que confundir las variables de ámbito local $loc$, declaradas dentro de un método, con los atributos del objeto $\attr$ que son un añadido al contar con orientación a objetos.\\
 
-Con estas definiciones básicas procedemos a dar una definción formal de la semántica de ABS.
+Con estas definiciones básicas procedemos a dar una definición formal de la semántica de ABS.
 \begin{landscape}
 
 \subsection{Reglas de derivación en ABS}
@@ -188,7 +188,7 @@ $$
 ((0, GlobalVariables, [], \perp, \nil\ass{var}{0}):(1, Impmain, (\nil, S, 0), \perp, \nil\ass{globalval}{0}), \Cl)
 $$
 
-donde $S$ es el código de $main$. La taréa 0 del objeto 1 puede entrar a ejecutarse con la regla $\selabs$ y podemos suponer que se ejecuta por completo, dando lugar por el camino a la creación de dos objetos de la clase $Impf$, lo que nos lleva al estado
+donde $S$ es el código de $main$. La tarea 0 del objeto 1 puede entrar a ejecutarse con la regla $\selabs$ y podemos suponer que se ejecuta por completo, dando lugar por el camino a la creación de dos objetos de la clase $Impf$, lo que nos lleva al estado
 \begin{multline*}
   ((0, GlobalVariables, [], \perp, \nil\ass{var}{0}):\\
   (1, Impmain, (\nil, \epsilon(0), 0), \perp, \nil\ass{globalval}{0}):\\

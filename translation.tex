@@ -3,10 +3,10 @@ La traducción de CABS a ABS forma el grueso de este trabajo. La diferencia de p
 
 Además de dichas estructuras, es necesario emplear algunos trucos para poder vencer las restricciones del lenguaje para crear el concepto de variable global o de llamada a funciones síncrona.\\
 
-En este capítulo discutiremos este tema de una forma abstracta para posteriomente poder llevar a cabo la implementación de un compilador correcto.
+En este capítulo discutiremos este tema de una forma abstracta para posteriormente poder llevar a cabo la implementación de un compilador correcto.
 
 \section{Variables globales y funciones}
-La ausencia de memoría compartida entre los distintos \emph{COGs} (Concurrent Object Group) o conjunto de tareas de un objeto hace que la idea de variable global no sea inmediata. Del mismo modo, es necesario discutir el concepto de función al estilo de C, pese a que los métodos de una interfaz en ABS sean públicos y a primera vista similares.\\
+La ausencia de memoria compartida entre los distintos \emph{COGs} (Concurrent Object Group) o conjunto de tareas de un objeto hace que la idea de variable global no sea inmediata. Del mismo modo, es necesario discutir el concepto de función al estilo de C, pese a que los métodos de una interfaz en ABS sean públicos y a primera vista similares.\\
 
 Una primera aproximación vendría dada por el uso de una única clase en la que encapsular todo nuestro programa. Esta clase implementaría una interfaz con todas las cabeceras de las funciones de nuestro programa. Además contaría entre sus atributos con las variables globales, consiguiendo de este modo una visibilidad completa desde cualquier punto del programa.\\
 
@@ -45,7 +45,7 @@ Esta situación resuelve los problemas anteriormente planteados porque cada cola
 
 La solución pasa por crear un objeto independiente en el que se almacenen las variables globales como atributos, a los que solo se pueda acceder a través de unos métodos \emph{getters} y \emph{setters}. Este objeto sería el primero en crearse y se pasaría como parámetro en la creación de los sucesivos como un parámetro de clase.\\
 
-Las llamadas a los mencionados \emph{getters} and \emph{setters} podrían hacerse usando una llamada asíncrona e inmediatamente haciendo un $await$ de esta. Este $await$ sería necesario tanto para lecturas (como se vio en la discusión de los tipos futuros en el capítulo anterior) como en las escrituras, puesto que un mismo objeto podría intentar hacer dos escrituras seguidas sobre la misma variable y el orden de ellas debe mantenerse. Esto último se puede ver en el siguiente ejemplo:
+Las llamadas a los mencionados \emph{getters} y \emph{setters} podrían hacerse usando una llamada asíncrona e inmediatamente haciendo un $await$ de esta. Este $await$ sería necesario tanto para lecturas (como se vio en la discusión de los tipos futuros en el capítulo anterior) como en las escrituras, puesto que un mismo objeto podría intentar hacer dos escrituras seguidas sobre la misma variable y el orden de ellas debe mantenerse. Esto último se puede ver en el siguiente ejemplo:
 \begin{lstlisting}
   globalval!setvar(1);
   globalval!setvar(2);
@@ -78,7 +78,7 @@ La implementación de un array de enteros quedaría del siguiente modo:
 
 La implementación del \emph{setter} pasa por iterar sobre la lista hasta encontrar la posición solicitada para posteriormente concatenar dos listas con el elemento modificado en medio. El \emph{getter} por otro lado emplea una llamada a una función de ABS que obtiene el elemento n-ésimo de un lista. Una implementación similar se puede hacer para el otro tipo de nuestro lenguaje CABS: los booleanos.\\
 
-El hecho de tener ahora nuestro tipo array encapsulado en una clase ABS nos permite utilizarlo con facilidad para implementar los arrays globales. Para este propósito podemos crear un método $init$ que se encarge de la creación de los objetos array y unos métodos \emph{getters} y \emph{setters} modificados que se encarguen de realizar las llamadas a los métodos finales del array. La razón del método $init$ es porque ABS no permite la creación de objetos al declarar los atributos de una clase, cosa que sí permite con los tipos primitivos.\\
+El hecho de tener ahora nuestro tipo array encapsulado en una clase ABS nos permite utilizarlo con facilidad para implementar los arrays globales. Para este propósito podemos crear un método $init$ que se encargue de la creación de los objetos array y unos métodos \emph{getters} y \emph{setters} modificados que se encarguen de realizar las llamadas a los métodos finales del array. La razón del método $init$ es porque ABS no permite la creación de objetos al declarar los atributos de una clase, cosa que sí permite con los tipos primitivos.\\
 
 El código generado para el siguiente ejemplo
 
@@ -104,7 +104,7 @@ A modo de explicación, sea $mat$ una matriz multidimensional entera en $int^{N_
 
 CABS presenta una gran flexibilidad en sus expresiones aritmético-lógicas no presentes en ABS. La sintaxis de ABS obliga a que el valor de retorno devuelto por una función solo pueda ser asignado a una variable, no pudiendo ser usado inmediatamente en una expresión del mismo tipo que el de retorno. Esto nos obliga a traducir las expresiones aritméticas en una serie de asignaciones auxiliares cuyas variables posteriormente se operan con los valores almacenados en ellas. Será por tanto necesario tener un modo de obtener nombres de variables auxiliares que no se referencien en ningún otro punto del programa traducido.\\
 
-Sea por tanto $\Aux: \Nat \rightarrow \Var$ una función definida sobre los enteros que devuelve el n-ésimo nombre de variable {\it libre}. En un sentido estricto esta función debería tomar como argumento el programa en CABS y la traducción parcial en ABS para saber qué nombres de variable han sido ya usados. A modo de simplificación podemos evitar esto reservando un conjunto de nombres de varibles para este propósito que no sean accesibles al usuario. Esta es la idea que posteriomente se llevará a cabo en la implementación del compilador. De ahora en adelante nos referiremos a este conjunto como $\Var_R \subset \Var$. Un posible ejemplo de subconjunto $\Var_R$ podría ser $\{aux\_var\_v: v \in \Nat\}$, que por tener la misma cardinalidad que $\Nat$ nos permite crear una biyección inmediata.\\
+Sea por tanto $\Aux: \Nat \rightarrow \Var$ una función definida sobre los enteros que devuelve el n-ésimo nombre de variable {\it libre}. En un sentido estricto esta función debería tomar como argumento el programa en CABS y la traducción parcial en ABS para saber qué nombres de variable han sido ya usados. A modo de simplificación podemos evitar esto reservando un conjunto de nombres de variables para este propósito que no sean accesibles al usuario. Esta es la idea que posteriormente se llevará a cabo en la implementación del compilador. De ahora en adelante nos referiremos a este conjunto como $\Var_R \subset \Var$. Un posible ejemplo de subconjunto $\Var_R$ podría ser $\{aux\_var\_v: v \in \Nat\}$, que por tener la misma cardinalidad que $\Nat$ nos permite crear una biyección inmediata.\\
 
 Teniendo esto en cuenta, resulta fácil pensar en definir la traducción de las expresiones como una función que toma una expresión en CABS junto con un natural $v$ y que devuelve una expresión en ABS junto con un natural que indique el siguiente natural no utilizado en la traducción. Si garantizamos no repetir un mismo n para dos expresiones distintas entonces garantizamos que las variables auxiliares no son usadas más allá de una única asignación y una única referencia.\\
 

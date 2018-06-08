@@ -20,28 +20,28 @@ Cada expresión utilizada en un programa CABS se corresponde de forma unívoca c
 
 Hecha esta introducción, procedemos a comprobar en primer lugar que las asignaciones hechas en CABS se corresponden con las de la traducción de estas a ABS, llegando de estados equivalentes a estados equivalentes en un solo paso.\\
 
-En esta memoria expondremos solo el proceso para las expresiones ariméticas. El caso de las expresiones booleanas es completamente análogo salvo tipo y operadores empleados.
+En esta memoria expondremos solo el proceso para las expresiones aritméticas. El caso de las expresiones booleanas es completamente análogo salvo tipo y operadores empleados.
 
 \subsection{Variables locales}
 
 \subsubsection{Caso $x = \nu$ con $\nu \in \V$}
-Sean $(\G, \F, \RP \leadsto (local:s,x = \nu\;S))$ y $(\O \leadsto (id, c, \RT \leadsto (loc, x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)$ estados equivalentes, donde la variable auxiliar $k$-esima es la variable asignada a la expresión $\nu$ de forma que $loc(aux\_var\_k) = \nu$.\\
+Sean $(\G, \F, \RP \leadsto (local:s,x = \nu\;S))$ y $(\O \leadsto (id, c, \RT \leadsto (loc, x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)$ estados equivalentes, donde la variable auxiliar $k$-ésima es la variable asignada a la expresión $\nu$ de forma que $loc(aux\_var\_k) = \nu$.\\
 
 Tenemos que del estado $(\G, \F, \RP \leadsto (local:s,x = \nu\;S))$, aplicando la regla $\assvc$, llegamos al estado $(\G, \F, \RP \leadsto (local\ass{x}{\nu}:s, S))$ en CABS. Por otro lado, del estado equivalente en ABS $(\O \leadsto (id, c, \RT \leadsto (loc, x = aux\_var\_k\; S, t), t, \attr), \Cl)$, aplicando la regla de asignación local correspondiente, llegamos al estado $(\O \leadsto (id, c, \RT \leadsto (loc \ass{x}{\A \eval{aux\_var\_k}_{loc, \attr}}, S_\ABS, t), t, \attr), \Cl)$ y del hecho de que dicha variable auxiliar tenga el valor de $\nu$ llegamos inmediatamente a un estado equivalente.
 
 \subsubsection{Caso $x = n$}
-Sea $(\G, \F, \RP \leadsto (local:s,x = n\;S))$ y sea $(\O \leadsto (id, c, \RT \leadsto (loc, Int\,aux\_var\_k = n\; x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)$ su estado equivalente, donde la variable auxiliar $k$-esima es la variable asignada a la expresión $n$.\\
+Sea $(\G, \F, \RP \leadsto (local:s,x = n\;S))$ y sea $(\O \leadsto (id, c, \RT \leadsto (loc, Int\,aux\_var\_k = n\; x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)$ su estado equivalente, donde la variable auxiliar $k$-ésima es la variable asignada a la expresión $n$.\\
 
 En este caso, solo podemos aplicar para el proceso actual la regla $\assac$ que delega la acción en las reglas para expresiones aritmético-lógicas. La regla aplicable en esta situación es $\numa$ con lo que llegamos al estado $(\G, \F, \RP \leadsto (local:s,x = \N\eval{n}\;S))$.\\
 
-En el lado de ABS aplicamos la regla de asignación sobre la variable auxiliar llegando al estado $(\O \leadsto (id, c, \RT \leadsto (loc \ass{aux\_var\_k}{\A \eval{n}_{loc, \attr}}, x = aux\_var\_k\;S_\ABS, t), t, \attr), \Cl)$ preservandose la equivalencia entre estados al asignar el valor de la expresión a su variable auxiliar.
+En el lado de ABS aplicamos la regla de asignación sobre la variable auxiliar llegando al estado $(\O \leadsto (id, c, \RT \leadsto (loc \ass{aux\_var\_k}{\A \eval{n}_{loc, \attr}}, x = aux\_var\_k\;S_\ABS, t), t, \attr), \Cl)$ preservándose la equivalencia entre estados al asignar el valor de la expresión a su variable auxiliar.
 
 \subsubsection{Caso $x = f()$ (simplificación sin argumentos)}
-Sean los estados equivalentes $(\G, \F, \RP \leadsto (local:s,x = f()\;S))$ y $(\O \leadsto (id, c, \RT \leadsto (loc, \mbox{Intf }  aux\_var\_(k-1) = new\, \mbox{Impf}(globalval) \; Int\, aux\_var\_k = await\,auxi\_var\_(k-1)!f()\; x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)$ donde la variable auxiliar $k$-esima es la variable asignada a la expresión $f()$.\\
+Sean los estados equivalentes $(\G, \F, \RP \leadsto (local:s,x = f()\;S))$ y $(\O \leadsto (id, c, \RT \leadsto (loc, \mbox{Intf }  aux\_var\_(k-1) = new\, \mbox{Impf}(globalval) \; Int\, aux\_var\_k = await\,auxi\_var\_(k-1)!f()\; x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)$ donde la variable auxiliar $k$-ésima es la variable asignada a la expresión $f()$.\\
 
 La semántica de CABS nos permite usar la regla $\assac$ con la regla $\callab$ resultando en el estado $(\G, \F, \RP \leadsto (\nil:local:s, S_F\,x = \Unstack{a}\;S))$ donde $a$ es la expresión de retorno de $f$.\\
 
-Por otro lado, en la semántica de ABS, podemos aplicar primero la regla de creacción de objetos y a continuación la regla de llamada síncrona, resultando el estado
+Por otro lado, en la semántica de ABS, podemos aplicar primero la regla de creación de objetos y a continuación la regla de llamada síncrona, resultando el estado
 \begin{multline*}
   (\O \leadsto (id', c', (\nil, S_\ABS^F, t'), \perp, \attr')\\
   (id, c, \RT \leadsto (loc, Int\, aux\_var\_k = await\,t'\; x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)
@@ -59,7 +59,7 @@ Sean los estados equivalentes $(\G, \F, \RP \leadsto (local':local:s,x = \Unstac
   (\O \leadsto (id', c', (loc', \return aux\_var\_k', t'), t', \attr')\\
   (id, c, \RT \leadsto (loc, Int\, aux\_var\_k = await\,t'\; x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)
 \end{multline*}
-donde la variable auxiliar $k'$-esima es la variable asignada a la expresión $\nu$, que tiene su valor asignado en $loc'$, y la $k$-esima al unstack.\\
+donde la variable auxiliar $k'$-ésima es la variable asignada a la expresión $\nu$, que tiene su valor asignado en $loc'$, y la $k$-ésima al unstack.\\
 
 En el caso de CABS, aplicar la regla $\assac$ con la regla $\unab$ para la expresión nos lleva al estado $(\G, \F, \RP \leadsto (local:s, x = \nu \; S))$.\\
 
@@ -69,7 +69,7 @@ En el caso de ABS, podemos aplicar la regla de retorno que nos lleva a un estado
   (id, c, \RT \leadsto (loc, Int\, aux\_var\_k = await\,t'\; x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)
 \end{multline*}
 
-Desde este estado se puede aplicar la regla del $await$ que permite recoger el valor de $\nu$ y asignarselo, en este caso, a la variable $aux\_var\_k$, llegando al estado
+Desde este estado se puede aplicar la regla del $await$ que permite recoger el valor de $\nu$ y asignárselo, en este caso, a la variable $aux\_var\_k$, llegando al estado
 \begin{multline*}
   (\O \leadsto (id', c', [], \perp, \attr')\\
   (id, c, \RT \leadsto (loc\ass{aux\_var\_k}{\nu}, x = aux\_var\_k\; S_\ABS, t), t, \attr), \Cl)
@@ -83,7 +83,7 @@ Cabe destacar que el concepto de desapilar un entorno en CABS queda reflejado en
 
 \subsubsection{Caso $x = a_1 \odot a_2$}
 
-Antes de discutir este caso conviene ver que en CABS el cómputo de $a_1 \odot a_2$ precisa del cómputo de $a_1$, de modo que el argumento que vamos a seguir para el caso compuesto es asumir que todo va bien si nos encontraramos con la expresión $a_1$ y que por tanto la asunción se puede emplear para la expresión $a_1 \odot a_2$.\\
+Antes de discutir este caso conviene ver que en CABS el cómputo de $a_1 \odot a_2$ precisa del cómputo de $a_1$, de modo que el argumento que vamos a seguir para el caso compuesto es asumir que todo va bien si nos encontráramos con la expresión $a_1$ y que por tanto la asunción se puede emplear para la expresión $a_1 \odot a_2$.\\
 
 Otro detalle importante a tener en cuenta es que no se empieza a procesar la expresión $a_2$ hasta que no hemos completado el cómputo de $a_1$, como se refleja en las reglas de la semántica de CABS. Esto se reflejará también en ABS ya que las asignaciones de la expresión $a_2$ vienen precedidas por las de la expresión $a_1$.\\
 
@@ -94,7 +94,7 @@ Dicho esto, sean los estados equivalentes $(\G, \F, \RP \leadsto (local:s,x = a_
 \end{multline*}
 donde $c_1$ es el código asociado a $a_1$, $c_2$ el asociado a $a_2$ y $aux\_var\_k_1$, $aux\_var\_k_2$ y $aux\_var\_k$ las variables asociadas a cada una de las expresiones aritméticas en juego.\\
 
-En concreto tenemos que la última instrucción de $c_1$, por el modo en que hemos definido la traducción, se corresponde con una asignación a su variable auxiliar. Por el modo en que están definidas las expresiones aritméticas, podemos aplicar inducción estructural con lo que, por hipotesis de inducción tenemos que los estados equivalentes $(\G, \F, \RP \leadsto (local:s,x = a_1\;S))$ y $(\O \leadsto (id, c, \RT \leadsto (loc, c_1\,x = aux\_var\_k_1\; S_\ABS, t), t, \attr), \Cl)$ llegan en un solo paso a los estados equivalentes $(\G, \F, \RP \leadsto (local:s,x = a_1'\;S))$ y $(\O \leadsto (id, c, \RT \leadsto (loc, c_1'\,x = aux\_var\_k_1\; S_\ABS, t), t, \attr), \Cl)$.\\
+En concreto tenemos que la última instrucción de $c_1$, por el modo en que hemos definido la traducción, se corresponde con una asignación a su variable auxiliar. Por el modo en que están definidas las expresiones aritméticas, podemos aplicar inducción estructural con lo que, por hipótesis de inducción tenemos que los estados equivalentes $(\G, \F, \RP \leadsto (local:s,x = a_1\;S))$ y $(\O \leadsto (id, c, \RT \leadsto (loc, c_1\,x = aux\_var\_k_1\; S_\ABS, t), t, \attr), \Cl)$ llegan en un solo paso a los estados equivalentes $(\G, \F, \RP \leadsto (local:s,x = a_1'\;S))$ y $(\O \leadsto (id, c, \RT \leadsto (loc, c_1'\,x = aux\_var\_k_1\; S_\ABS, t), t, \attr), \Cl)$.\\
 
 Teniendo en cuenta esto y que si tenemos un código en ABS, $S_1$, que en un paso desde un estado dado al que denotaremos por $s$ se llega a un estado $s'$ con código $S_1'$ entonces tendríamos un comportamiento similar con el código $S_1 S_2$ y $S_1' S_2$ (en otras palabras, el concatenar código por detrás no altera el significado de los estados intermedios), llegamos a que de los estados originales llegamos en un paso a los estados $(\G, \F, \RP \leadsto (local:s,x = a_1' \odot a_2\;S))$ y
 \begin{multline*}
@@ -117,7 +117,7 @@ que son equivalentes.
 \subsubsection{Casos $x = f(a_1, \dots, a_n)$ y $x = \Unstack{a}$}
 Podemos considerar la llamada a una función con argumentos o la instrucción unstack como operadores aritméticos ($n$-ario el primero, unario el segundo) que del mismo modo que los anteriores operadores binarios esperan al computo de las subexpresiones para poder ejecutarse.\\
 
-El proceder con estos es identico en el sentido de aplicar la hipótesis de inducción con las subexpresiones y componer de nuevo con el operador. La llamada final a la función cuando están preparados todos los operandos o la ejecución del unstack están reflejados ya en los casos base presentados al principio de la subsección.
+El proceder con estos es idéntico en el sentido de aplicar la hipótesis de inducción con las subexpresiones y componer de nuevo con el operador. La llamada final a la función cuando están preparados todos los operandos o la ejecución del unstack están reflejados ya en los casos base presentados al principio de la subsección.
 
 \subsection{Variables globales}
 
@@ -136,7 +136,7 @@ Tenemos que las dos reglas axiomáticas del if en CABS (la regla para el valor t
 De este modo, es fácil ver que volvemos a tener que la ejecución de un paso en el if en CABS (ya sea en la condición o en la decisión de que rama se toma) se corresponde con un paso de ejecución (obviando pasos no relevantes, como los de cambio de tarea) en ABS.
 
 \subsubsection{Caso while}
-El problema que se nos presenta con el while es que su traducción a ABS no preserva la equivalencia de estados inmediatamente al aplicar las reglas de la semántica. De hecho, en CABS el while junto con su condición mutan en un if equivalente resultante de desenrollar el blucle una vez, mientras que, en ABS, la traducción empieza por computar las expresiones boolenas de la condición y cuando tiene el resultado listo se convierte en un if para entonces sí volver a ser un estado equivalente.\\
+El problema que se nos presenta con el while es que su traducción a ABS no preserva la equivalencia de estados inmediatamente al aplicar las reglas de la semántica. De hecho, en CABS el while junto con su condición mutan en un if equivalente resultante de desenrollar el bucle una vez, mientras que, en ABS, la traducción empieza por computar las expresiones booleanas de la condición y cuando tiene el resultado listo se convierte en un if para entonces sí volver a ser un estado equivalente.\\
 
 Hay varias formas de solucionar este problema. Una de ellas pasaría por hacer una modificación en la semántica de CABS, creando una prórroga antes de realizar la conversión al if. Esta opción, aunque complicaría un poco más la semántica del lenguaje, nos permitiría tener de nuevo una equivalencia paso a paso como la que hemos tenido hasta ahora. Las nuevas reglas del while en CABS serían las siguientes:
 
@@ -171,11 +171,11 @@ Una vez tenemos resueltas estas cuestiones, la equivalencia en la bisimulación 
 
 \textit{Opción alternativa.}\\
 
-Otro modo de concluir con el caso del while sería crear un azucar sintáctico para el while de ABS que permitiera agrupar en su sintaxis el código de las asignaciones para el cómputo de la condición. De este modo, se podría modificar la regla del while para que actuara sobre esta construcción auxiliar y pudiera realizar el mismo paso que la semántica de CABS original para llegar a un equivalente a la vez. Esta opción sería equivalente a la anterior pero por simplicidad se deja solo comentada.
+Otro modo de concluir con el caso del while sería crear un azúcar sintáctico para el while de ABS que permitiera agrupar en su sintaxis el código de las asignaciones para el cómputo de la condición. De este modo, se podría modificar la regla del while para que actuara sobre esta construcción auxiliar y pudiera realizar el mismo paso que la semántica de CABS original para llegar a un equivalente a la vez. Esta opción sería equivalente a la anterior pero por simplicidad se deja solo comentada.
 
 \subsubsection{Caso thread}
 
-El caso del $\thread$ vuelve a traer consigo la discusión que ya habíamos tenido con las llamadas a funciones con parámetros. Las funciones llamadas en paralelo con $\thread$ pueden verse de nuevo como un operador, con la diferencia de que no tienen un resultado en su retorno. De nuevo sería necesario analizar el proceso de la bisimulación para las funciones con $n$-paramétros (con $n$ variable) comprobando que se mantiene la equivalencia entre estados en cada uno de los pasos de la evaluación de los parámetros y, finalmente, en la creación final de los procesos.\\
+El caso del $\thread$ vuelve a traer consigo la discusión que ya habíamos tenido con las llamadas a funciones con parámetros. Las funciones llamadas en paralelo con $\thread$ pueden verse de nuevo como un operador, con la diferencia de que no tienen un resultado en su retorno. De nuevo sería necesario analizar el proceso de la bisimulación para las funciones con $n$-parámetros (con $n$ variable) comprobando que se mantiene la equivalencia entre estados en cada uno de los pasos de la evaluación de los parámetros y, finalmente, en la creación final de los procesos.\\
 
 Por simplicidad en este trabajo hablaremos del caso de las funciones sin parámetros, puesto que los restantes casos se reducen a comprobar que la evaluación de expresiones aritmético-lógicas se sigue comportando bien al usarse como paso por valor en funciones en lugar de en asignaciones, como ya hemos detallado anteriormente.\\
 
@@ -187,7 +187,7 @@ En el caso de ABS, aplicando en un primer lugar la regla de creación de objetos
 
 Cabe mencionar que la razón por la que ambos ámbitos de variables locales se encuentran a nil es porque al realizar la llamada concurrente a una función sin argumentos esta no puede contar con más información de partida que la que se puede obtener de las variables globales. Para el caso de las llamadas a funciones con argumento las reglas semánticas garantizan que estos estarán disponibles en el ámbito local.
 
-\section{Conclusión de la correción}
+\section{Conclusión de la corrección}
 
 Con esto concluimos la corrección de la traducción dando un paso en la semántica de CABS. Ahora bien, el objetivo de este capítulo era conseguir ver que la evolución del programa escrito en CABS era equivalente a la que se lleva en cabo con su traducción en ABS. Esto se obtiene haciendo uso de una inducción sobre el número de pasos en la ejecución.\\
 

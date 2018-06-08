@@ -1,10 +1,10 @@
 \chapter{Sintaxis y semántica}
 \section{Sintaxis de CABS}
-La mayoría de lenguajes de programación del mercado siguen una sintaxis común similiar a la que tiene el lenguaje original en el que se suelen basar que es C. A la hora de definir la sintaxis de CABS tomaremos como referencia de nuevo la de ese lenguaje.\\
+La mayoría de lenguajes de programación del mercado siguen una sintaxis común similar a la que tiene el lenguaje original en el que se suelen basar que es C. A la hora de definir la sintaxis de CABS tomaremos como referencia de nuevo la de ese lenguaje.\\
 
 Para sentar las bases de la notación que se usará de ahora en adelante para definir la semántica de nuestro lenguaje, diremos que $\P$ es un programa en CABS formado por instrucciones globales como lo son las declaraciones de variables globales y las declaraciones de funciones.\\
 
-La declaración de variables constarán de un tipo y de un nombre de variable seguido de un punto y coma. Las funciones estarán formadas por un tipo de rotorno, un nombre de función, una lista de argumentos (es posible que sea vacia), un cuerpo con instrucciónes $S \in \Stm$ y una expresión de retorno. A modo de ilustración podemos ver el siguiente código
+La declaración de variables constarán de un tipo y de un nombre de variable seguido de un punto y coma. Las funciones estarán formadas por un tipo de retorno, un nombre de función, una lista de argumentos (es posible que sea vacía), un cuerpo con instrucciones $S \in \Stm$ y una expresión de retorno. A modo de ilustración podemos ver el siguiente código
 
 \lstinputlisting{code.0.1.txt}
 
@@ -14,7 +14,7 @@ Los tipos que manejaremos en nuestro lenguaje serán enteros y booleanos, cuyos 
 
 \lstinputlisting{code.0.2.txt}
 
-Las instrucciones $S$ del cuerpo de una función de un programa son las típicas de un lenguaje imperativo, entre las que se encuentran las asignaciones, las operaciones aritmetico lógicas, las instrucciones de control, como los condicionales y los bucles y, la clave de un lenguaje con concurrencia, un $\thread$ para la ejecución de funciones en paralelo imitando el comportamiento de la librería pthread en C. Veamos un ejemplo que use esta última construcción:
+Las instrucciones $S$ del cuerpo de una función de un programa son las típicas de un lenguaje imperativo, entre las que se encuentran las asignaciones, las operaciones aritmético-lógicas, las instrucciones de control, como los condicionales y los bucles y, la clave de un lenguaje con concurrencia, un $\thread$ para la ejecución de funciones en paralelo imitando el comportamiento de la librería pthread en C. Veamos un ejemplo que use esta última construcción:
 
 \lstinputlisting{code.0.3.txt}
 Como podemos ver, las llamadas concurrentes son similares a las llamadas a procedimientos habituales precedidas por la palabra reservada $\thread$.
@@ -25,11 +25,11 @@ A continuación pasamos a hablar de la semántica del lenguaje CABS. La idea es 
 En una primera sección daremos las definiciones básicas de lo que serán los estados de nuestro programa para, posteriormente, especificar cuales serán las reglas que marcaran las transiciones entre ellos. Por último, mostraremos algunos ejemplos de derivación a partir de unos programas básicos.
 
 \subsection{Preámbulo semántico}
-Los programas en CABS se pueden entender, de forma simplificada, como unas secuencias de pasos que van a menejar unos valores enteros y lógicos posiblemente almacenados en una memoria donde también se guardarán los resultados desprendidos de las operaciones que se realicen. Es por esto que en primer lugar tenemos que definir un conjunto de valores $\V = \Z \cup \B$ que sea la unión de los enteros y de los booleanos, los elementos básicos de todo programa.\\
+Los programas en CABS se pueden entender, de forma simplificada, como unas secuencias de pasos que van a manejar unos valores enteros y lógicos posiblemente almacenados en una memoria donde también se guardarán los resultados desprendidos de las operaciones que se realicen. Es por esto que en primer lugar tenemos que definir un conjunto de valores $\V = \Z \cup \B$ que sea la unión de los enteros y de los booleanos, los elementos básicos de todo programa.\\
 
 Una primera parte de la representación del estado estará formada por las variables globales de nuestro programa. Definimos $\Gs = \Var \hookrightarrow \V$ el conjunto de funciones parciales del conjunto de variables al conjunto de valores. El estado actual de nuestras variables globales será una función de este conjunto y por lo general nos referiremos a ella con la letra $\G$. Posteriormente cuando hablemos de variables locales también las definiremos como un conjunto de funciones similares pero que trataremos por separado por comodidad. El conjunto $\Var$ contiene todos los nombre de variable posibles y usaremos $\G\,var$ para referirnos al valor almacenado por la variable global $var$. Por ser una función parcial quedan reflejadas en $\G$ únicamente las variables que han sido previamente declaradas.\\
 
-Por otro lado nos encontramos en nuestro lenguaje con la necesidad de definir un conjunto que recoja la información básica de las funciones y procedimientos. Definimos $\Fs = \Func \hookrightarrow (\T \times \Stm \times \Args \times (\Exp \cup \{\varepsilon\}))$ el conjunto de funciones parciales que asocia un nombre de función a su definición. Una función quedará definida por su tipo de retorno $t \in \T$, su código $S \in \Stm$, sus argumentos de entrada $\args \in \Args$ y su expresión de retorno $e \in \Exp \cup \{\varepsilon\}$. Según las necesidades, la expresión de retorno será una expresión booleana, una expresión aritmética o simplemente será la expresión vacia, empleada para los procedimientos. De nuevo tenemos un conjunto de nombres de funciones $\Func$. En principio los nombres de variable y de función son los mismos en los lenguajes de programación habituales y es también el caso de CABS, no obstante, por simplicidad, consideraremos en la semántica que son conjuntos separados. A su vez, contamos también con la ventaja de las funciones parciales en $\Fs$ que solo tendrán la información de aquellas funciones que en verdad hayan sido definidas en el programa. $\F$ será la metavariable que usaremos para referirnos a una función de $\Fs$ concreta.\\
+Por otro lado nos encontramos en nuestro lenguaje con la necesidad de definir un conjunto que recoja la información básica de las funciones y procedimientos. Definimos $\Fs = \Func \hookrightarrow (\T \times \Stm \times \Args \times (\Exp \cup \{\varepsilon\}))$ el conjunto de funciones parciales que asocia un nombre de función a su definición. Una función quedará definida por su tipo de retorno $t \in \T$, su código $S \in \Stm$, sus argumentos de entrada $\args \in \Args$ y su expresión de retorno $e \in \Exp \cup \{\varepsilon\}$. Según las necesidades, la expresión de retorno será una expresión booleana, una expresión aritmética o simplemente será la expresión vacía, empleada para los procedimientos. De nuevo tenemos un conjunto de nombres de funciones $\Func$. En principio los nombres de variable y de función son los mismos en los lenguajes de programación habituales y es también el caso de CABS, no obstante, por simplicidad, consideraremos en la semántica que son conjuntos separados. A su vez, contamos también con la ventaja de las funciones parciales en $\Fs$ que solo tendrán la información de aquellas funciones que en verdad hayan sido definidas en el programa. $\F$ será la metavariable que usaremos para referirnos a una función de $\Fs$ concreta.\\
 
 Para dar un significado a nuestro programas tenemos que definir qué va a representar para nosotros su estado de ejecución. Definimos el conjunto de estados $\State = \Gs \times \Fs \times \RPs$ como una tupla que recoja la información de las variables globales y de las funciones definidas en nuestro programa $\P$, así como, una lista de marcos de ejecución o runtime processes que contendrá la información local de los procesos. Esto último quedará recogido en los elementos de $\RPs = ((\loc)^+ \times \Stm)^*$ donde $\loc = \Var \hookrightarrow \V$ será el conjunto de ámbitos locales. Por lo general usaremos la notación $local:s \in (\loc)^+$ para referirnos a la pila de llamadas de un proceso, donde $local \in \loc$ y $s \in (\loc)^*$, emulando la notación de lista de un lenguaje funcional como Haskell. Usaremos además la metavariable $\RP$ para referirnos a una lista de marcos de ejecución concreta y el operador $\leadsto$ para referirnos a un elemento de la lista cualquiera, de modo que, $\RP \leadsto (local:s, S)$ indica que la lista de marcos $\RP$ contiene en concreto el marco $(local:s, S)$ donde $S$ es el código del proceso y $(local:s)$ su pila de ámbitos locales.\\
 
@@ -53,7 +53,7 @@ $$
 \start((\G, \F, \RP)) = (\G, \F, [(\nil:[], S)]) \text{ donde } \F(main) = (int, S, \args, 0)
 $$
 
-Con esto conseguimos crear un nuevo marco de ejecución con el código inicial de main. Nótese que la función inicializa la pila de ambitos de variables locales con el ambito $\nil$ que no contiene ninguna variable inicializada.
+Con esto conseguimos crear un nuevo marco de ejecución con el código inicial de main. Nótese que la función inicializa la pila de ámbitos de variables locales con el ámbito $\nil$ que no contiene ninguna variable inicializada.
 
 \subsubsection{Semántica (Expresiones aritmético-lógicas).}
 Las primeras reglas que queremos definir serán las de las expresiones aritmético-lógicas. Nuestro lenguaje permite la llamada a funciones con valor de retorno, lo que hace que tengamos que, desde un principio, manejar unas reglas que garanticen la no terminación de la evaluación de las expresiones. Será por ello que tengamos que dar una definición de una función parcial que dada una expresión nos devuelva otra expresión más simplificada, pudiendo emplear el estado del programa para ello y permitiendo modificaciones del mismo, hasta eventualmente quedarnos con un valor $v \in \V$, lo que consideramos la expresión más simplificada.\\
@@ -196,7 +196,7 @@ donde $\bigodot$ es alguno de los operadores del lenguaje que tienen su homólog
     \Infer[left label=$\bcallab$]3{\st{\func(args)}{(\G, \F, \RP \leadsto (local:s, S))} \stbexp \st{\Unstack{a}}{(\G, \F, \RP \leadsto (\nil\ass{args}{v_1:\dots:v_n}:local:s, S_F\;S))}}
 \end{prooftree*}
 
-que repiten de forma similar lo que ya teníamos para la llamada de funciones ariméticas.
+que repiten de forma similar lo que ya teníamos para la llamada de funciones aritméticas.
 
 %%%%%%%%%%%
 %%%%%%%%%%%
@@ -225,7 +225,7 @@ que repiten de forma similar lo que ya teníamos para la llamada de funciones ar
     \Infer[left label=$\assvcg$]1{(\G, \F, \RP \leadsto (local:s,\var = v\;S)) \stns (\G\ass{\var}{v}, \F, \RP \leadsto (local:s, S))}
 \end{prooftree*}
 
-donde $var$ es una variable entera. Para variables boolenas las regla es análoga.
+donde $var$ es una variable entera. Para variables booleanas las regla es análoga.
 
 %%%%%%%%%
 \iffalse
