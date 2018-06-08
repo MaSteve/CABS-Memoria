@@ -1,16 +1,16 @@
 \chapter*{Resumen}
 \thispagestyle{empty}
-El avance de los ordenadores en las últimas décadas han brindado la oportunidad a los desarrolladores de programas de aprovechar las ventajas de los últimos procesadores que permiten la ejecución simultanea de varios hilos de ejecución al mismo tiempo. Es por este motivo por el que cada vez es más común el desarrollo de programas concurrentes en todos los ámbitos, desde el software científico hasta las aplicaciones móviles.\\
+El avance de los ordenadores en las últimas décadas ha brindado la oportunidad a los desarrolladores de programas de aprovechar las ventajas de los procesadores modernos que permiten la ejecución simultánea de varios hilos de ejecución al mismo tiempo. Es por este motivo por el que cada vez es más común el desarrollo de programas concurrentes en todos los ámbitos, desde el software científico hasta las aplicaciones móviles.\\
 
 No obstante, el desarrollo de programas concurrentes conlleva riesgos adicionales como deadlocks o condiciones de carrera no presentes en los programas secuenciales. Es por ello necesario el uso de técnicas de validación como el testing para poder comprobar el comportamiento de los programas y verificar que cumplen con los requisitos adecuados.\\
 
-Sin embargo, las técnicas de testing habituales no son efectivas debido al indeterminismo en la ejecución de los procesos y una exploración exhaustiva de todos los posibles entrelazados suele ser intratable por su coste exponencial. No obstante, en los sistemas basados en actores, debido a la ausencia de memoria compartida y la ejecución sin interrupciones de los procesos, el número de puntos en los que hace falta considerar el indeterminismo de estos programas es mucho menor.\\
+Sin embargo, las técnicas de testing habituales no son efectivas debido al indeterminismo en la ejecución de los procesos y una exploración exhaustiva de todos los posibles entrelazamientos suele ser intratable por su coste exponencial. No obstante, en los sistemas basados en actores, debido a la ausencia de memoria compartida y la ejecución sin interrupciones de los procesos, el número de puntos en los que hace falta considerar el indeterminismo de estos programas es mucho menor.\\
 
 Una de las mejores técnicas para mitigar la explosión de estados es el algoritmo POR (Partial Order Reduction), que permite agrupar en clases de equivalencia derivaciones redundantes, y sobre el que, hoy en día, se sigue investigando. Sobre estas líneas en este trabajo nos centraremos en el uso de SYCO para el testing de programas concurrentes.\\
 
 SYCO es una herramienta para ABS, un lenguaje de modelado para programas concurrentes basado en el modelo de actores, que permite obtener los posibles estados finales de un programa concurrente usando el estado del arte del algoritmo DPOR (Dynamic Partial Order Reduction). No obstante, el problema que presenta ABS es que, como todo lenguaje de modelado, la implementación real de un programa dista mucho de la implementación que se pueda hacer en este lenguaje. Además, el modelo de concurrencia basado en actores, pese a estar cobrando cada vez más importancia, no es el modelo de los lenguajes más populares como son Java y C/C++.\\
 
-La idea de este trabajo consiste en facilitar el uso de las herramientas de testing implementadas para ABS con los programas escritos en C. Para ello desarrollaremos un lenguaje con una sintaxis similar a C, llamado CABS, que permitirá la ejecución concurrente de hilos usando para ello una concurrencia de grano fino.
+La idea de este trabajo consiste en facilitar el uso de las herramientas de testing implementadas para ABS con los programas escritos en C. Para ello desarrollaremos un lenguaje con una sintaxis similar a C, llamado CABS, que permitirá la ejecución concurrente de hilos, usando para ello una concurrencia de grano fino.
 
 \newpage
 \thispagestyle{empty}
@@ -23,9 +23,9 @@ Nevertheless, concurrent software development has additional risks, such as dead
 
 However, the usual techniques are not effective due to the nondeterministic behavior of these programs and trying to search all the possible interleavings is an intractable problem due to its exponential cost. However, in the actor model paradigm, due to the absence of share memory and the non-preemptive scheduling, the number of interleavings is much lower.\\
 
-One of the best techniques for avoiding the state explosion is the Partial Order Reduction (POR) algorithm. This algorithm can merge several redundant derivation into the same equivalence class. Nowadays, some researchers are still working on this. In this thesis, we will use a specific implementation of this technique called SYCO.\\
+One of the best techniques for avoiding the state explosion is the Partial Order Reduction (POR) algorithm. This algorithm can merge several redundant derivation into the same equivalence class. Nowadays, some researchers are still working on this. In this thesis, we will use a specific implementation of this technique, called SYCO.\\
 
-SYCO is a software tool developed for ABS, a modeling language for concurrent programming based on the actor model. We can obtain the possible final states of a concurrent program using the state of the art in the Dynamic Partial Order Reduction (DPOR) algorithm. However, ABS implementations are far away from a real implementation of the final program in one of the main languages, such as Java or C/C++. In addition, actor model concurrency is not the paradigm used in those languages.\\
+SYCO is a software tool developed for ABS, a modeling language for concurrent programming based on the actor model. Using this tool, we can obtain the possible final states of a concurrent program using the state of the art in the Dynamic Partial Order Reduction (DPOR) algorithm. However, ABS implementations are far away from a real implementation of the final program in one of the main languages, such as Java or C/C++. In addition, actor model concurrency is not the paradigm used in those languages.\\
 
 The idea of this thesis is to develop a programming language, similar to C, with a fine-grain concurrency support and to make easier the use of the tools developed for ABS in C programs. The name of this language is CABS. (Did you catch the joke?)\\
 
